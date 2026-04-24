@@ -10,6 +10,7 @@
   --color-primary: #ED80A8;
 
   /* real soft shades */
+  --color-primary-50: #FDFAF8;
   --color-primary-100: #FDE7EF;
   --color-primary-200: #F8E3E2;
   --color-primary-300: #F5BDD0;
@@ -32,6 +33,7 @@
 @theme inline {
   /* Colors */
   --color-primary: var(--color-primary);
+  --color-primary-50: var(--color-primary-50);
   --color-primary-100: var(--color-primary-100);
   --color-primary-200: var(--color-primary-200);
   --color-primary-300: var(--color-primary-300);

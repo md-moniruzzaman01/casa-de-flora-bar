@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
@@ -13,13 +13,12 @@ export default function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
 
+  const [isPlaying, setIsPlaying] = useState(true);
+
   const { hero } = HOME_CONTENT;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // ===============================
-      // VIDEO PARALLAX
-      // ===============================
       gsap.to(videoRef.current, {
         y: 120,
         scale: 1.1,
@@ -32,9 +31,6 @@ export default function Hero() {
         },
       });
 
-      // ===============================
-      // TEXT PINS (Luxury feel)
-      // ===============================
       gsap.fromTo(
         textRef.current,
         { y: 80, opacity: 0 },
@@ -50,9 +46,6 @@ export default function Hero() {
         }
       );
 
-      // ===============================
-      // TITLE STAGGER
-      // ===============================
       gsap.from(".hero-line", {
         y: 40,
         opacity: 0,
@@ -69,13 +62,25 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
+  // ▶️ Toggle play/pause
+  const handleVideoToggle = () => {
+    if (!videoRef.current) return;
+
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
   return (
     <section ref={ref} className="relative min-h-screen overflow-hidden">
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
+      <div className="flex flex-col lg:flex-row min-h-screen">
 
         {/* ================= LEFT VIDEO ================= */}
-        <div className="relative h-[60vh] lg:h-screen overflow-hidden">
+        <div className="relative w-full lg:w-[45%] h-[50vh] lg:h-screen overflow-hidden">
 
           <video
             ref={videoRef}
@@ -85,11 +90,28 @@ export default function Hero() {
             loop
             playsInline
           >
-            <source src="/hero-video.mp4" type="video/mp4" />
+            <source src="/CASA DE FLORA BAR.mp4" type="video/mp4" />
           </video>
 
           {/* dark overlay */}
           <div className="absolute inset-0 bg-black/30" />
+
+          {/* ▶️ PLAY / PAUSE BUTTON */}
+          <button
+            onClick={handleVideoToggle}
+            className="absolute bottom-6 right-6 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white/30 transition"
+          >
+            {isPlaying ? (
+              // Pause icon
+              <div className="flex gap-[2px]">
+                <span className="w-[3px] h-4 bg-white"></span>
+                <span className="w-[3px] h-4 bg-white"></span>
+              </div>
+            ) : (
+              // Play icon
+              <div className="w-0 h-0 border-l-[8px] border-l-white border-y-[6px] border-y-transparent ml-1"></div>
+            )}
+          </button>
 
           {/* badge */}
           <div className="absolute top-8 left-8 z-10">
@@ -97,7 +119,7 @@ export default function Hero() {
               <span className="text-[9px] uppercase tracking-widest opacity-70">
                 Since
               </span>
-              <span className="text-lg font-serif italic">2024</span>
+              <span className="text-lg font-serif italic">2020</span>
               <span className="text-[8px] uppercase tracking-widest opacity-60">
                 Est.
               </span>
@@ -106,52 +128,48 @@ export default function Hero() {
         </div>
 
         {/* ================= RIGHT CONTENT ================= */}
-        <div className="flex items-center bg-[#FDFAF8] px-6 lg:px-20 py-16">
+        <div className="w-full lg:w-[55%] flex items-center justify-start px-8 md:px-16 lg:px-24 py-20 lg:py-0">
+          <div ref={textRef} className="max-w-2xl">
 
-          <div ref={textRef} className="max-w-xl">
-
-            {/* TAG */}
-            <p className="text-[10px] tracking-[0.3em] uppercase text-pink-700 mb-6">
-              {hero.tag}
-            </p>
-
-            {/* TITLE */}
-            <h1 className="font-serif text-[44px] lg:text-[64px] leading-[1.1]">
+            {/* Main Heading - Responsive Sizes */}
+            <h1 className="font-serif leading-[1.05] text-black mb-8">
+              {/* Mobile: 48px | Tablet: 72px | Desktop: 90px | Large Desktop: 110px */}
               {hero.title.map((line, i) => (
-                <span key={i} className="block hero-line">
+                <span
+                  key={i}
+                  className={`block text-[48px] md:text-[72px] lg:text-[80px] xl:text-[100px] ${line === "Beautiful" ? "text-primary" : ""}`}
+                >
                   {line}
                 </span>
               ))}
             </h1>
 
-            {/* divider */}
-            <div className="h-[1px] w-14 bg-[#C4A882] my-6" />
+            {/* Separator Line */}
+            <div className="h-[1px] w-16 bg-[#E8A0B5] mb-8" />
 
-            {/* DESCRIPTION */}
-            <p className="text-[15px] leading-[1.8] text-gray-600 mb-10">
+            {/* Description */}
+            <p className="text-gray-700 text-lg md:text-xl font-light leading-relaxed max-w-xl mb-12">
               {hero.description}
             </p>
 
-            {/* CTA */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* Buttons - Matching the sleek design */}
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <Link
                 href={hero.primaryCTA.href}
-                className="bg-black text-white px-8 py-4 text-[10px] uppercase tracking-[0.3em] hover:bg-pink-600 transition"
+                className="bg-black text-white px-10 py-3 text-sm md:text-base uppercase tracking-widest border border-black hover:bg-transparent hover:text-black transition-all duration-300"
               >
                 {hero.primaryCTA.label}
               </Link>
 
               <Link
                 href={hero.secondaryCTA.href}
-                className="border-b border-[#C4A882] text-[10px] uppercase tracking-[0.3em] pb-1 hover:text-pink-600"
+                className="border border-gray-300 text-black px-10 py-3 text-sm md:text-base uppercase tracking-widest hover:border-black transition-all duration-300"
               >
                 {hero.secondaryCTA.label}
               </Link>
             </div>
-
           </div>
         </div>
-
       </div>
     </section>
   );

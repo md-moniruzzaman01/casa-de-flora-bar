@@ -1,139 +1,217 @@
-"use client";
+"use client"
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import Image from "next/image";
+gsap.registerPlugin(ScrollTrigger);
 
-interface ServiceCard {
-  id: number;
-  title: string;
-  description: string;
-  imageSrc: string;
-  imageAlt: string;
-}
-
-const services: ServiceCard[] = [
+const services = [
   {
-    id: 1,
-    title: "Floral Café",
+    title: 'Floral Café',
     description:
-      "Enjoy handcrafted coffee, signature drinks, desserts, and a cozy floral atmosphere made for everyday moments.",
-    imageSrc: "/images/floral-cafe.png",
-    imageAlt: "Floral café coffee cup",
+      'Enjoy handcrafted coffee, signature drinks, desserts, and a cozy floral atmosphere made for everyday moments.',
+    icon: '☕',
   },
   {
-    id: 2,
-    title: "Weekend Brunch",
+    title: 'Weekend Brunch',
     description:
-      "Gather with friends for indulgent weekend brunch and beautiful conversations.",
-    imageSrc: "/images/weekend-brunch.png",
-    imageAlt: "Croissant on plate",
+      'Gather with friends for indulgent weekend brunch, curated dishes, and beautiful conversations.',
+    icon: '🥐',
   },
   {
-    id: 3,
-    title: "Bouquet Bar",
-    description: "Design your own bouquet while enjoying your favorite drink.",
-    imageSrc: "/images/bouquet-bar.png",
-    imageAlt: "Flowers bouquet",
+    title: 'Bouquet Bar',
+    description:
+      'Choose fresh blooms and design a bouquet while sipping your favorite drink.',
+    icon: '💐',
   },
   {
-    id: 4,
-    title: "Private Events",
+    title: 'Private Events',
     description:
-      "Celebrate special moments in a dreamy floral environment.",
-    imageSrc: "/images/private-events.png",
-    imageAlt: "Event setup",
+      'Celebrate birthdays, bridal showers, reunions, and intimate gatherings in a dreamy setting.',
+    icon: '🎈',
   },
 ];
 
-export default function FloralServicesSection() {
-  return (
-    <section className="relative py-24 px-4 sm:px-10 lg:px-16 bg-[#fff7f6] overflow-hidden">
-      {/* background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -left-24 top-10 h-96 w-96 bg-[#f8cfc7] blur-3xl opacity-30 rounded-full" />
-        <div className="absolute -right-24 bottom-10 h-96 w-96 bg-[#f7ddd7] blur-3xl opacity-30 rounded-full" />
-      </div>
+const ServiceSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const iconsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-      {/* heading */}
-      <div className="relative text-center mb-16">
-        <p className="text-xs uppercase tracking-[0.35em] text-[#c09888]">
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+
+      // ── Heading fade-down ────────────────────────────────────────
+      if (headingRef.current) {
+        gsap.fromTo(
+          headingRef.current,
+          { opacity: 0, y: -40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: headingRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+
+      // ── Cards drop from above, staggered ────────────────────────
+      // Set all cards invisible & above before the trigger fires
+      gsap.set(cardsRef.current, { opacity: 0, y: -120 });
+
+      ScrollTrigger.create({
+        trigger: gridRef.current,
+        start: 'top 75%',          // fires when grid top hits 75% of viewport
+        toggleActions: 'play none none reverse',
+        onEnter: () => {
+          gsap.to(cardsRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            stagger: 0.15,          // each card drops 150ms after the previous
+          });
+        },
+        onLeaveBack: () => {
+          gsap.to(cardsRef.current, {
+            opacity: 0,
+            y: -120,
+            duration: 0.5,
+            ease: 'power2.in',
+            stagger: { each: 0.1, from: 'end' },
+          });
+        },
+      });
+
+      // ── Icons pop in after cards land ───────────────────────────
+      gsap.set(iconsRef.current, { scale: 0, opacity: 0 });
+
+      ScrollTrigger.create({
+        trigger: gridRef.current,
+        start: 'top 75%',
+        toggleActions: 'play none none reverse',
+        onEnter: () => {
+          gsap.to(iconsRef.current, {
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            ease: 'back.out(2)',
+            stagger: 0.15,
+            delay: 0.3,             // starts after first card begins dropping
+          });
+        },
+        onLeaveBack: () => {
+          gsap.to(iconsRef.current, {
+            scale: 0,
+            opacity: 0,
+            duration: 0.3,
+            ease: 'power2.in',
+          });
+        },
+      });
+
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // ── Hover handlers ───────────────────────────────────────────────
+  const handleMouseEnter = (i: number) => {
+    const card = cardsRef.current[i];
+    const icon = iconsRef.current[i];
+    if (card) gsap.to(card, { scale: 1.06, boxShadow: '0 24px 56px rgba(210,140,160,0.28)', duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
+    if (icon) gsap.to(icon, { scale: 1.25, rotate: 8, duration: 0.35, ease: 'back.out(2)', overwrite: 'auto' });
+  };
+
+  const handleMouseLeave = (i: number) => {
+    const card = cardsRef.current[i];
+    const icon = iconsRef.current[i];
+    if (card) gsap.to(card, { scale: 1, boxShadow: '0 8px 28px rgba(210,140,160,0.12)', duration: 0.4, ease: 'power2.inOut', overwrite: 'auto' });
+    if (icon) gsap.to(icon, { scale: 1, rotate: 0, duration: 0.4, ease: 'power2.inOut', overwrite: 'auto' });
+  };
+
+  return (
+    <section
+      ref={sectionRef}
+      className="py-24 px-4"
+      style={{ background: 'linear-gradient(160deg, #fff5f7 0%, #fce8ed 100%)' }}
+    >
+      {/* Section heading */}
+      <div ref={headingRef} className="text-center mb-16">
+        <p className="text-xs uppercase tracking-[0.3em] text-[#c47a8a] mb-3 font-medium">
           What We Offer
         </p>
         <h2
-          className="mt-2 text-4xl sm:text-5xl text-[#5a3830]"
-          style={{ fontFamily: "'Playfair Display', serif" }}
+          className="text-4xl md:text-5xl text-[#3d2b30] mb-4"
+          style={{ fontFamily: '"Playfair Display", Georgia, serif', fontWeight: 400 }}
         >
           Our Services
         </h2>
+        <div className="mx-auto w-16 h-px bg-gradient-to-r from-transparent via-[#d4899a] to-transparent" />
       </div>
 
-      {/* cards */}
-      <div className="relative max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-        {services.map((service) => (
-          <ScallopCard key={service.id} service={service} />
+      {/* Cards grid */}
+      <div ref={gridRef} className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {services.map((service, index) => (
+          <div
+            key={index}
+            ref={(el) => { cardsRef.current[index] = el; }}
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={() => handleMouseLeave(index)}
+            style={{
+              maskImage: 'url("/card.svg")',
+              WebkitMaskImage: 'url("/card.svg")',
+              maskSize: '100% 100%',
+              WebkitMaskSize: '100% 100%',
+              maskRepeat: 'no-repeat',
+              WebkitMaskRepeat: 'no-repeat',
+              background: 'linear-gradient(145deg, #fdf0f3 0%, #f9e0e7 100%)',
+              boxShadow: '0 8px 28px rgba(210,140,160,0.12)',
+              willChange: 'transform',
+            }}
+            className="p-8 min-h-[400px] flex flex-col items-center text-center justify-center cursor-pointer"
+          >
+            {/* Icon */}
+            <div
+              ref={(el) => { iconsRef.current[index] = el; }}
+              className="text-5xl mb-6 select-none"
+              style={{ display: 'inline-block' }}
+            >
+              {service.icon}
+            </div>
+
+            {/* Decorative dot row */}
+            <div className="flex gap-1 mb-5">
+              {[...Array(3)].map((_, d) => (
+                <span
+                  key={d}
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ background: '#d4899a', opacity: 0.4 + d * 0.2 }}
+                />
+              ))}
+            </div>
+
+            <h3
+              className="text-2xl text-[#4A2B33] mb-4 leading-snug"
+              style={{ fontFamily: '"Playfair Display", Georgia, serif', fontWeight: 500 }}
+            >
+              {service.title}
+            </h3>
+
+            <p className="text-sm text-[#7a5560] leading-relaxed font-light">
+              {service.description}
+            </p>
+          </div>
         ))}
       </div>
     </section>
   );
-}
+};
 
-function ScallopCard({ service }: { service: ServiceCard }) {
-  const scallopSize = 26;
-
-  return (
-    <div
-      className="relative cursor-pointer transition-transform duration-300 hover:-translate-y-3"
-      style={{
-        filter: "drop-shadow(0 18px 30px rgba(160,100,90,0.18))",
-      }}
-    >
-      <div
-        className="relative bg-[#f9e2e2]"
-        style={{
-          width: "100%",
-          minHeight: 360,
-          padding: "42px 26px",
-          borderRadius: "18px",
-
-          maskImage: `
-            radial-gradient(circle ${scallopSize}px at top, transparent 98%, black 100%),
-            radial-gradient(circle ${scallopSize}px at bottom, transparent 98%, black 100%)
-          `,
-          WebkitMaskImage: `
-            radial-gradient(circle ${scallopSize}px at top, transparent 98%, black 100%),
-            radial-gradient(circle ${scallopSize}px at bottom, transparent 98%, black 100%)
-          `,
-
-          maskSize: "calc(100% / 4) 100%, calc(100% / 4) 100%",
-          WebkitMaskSize: "calc(100% / 4) 100%, calc(100% / 4) 100%",
-          maskRepeat: "repeat-x",
-          WebkitMaskRepeat: "repeat-x",
-        }}
-      >
-        <div className="flex h-full flex-col items-center justify-center text-center">
-          <h3
-            className="text-2xl mb-6 text-black"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            {service.title}
-          </h3>
-
-          <div className="relative mb-6 h-28 w-28">
-            <Image
-              src={service.imageSrc}
-              alt={service.imageAlt}
-              fill
-              className="object-contain"
-            />
-          </div>
-
-          <p
-            className="text-sm leading-relaxed text-[#6b4a44] max-w-[200px]"
-            style={{ fontFamily: "'EB Garamond', serif" }}
-          >
-            {service.description}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+export default ServiceSection;
