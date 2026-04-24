@@ -1,15 +1,16 @@
 // /components/Navbar/config/constants.ts
 
+
 import { NavbarConfig } from "./types";
 
 export const NAVBAR_CONFIG: NavbarConfig = {
-  logo: "Casa de Flora",
+  logo: "/logo.png",
 
   navItems: [
     { label: "Home", href: "/" },
 
     {
-      label: "Services",
+      label: "Services ▼",
       children: [
         { label: "Floral Café", href: "/services/floral-cafe" },
         { label: "Weekend Brunch", href: "/services/brunch" },

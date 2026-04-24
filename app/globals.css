@@ -17,6 +17,7 @@
 
   /* base colors */
   --color-black: #000000;
+  --color-gray: #2c2420;
   --color-white: #ffffff;
 
   /* =================
@@ -39,6 +40,7 @@
   --color-primary-300: var(--color-primary-300);
 
   --color-black: var(--color-black);
+  --color-gray: var(--color-gray);
   --color-white: var(--color-white);
 
   /* Fonts */

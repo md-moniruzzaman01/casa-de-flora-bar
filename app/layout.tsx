@@ -8,6 +8,7 @@ import {
   EB_Garamond,
 } from "next/font/google";
 import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 
 /* =========================
    FONTS
@@ -54,6 +55,7 @@ export default function RootLayout({
         <main className="flex-1">
           <SmoothScroll>{children}</SmoothScroll>
         </main>
+        <Footer/>
       </body>
     </html>
   );
