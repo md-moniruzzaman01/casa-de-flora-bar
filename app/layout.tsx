@@ -50,7 +50,7 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${tenor.variable} ${garamond.variable} h-full antialiased`}
     >
-      <body className="min-h-screen flex flex-col bg-white text-black">
+      <body className="min-h-screen flex flex-col bg-white text-black font-display">
         <Navbar />
         <main className="flex-1">
           <SmoothScroll>{children}</SmoothScroll>

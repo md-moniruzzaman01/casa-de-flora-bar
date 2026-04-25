@@ -56,16 +56,23 @@ export const HOME_CONTENT = {
 
   bouquetSection: {
     title: "MAKE YOUR OWN BOUQUET",
-    description:
-      "Celebrate brunch dates, birthdays, and unforgettable gatherings in a chic floral setting with curated food, warm hospitality, and perfect vibes.",
-    primaryCTA: "Reserve your table",
-    secondaryCTA: "Purchase Ticket",
-    stats: {
-      value: "500+",
-      label: "Bouquets created, each blooming with a unique story.",
-    },
-    extraText:
-      "Enjoy a calm, creative floral experience where you can design your own bouquet while we take care of every detail.",
+    description: "Celebrate brunch dates, birthdays, and unforgettable gatherings in a chic floral setting with curated food, warm hospitality, and perfect vibes.",
+    stats: "500",
+    statsSubtext: "Bouquets created, each blooming with a unique story.",
+    ctaPrimary: "Reserve your table",
+    ctaSecondary: "Purchase Ticket",
+    footerNote: "Enjoy a calm, creative floral experience where you can design your own bouquet while we take care of every detail.",
+    polaroids: [
+      "/bouquet image/flora 1.jpg", // Replace with your actual image paths
+      "/bouquet image/flora 2.jpg",
+      "/bouquet image/flora 3.jpg",
+      "/bouquet image/flora 4.jpg",
+      "/bouquet image/flora 5.jpg",
+    ],
+    gridImages: [
+      "/bouquet image/flora 6.jpg", "/bouquet image/flora 7.jpg", "/bouquet image/flora 8.jpg", "/bouquet image/flora 9.jpg",
+      "/bouquet image/flora 10.jpg", "/bouquet image/flora 11.jpg", "/bouquet image/flora 12.jpg", "/bouquet image/flora 13.jpg"
+    ]
   },
 
   largeGroup: {

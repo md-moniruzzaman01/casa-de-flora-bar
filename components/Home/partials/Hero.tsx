@@ -76,7 +76,7 @@ export default function Hero() {
   };
 
   return (
-    <section ref={ref} className="relative min-h-screen overflow-hidden">
+    <section ref={ref} className="relative min-h-screen bg-primary-50 overflow-hidden">
       <div className="flex flex-col lg:flex-row min-h-screen">
 
         {/* ================= LEFT VIDEO ================= */}
@@ -84,7 +84,7 @@ export default function Hero() {
 
           <video
             ref={videoRef}
-            className="absolute inset-0 w-full h-full object-cover scale-110"
+            className="absolute inset-0 w-full h-full object-cover scale-100"
             autoPlay
             muted
             loop
