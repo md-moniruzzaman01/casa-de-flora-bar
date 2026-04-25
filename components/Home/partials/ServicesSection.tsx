@@ -64,7 +64,7 @@ const ServiceSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="px-4 md:px-4 bg-white overflow-hidden">
+    <section ref={sectionRef} className="px-4 py-20 md:px-4 bg-white overflow-hidden">
       <div 
         ref={containerRef}
         className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 items-start"
@@ -83,13 +83,13 @@ const ServiceSection = () => {
               background: '#F8E3E2',
               boxShadow: '0 10px 30px rgba(210,140,160,0.1)',
             }}
-            className="p-1 md:p-10 min-h-60 md:min-h-screen flex flex-col items-center text-center justify-center cursor-pointer group transition-shadow duration-300 hover:shadow-2xl"
+            className="p-2 md:p-10 min-h-60 md:min-h-screen flex flex-col items-center text-center justify-center cursor-pointer group transition-shadow duration-300 hover:shadow-2xl"
           >
-            <h3 className="text-xl md:text-2xl mb-2 md:mb-8 text-black font-serif uppercase tracking-tight">
+            <h3 className="text-base md:text-2xl mb-2 md:mb-8 text-black font-serif uppercase tracking-tight">
               {service.title}
             </h3>
 
-            <div className="relative w-20 md:w-34 h-20 md:h-34 mb-2 md:mb-10 transition-transform duration-500 group-hover:scale-110">
+            <div className="relative w-20 md:w-34 h-16 md:h-34 mb-2 md:mb-10 transition-transform duration-500 group-hover:scale-110">
               <Image
                 src={`/services icon/${service.iconName}`}
                 alt={service.title}
@@ -98,7 +98,7 @@ const ServiceSection = () => {
               />
             </div>
 
-            <p className="text-black text-xs md:text-sm leading-relaxed">
+            <p className="text-black text-[11px] md:text-sm leading-relaxed">
               {service.description}
             </p>
           </div>

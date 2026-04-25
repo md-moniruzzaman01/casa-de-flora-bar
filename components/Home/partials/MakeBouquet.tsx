@@ -117,7 +117,7 @@ export default function MakeBouquet() {
                             <button className="bg-black text-white px-8 py-3 text-sm uppercase tracking-widest hover:bg-gray-900 transition-colors">
                                 {HOME_CONTENT.bouquetSection.ctaPrimary}
                             </button>
-                            <button className="border border-black/20 px-8 py-3 text-sm uppercase tracking-widest hover:bg-white/50 transition-colors">
+                            <button className="border border-black/20 px-11 py-3 text-sm uppercase tracking-widest hover:bg-white/50 transition-colors">
                                 {HOME_CONTENT.bouquetSection.ctaSecondary}
                             </button>
                         </div>
@@ -142,11 +142,10 @@ export default function MakeBouquet() {
                                     onClick={() => handleImageClick(src)}
                                     className={`polaroid-item absolute bg-white p-2 pb-8 md:p-3 md:pb-12 shadow-[0_15px_45px_rgba(0,0,0,0.1)] border border-gray-50 rounded-sm cursor-zoom-in group
                                         ${idx === 0 ? "-rotate-12 -translate-x-24 md:-translate-x-44 -translate-y-16 md:-translate-y-32" : ""}
-                                        ${idx === 1 ? "-rotate-6 -translate-x-4 md:-translate-x-12 -translate-y-20 md:-translate-y-40" : ""}
+                                        ${idx === 1 ? "-rotate-6 -translate-x-1.5 md:-translate-x-12 -translate-y-20 md:-translate-y-40" : ""}
                                         ${idx === 2 ? "rotate-6 translate-x-24 md:translate-x-44 -translate-y-10 md:-translate-y-16" : ""}
-                                        ${idx === 3 ? "rotate-12 translate-x-28 md:translate-x-52 translate-y-16 md:translate-y-32" : ""}
-                                        ${idx === 4 ? "-rotate-8 -translate-x-2 md:-translate-x-8 translate-y-24 md:translate-y-48" : ""}
-                                    `}
+                                        ${idx === 3 ? "rotate-12 translate-x-26 md:translate-x-52 translate-y-24 md:translate-y-32" : ""}
+                                        ${idx === 4 ? "-rotate-5 -translate-x-11 md:-translate-x-8 translate-y-20 md:translate-y-48" : ""}                           `}
                                     style={{ zIndex: 50 - idx }}
                                 >
                                     <div className="relative w-28 h-28 md:w-48 md:h-48 overflow-hidden rounded-[2px]">
@@ -157,7 +156,7 @@ export default function MakeBouquet() {
                         </div>
 
                         <div className="relative z-10 content-fade">
-                            <h2 className="text-7xl md:text-9xl font-serif text-black flex items-start leading-none tracking-tighter">
+                            <h2 className="text-5xl md:text-9xl font-serif text-black flex items-start leading-none tracking-tighter">
                                 {HOME_CONTENT.bouquetSection.stats}
                                 <span className="text-3xl md:text-5xl mt-2 md:mt-4 ml-1 font-sans">+</span>
                             </h2>
