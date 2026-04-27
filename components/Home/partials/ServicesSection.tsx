@@ -55,7 +55,7 @@ const ServiceSection = () => {
           trigger: sectionRef.current,
           start: "top bottom", // Starts moving as soon as section enters
           end: "center center", // Reaches a perfect row when section is centered
-          scrub: 1,            // Smoothly follows the scroll
+          scrub: 2,            // Smoothly follows the scroll
         }
       });
     }, sectionRef);

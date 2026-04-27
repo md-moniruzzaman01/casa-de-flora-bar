@@ -1,3 +1,4 @@
+import EventRentalForm from "@/components/Home/partials/EventRentalForm";
 import Hero from "@/components/Home/partials/Hero";
 import MakeBouquet from "@/components/Home/partials/MakeBouquet";
 import ReservationSection from "@/components/Home/partials/ReservationSection";
@@ -11,7 +12,7 @@ export default function Home() {
       <ServicesSection />
       <MakeBouquet />
       <ReservationSection />
-      <div className="min-h-screen"></div>
+      <EventRentalForm/>
     </>
   );
 }
