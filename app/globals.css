@@ -55,7 +55,8 @@
 html,
 body {
   height: 100%;
-  scroll-behavior: auto; /* Lenis handles scroll */
+  scroll-behavior: auto;
+  /* Lenis handles scroll */
 }
 
 body {
@@ -74,63 +75,178 @@ body {
 
 
 .res-section {
-          background: #FDF1F5;
-          font-family: 'Georgia', 'Times New Roman', serif;
-          /* Mobile: auto height, normal flow */
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
+  background: #FDF1F5;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  /* Mobile: auto height, normal flow */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-        /* The canvas is the ONLY element with overflow:hidden on desktop.
+/* The canvas is the ONLY element with overflow:hidden on desktop.
            It fills the section exactly so images can't bleed outside. */
-        .res-canvas {
-          position: absolute;
-          inset: 0;                 /* fills section */
-          overflow: hidden;         /* clips dispersing images */
-          pointer-events: none;     /* doesn't block card/title clicks */
-          z-index: 1;
-        }
+.res-canvas {
+  position: absolute;
+  inset: 0;
+  /* fills section */
+  overflow: hidden;
+  /* clips dispersing images */
+  pointer-events: none;
+  /* doesn't block card/title clicks */
+  z-index: 1;
+}
 
-        .res-content {
-          position: relative;
-          z-index: 10;             /* above the canvas */
-          width: 100%;
-          max-width: 720px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 0 16px;
-        }
+.res-content {
+  position: relative;
+  z-index: 10;
+  /* above the canvas */
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px;
+}
 
-        /* Mobile photo strip */
-        .mobile-collage {
-          display: flex;
-          gap: 8px;
-          padding: 28px 16px 0;
-          width: 100%;
-          overflow-x: auto;
-          scrollbar-width: none;
-          -webkit-overflow-scrolling: touch;
-          z-index: 10;
-          position: relative;
-        }
-        .mobile-collage::-webkit-scrollbar { display: none; }
+/* Mobile photo strip */
+.mobile-collage {
+  display: flex;
+  gap: 8px;
+  padding: 28px 16px 0;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  z-index: 10;
+  position: relative;
+}
 
-        /* Desktop images live inside .res-canvas */
-        .desktop-img { display: none; }
+.mobile-collage::-webkit-scrollbar {
+  display: none;
+}
 
-        @media (min-width: 768px) {
-          .res-section {
-            height: 100vh;          /* exact viewport — no overflow */
-            justify-content: center;
-            overflow: visible;      /* let GSAP pin spacer work normally */
-          }
-          .res-canvas {
-            pointer-events: none;
-          }
-          .mobile-collage { display: none !important; }
-          .desktop-img    { display: block; }
-          .res-content    { margin-top: 0; }
-        }
+/* Desktop images live inside .res-canvas */
+.desktop-img {
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+.img-cinematic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(30, 18, 12, 0.45) 100%);
+  pointer-events: none;
+}
+
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #b8893e 0%, #f0dba8 40%, #c9a96e 60%, #f0dba8 80%, #b8893e 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldShimmer 5s linear infinite;
+}
+
+.corner-frame {
+  position: relative;
+}
+
+.corner-frame::before,
+.corner-frame::after {
+  content: '';
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-color: #c9a96e;
+  border-style: solid;
+}
+
+.corner-frame::before {
+  top: -10px;
+  left: -10px;
+  border-width: 1px 0 0 1px;
+}
+
+.corner-frame::after {
+  bottom: -10px;
+  right: -10px;
+  border-width: 0 1px 1px 0;
+}
+
+.hover-zoom {
+  overflow: hidden;
+}
+
+.hover-zoom img {
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hover-zoom:hover img {
+  transform: scale(1.06);
+}
+
+.gold-bar-hover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #c9a96e;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
+}
+
+.gold-bar-hover:hover::after {
+  transform: scaleX(1);
+}
+
+
+
+@media (min-width: 768px) {
+  .res-section {
+    height: 100vh;
+    /* exact viewport — no overflow */
+    justify-content: center;
+    overflow: visible;
+    /* let GSAP pin spacer work normally */
+  }
+
+  .res-canvas {
+    pointer-events: none;
+  }
+
+  .mobile-collage {
+    display: none !important;
+  }
+
+  .desktop-img {
+    display: block;
+  }
+
+  .res-content {
+    margin-top: 0;
+  }
+}
