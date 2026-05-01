@@ -68,7 +68,7 @@ export default function Navbar() {
     <>
       <header
         ref={navRef}
-        className={`sticky top-0 z-50 bg-primary-100 border-b border-primary-200/40 transition-all duration-500 ease-in-out ${isScrolled
+        className={`sticky top-0 z-50 bg-primary-200 border-b border-primary-200/40 transition-all duration-500 ease-in-out ${isScrolled
             ? "py-0 bg-primary-50 backdrop-blur-xl shadow-md"
             : "py-2 bg-primary-100"
           }`}

@@ -20,8 +20,8 @@ export const HOME_CONTENT = {
     },
 
     secondaryCTA: {
-      label: "Plan Your Event",
-      href: "/events",
+      label: "Make Your Own Bouquet",
+      href: "/bouquet",
     },
 
     badge: {

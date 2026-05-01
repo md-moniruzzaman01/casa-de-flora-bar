@@ -103,7 +103,7 @@ useEffect(() => {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top top",
-              end: "+=350%", // Increased for smoother sequence
+              end: "+=300%", // Increased for smoother sequence
               scrub: 1.2,
               pin: true,
             },
@@ -176,7 +176,7 @@ useEffect(() => {
       </div>
 
       {/* Center Content */}
-      <div className="relative z-20 flex flex-col items-center w-full max-w-[720px] px-4 mt-7 md:mt-20">
+      <div className="relative z-20 flex flex-col items-center w-full max-w-[720px] px-4 mt-7 md:mt-11">
         <h1
           ref={titleRef}
           className="text-[clamp(32px,8vw,72px)] font-normal text-center text-black mb-[clamp(20px,5vw,40px)] leading-[1.08] uppercase px-2"
@@ -225,13 +225,6 @@ useEffect(() => {
 
             <p className="text-[clamp(12.5px,3.2vw,13.5px)] text-gray-600 leading-[1.65] mb-4">
               {reservationData.footer}
-            </p>
-
-            <p className="text-[clamp(10.5px,2.6vw,11.5px)] text-gray-900 font-bold tracking-tight mb-1">
-              **MAKE SURE TO RESERVE YOUR TABLE FIRST. TICKETS FOR FLOWERS MUST BE PURCHASED 24 HOURS IN ADVANCE.
-            </p>
-            <p className="text-[clamp(10.5px,2.6vw,11.5px)] text-gray-900 font-bold tracking-wider mb-7">
-              *******THIS DOES NOT INCLUDE FLOWERS*******
             </p>
 
             <div className="flex justify-center">
