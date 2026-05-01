@@ -44,7 +44,7 @@ export default function LuxuryReservation() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const collageRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+useEffect(() => {
     let ctx: any;
 
     const init = async () => {
@@ -55,16 +55,15 @@ export default function LuxuryReservation() {
       const isMobile = window.innerWidth < 768;
 
       ctx = gsap.context(() => {
-        // Filter out null refs for GSAP
         const imgs = imgRefs.current.filter(Boolean);
         const card = cardRef.current;
         const title = titleRef.current;
 
         if (isMobile) {
-          // ── MOBILE ANIMATION ──
-          gsap.set(imgs, { opacity: 0, y: 30, scale: 0.95 });
-          gsap.set(title, { opacity: 0, y: 24, letterSpacing: "0.2em" });
-          gsap.set(card, { opacity: 0, y: 36 });
+          // --- MOBILE: Text/Card first, then Images ---
+          gsap.set(imgs, { opacity: 0, y: 20 });
+          gsap.set(title, { opacity: 0, y: 20 });
+          gsap.set(card, { opacity: 0, y: 30 });
 
           const tl = gsap.timeline({
             scrollTrigger: {
@@ -74,13 +73,12 @@ export default function LuxuryReservation() {
             },
           });
 
-          tl.to(imgs, { opacity: 1, y: 0, scale: 1, stagger: 0.12, duration: 0.7, ease: "power3.out" })
-            .to(title, { opacity: 1, y: 0, letterSpacing: "0.07em", duration: 0.8, ease: "power3.out" }, "-=0.3")
-            .to(card, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.4");
+          tl.to(title, { opacity: 1, y: 0, duration: 0.6 })
+            .to(card, { opacity: 1, y: 0, duration: 0.6 }, "-=0.3")
+            .to(imgs, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6 }, "-=0.2");
 
         } else {
-          // ── DESKTOP ANIMATION ──
-          const stackOffsets = [{ dx: -20, dy: -18 }, { dx: 24, dy: -22 }, { dx: -16, dy: 20 }, { dx: 22, dy: 24 }];
+          // --- DESKTOP: Text/Card focus, then Image "Burst" ---
           const corners = [
             { x: "-38vw", y: "-26vh", r: -1 },
             { x: "38vw", y: "-26vh", r: 1 },
@@ -88,48 +86,48 @@ export default function LuxuryReservation() {
             { x: "38vw", y: "24vh", r: -1 },
           ];
 
+          // 1. Initial State: Images are hidden in a tight stack in the center
           gsap.set(imgs, {
             position: "absolute", left: "50%", top: "50%",
             xPercent: -50, yPercent: -50,
             width: 220, height: 285,
-            opacity: 0, scale: 0.82, filter: "blur(6px)",
+            opacity: 0, scale: 0.5, // Start smaller
+            x: 0, y: 0
           });
 
-          imgs.forEach((el, i) => {
-            gsap.set(el, {
-              x: stackOffsets[i]?.dx || 0,
-              y: stackOffsets[i]?.dy || 0,
-              rotation: (i % 2 === 0 ? -1 : 1) * (i + 1) * 1.5,
-            });
-          });
-
-          gsap.set(card, { opacity: 0, y: 40, scale: 0.95 });
-          gsap.set(title, { opacity: 0, y: 28, letterSpacing: "0.22em" });
+          // 2. Initial State: Text and Card
+          gsap.set(card, { opacity: 0, y: 60, scale: 0.9 });
+          gsap.set(title, { opacity: 0, y: 40, letterSpacing: "0.22em" });
 
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top top",
-              end: "+=280%",
-              scrub: 1.4,
+              end: "+=350%", // Increased for smoother sequence
+              scrub: 1.2,
               pin: true,
-              pinSpacing: true,
             },
           });
 
-          tl.to(imgs, { opacity: 1, scale: 0.88, filter: "blur(0px)", stagger: 0.07, duration: 0.6, ease: "power2.out" });
+          // STEP 1: Bring in the Title and Card first
+          tl.to(title, { opacity: 1, y: 0, letterSpacing: "0.07em", duration: 1 })
+            .to(card, { opacity: 1, y: 0, scale: 1, duration: 1 }, "-=0.5")
+            
+          // STEP 2: Reveal the image stack behind the card
+            .to(imgs, { opacity: 1, scale: 0.8, duration: 0.8, stagger: 0.1 }, "-=0.2")
 
+          // STEP 3: The "Burst" - Images fly to their positions
+          tl.addLabel("burst");
           imgs.forEach((el, i) => {
             tl.to(el, {
               x: corners[i]?.x || 0,
               y: corners[i]?.y || 0,
               rotation: corners[i]?.r || 0,
-              scale: 1, xPercent: -50, yPercent: -50, duration: 2.2, ease: "expo.inOut",
-            }, "disperse");
+              scale: 1,
+              duration: 2.5,
+              ease: "expo.out",
+            }, "burst");
           });
-
-          tl.to(title, { opacity: 1, y: 0, letterSpacing: "0.07em", duration: 1.6, ease: "power3.out" }, "disperse+=0.4")
-            .to(card, { opacity: 1, y: 0, scale: 1, duration: 1.4, ease: "power2.out" }, "disperse+=0.9");
         }
       }, sectionRef);
     };
@@ -137,7 +135,6 @@ export default function LuxuryReservation() {
     init();
     return () => ctx?.revert();
   }, []);
-
   return (
     <section 
       ref={sectionRef} 

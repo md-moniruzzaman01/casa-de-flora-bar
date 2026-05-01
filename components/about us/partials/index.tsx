@@ -100,7 +100,7 @@ export default function AboutPage() {
                                     className=" font-serif text-4xl md:text-5xl lg:text-6xl "
                                 >
                                     Through the fire,<br />
-                                    <em className=" text-primary" >
+                                    <em className=" text-primary italic" >
                                         pandemic and flood
                                     </em>
                                 </h2>
@@ -119,7 +119,7 @@ export default function AboutPage() {
                             {/* Pull quote 1 */}
                             <FadeIn delay={0.25}>
                                 <blockquote
-                                    className="font-serif text-3xl border-l-2 border-l-primary-100 leading-snug pl-6 py-1"
+                                    className="font-serif text-xl  md:text-3xl border-l-2 border-l-primary-100 leading-snug pl-6 py-1"
                                 >
                                     &ldquo;Every Loss took a piece of me<br />and changed me as a person.&rdquo;
                                 </blockquote>
@@ -225,16 +225,15 @@ export default function AboutPage() {
                                     The Build
                                 </p>
                                 <h3
-                                    className="f-display font-light leading-tight"
-                                    style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", color: "#2a1f1a" }}
+                                    className=" font-serif font-light leading-tight text-4xl md:text-6xl"
                                 >
                                     Built on savings,<br />
-                                    <em className="f-display italic" style={{ color: "#c9a96e" }}>rebuilt on will</em>
+                                    <em className=" text-primary italic" >rebuilt on will</em>
                                 </h3>
                             </FadeIn>
 
                             <FadeIn delay={0.2}>
-                                <p className="f-body text-sm leading-8" style={{ color: "#7a6258" }}>
+                                <p className=" text-sm leading-8">
                                     The Build out Began in 2021 after hiring a designer, Architect and Contractor. This dream
                                     was built with my savings from working three jobs, no loans, no access to capital, just
                                     savings. &ldquo;We ran into a lot of delays, but never expected to encounter
@@ -246,12 +245,8 @@ export default function AboutPage() {
                             {/* Pull quote 2 */}
                             <FadeIn delay={0.25}>
                                 <blockquote
-                                    className="f-display italic leading-snug pl-6 py-1"
-                                    style={{
-                                        fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)",
-                                        borderLeft: "2px solid #c9a96e",
-                                        color: "#2a1f1a",
-                                    }}
+                                    className=" border-l-2 border-primary text-xl  md:text-3xl italic leading-snug pl-6 py-1"
+ 
                                 >
                                     &ldquo;Devastated and defeated was<br />an understatement. I was done.&rdquo;
                                 </blockquote>
