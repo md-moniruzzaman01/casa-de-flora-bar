@@ -12,10 +12,8 @@ export const NAVBAR_CONFIG: NavbarConfig = {
     {
       label: "Services ▼",
       children: [
-        { label: "Floral Café", href: "/services/floral-cafe" },
-        { label: "Weekend Brunch", href: "/services/brunch" },
-        { label: "Bouquet Bar", href: "/services/bouquet" },
-        { label: "Private Events", href: "/services/private-events" },
+        { label: "Wedding Florals", href: "/wedding-florals" },
+        { label: "Catering", href: "/catering" },
       ],
     },
 

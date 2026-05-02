@@ -25,7 +25,7 @@ const QuoteSection = () => {
   }, { scope: container });
 
   return (
-    <section ref={container} className="bg-white py-20 px-6 md:px-12 lg:px-24">
+    <section ref={container} className="bg-white my-20 py-20 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start quote-content">
         {/* Main Highlighted Quote */}
         <div className="border-l-2 border-[#D6768B] pl-8">

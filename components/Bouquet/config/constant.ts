@@ -23,17 +23,20 @@ export const BOUQUET_CONTENT = {
       {
         number: "01",
         title: "Reserve your table",
-        description: "Pick a date and time that works for you and your group. Walk-ins are welcome."
+        description: "Pick a date and time that works for you and your group. Walk-ins are welcome.",
+        icon:"calender.png"
       },
       {
         number: "02",
         title: "Choose your flowers",
-        description: "Select from a wide variety of fresh, seasonal blooms and greenery."
+        description: "Select from a wide variety of fresh, seasonal blooms and greenery.",
+        icon:"flowers bucket.png"
       },
       {
         number: "03",
         title: "Design & take home",
-        description: "We'll provide the tools and guidance you need to create your own unique masterpiece."
+        description: "We'll provide the tools and guidance you need to create your own unique masterpiece.",
+        icon:"bouquet.png"
       }
     ]
   },

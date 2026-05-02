@@ -1,7 +1,7 @@
 export const CELEBRATE_CONTENT = {
   hero: {
     title: "CELEBRATE WITH US",
-    subtitle: "Host your next event at Casa de Flora Bar",
+    subtitle: "Beautiful spaces · unforgettable moments · flowers & joy",
   },
   experienceHeader: {
     title: "Choose your experience",
@@ -12,7 +12,6 @@ export const CELEBRATE_CONTENT = {
       title: "Private Rental",
       tagline: "Only",
       price: "Starts at $1,000",
-      isDark:false,
       description: "A beautifully decorated space exclusively yours. Our Floral Suite Workshop offers the perfect setting for your celebration — birthdays, bridal showers, or simply a night of fun and floral design. Private party capacity up to 40 guests.",
       features: [
         "Fully decorated space — elegant floral and charming arrangements",
@@ -36,7 +35,7 @@ export const CELEBRATE_CONTENT = {
         "Pricing starts at $2,250 for up to 15 seated guests"
       ],
       ctaText: "RESERVE THIS PACKAGE",
-      isDark: true // Theme flag for the black card
+      featured: true // Theme flag for the black card
     },
     privateBrunch: {
       title: "Private Brunch",
@@ -50,7 +49,7 @@ export const CELEBRATE_CONTENT = {
         "Sip on coffee, juices, or spirits with your flowers",
         "$125 per person - groups of 8 or more"
       ],
-      ctaText: "CONTACT TO PURCHASE"
+      ctaText: "CONTACT TO PURCHASE",
     },
     privateSipAndClip: {
       title: "Private",
@@ -64,7 +63,7 @@ export const CELEBRATE_CONTENT = {
         "Expert floral guidance to help you create a masterpiece to take home",
         "Timed for early evening fun — perfect for celebrating and laughing"
       ],
-      ctaText: "RESERVE THIS PACKAGE"
+      ctaText: "RESERVE THIS PACKAGE",
     }
   },
   formSection: {
