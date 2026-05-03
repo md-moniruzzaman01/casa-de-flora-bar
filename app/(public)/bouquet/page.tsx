@@ -1,8 +1,8 @@
-import ExperienceDetails from "@/components/Bouquet/partials/ExperienceDetails";
-import Hero from "@/components/Bouquet/partials/Hero";
-import HowItWorks from "@/components/Bouquet/partials/HowItWorks";
-import NoticeSection from "@/components/Bouquet/partials/NoticeSection";
-import QuoteSection from "@/components/Bouquet/partials/QuoteSection";
+import ExperienceDetails from "@/components/bouquet/partials/ExperienceDetails";
+import Hero from "@/components/bouquet/partials/Hero";
+import HowItWorks from "@/components/bouquet/partials/HowItWorks";
+import NoticeSection from "@/components/bouquet/partials/NoticeSection";
+import QuoteSection from "@/components/bouquet/partials/QuoteSection";
 
 
 

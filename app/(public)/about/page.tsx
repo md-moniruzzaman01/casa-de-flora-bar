@@ -25,7 +25,7 @@ export default function AboutUsPage() {
             <div className="corner-frame">
               <div className="relative img-cinematic hover-zoom" style={{ aspectRatio: "3/4" }}>
                 <Image
-                  src="/about us/owner.jpg"
+                  src="/about/owner.jpg"
                   alt="Maritza — Founder of Casa de Flora Bar"
                   fill
                   priority
@@ -112,9 +112,9 @@ export default function AboutUsPage() {
             <div>
               <div className="grid grid-cols-3 gap-3 pt-2">
                 {[
-                  "/about us/img_1.jpg",
-                  "/about us/img_2.jpg",
-                  "/about us/img_3.jpg",
+                  "/about/img_1.jpg",
+                  "/about/img_2.jpg",
+                  "/about/img_3.jpg",
                 ].map((src, i) => (
                   <div
                     key={i}
@@ -153,7 +153,7 @@ export default function AboutUsPage() {
                 style={{ aspectRatio: "2/3" }}
               >
                 <Image
-                  src="/about us/img_4.jpg"
+                  src="/about/img_4.jpg"
                   alt="Casa De Flora Bar interior"
                   fill
                   className="object-cover"

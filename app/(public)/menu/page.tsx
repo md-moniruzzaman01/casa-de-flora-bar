@@ -1,4 +1,4 @@
-import MenuPage from "@/components/Menu/partials/MenuNav";
+import MenuPage from "@/components/menu/partials/MenuNav";
 
 
 export default function Menu() {

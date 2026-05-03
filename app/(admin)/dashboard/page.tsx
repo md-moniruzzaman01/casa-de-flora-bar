@@ -1,13 +1,9 @@
-// app/(admin)/dashboard/page.tsx
-import { redirect } from 'next/navigation';
+import DashboardContent from "@/components/admin/dashboard/partials";
 
-export default async function AdminDashboard() {
-
-
+export default function AdminDashboard() {
   return (
     <main>
-      <h1>Admin Control Panel</h1>
-      {/* Admin specific components */}
+      <DashboardContent />
     </main>
   );
 }

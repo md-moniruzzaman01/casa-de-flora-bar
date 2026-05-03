@@ -63,15 +63,15 @@ export const HOME_CONTENT = {
     ctaSecondary: "Purchase Ticket",
     footerNote: "Enjoy a calm, creative floral experience where you can design your own bouquet while we take care of every detail.",
     polaroids: [
-      "/bouquet image/flora 1.jpg", // Replace with your actual image paths
-      "/bouquet image/flora 2.jpg",
-      "/bouquet image/flora 3.jpg",
-      "/bouquet image/flora 4.jpg",
-      "/bouquet image/flora 5.jpg",
+      "/bouquet/flora 1.jpg", // Replace with your actual image paths
+      "/bouquet/flora 2.jpg",
+      "/bouquet/flora 3.jpg",
+      "/bouquet/flora 4.jpg",
+      "/bouquet/flora 5.jpg",
     ],
     gridImages: [
-      "/bouquet image/flora 6.jpg", "/bouquet image/flora 7.jpg", "/bouquet image/flora 8.jpg", "/bouquet image/flora 9.jpg",
-      "/bouquet image/flora 10.jpg", "/bouquet image/flora 11.jpg", "/bouquet image/flora 12.jpg", "/bouquet image/flora 13.jpg"
+      "/bouquet/flora 6.jpg", "/bouquet/flora 7.jpg", "/bouquet/flora 8.jpg", "/bouquet/flora 9.jpg",
+      "/bouquet/flora 10.jpg", "/bouquet/flora 11.jpg", "/bouquet/flora 12.jpg", "/bouquet/flora 13.jpg"
     ]
   },
 

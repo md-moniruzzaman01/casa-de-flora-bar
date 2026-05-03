@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(npm run *)",
+      "Bash(Get-ChildItem -Recurse \"D:\\\\client project\\\\frontend\\\\casa-de-flora-bar\\\\app\\\\\\(admin\\)\\\\events\")",
+      "Bash(Get-ChildItem -Recurse \"D:\\\\client project\\\\frontend\\\\casa-de-flora-bar\\\\components\\\\admin\\\\events\")"
+    ]
+  }
+}

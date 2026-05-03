@@ -1,7 +1,7 @@
 "use client";
 
 import { WaveDividerDown } from "@/components/shared/WaveDivider";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 interface ReservationDetail {
   label: string;
@@ -45,14 +45,15 @@ export default function LuxuryReservation() {
 
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(window.innerWidth < 768);
   }, []);
 
   useEffect(() => {
     if (isMobile === null) return;
 
-    let ctx: any;
+    let ctx: gsap.Context | undefined;
 
     const init = async () => {
       const { gsap } = await import("gsap");
@@ -136,7 +137,7 @@ export default function LuxuryReservation() {
     };
 
     init();
-    return () => ctx?.revert();
+    return () => { ctx?.revert(); };
   }, [isMobile]);
 
   if (isMobile === null) return null;

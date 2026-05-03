@@ -1,18 +1,12 @@
 "use client";
 
-import { AdminLayoutProps } from "@/components/shared/Dashboard Sidebar/config/types";
-import Navbar from "@/components/shared/Dashboard Sidebar/partials/Navbar";
-import Sidebar from "@/components/shared/Dashboard Sidebar/partials/Sidebar";
+import Navbar from "@/components/shared/dashboard-sidebar/partials/Navbar";
+import Sidebar from "@/components/shared/dashboard-sidebar/partials/Sidebar";
 
-
-export default function AdminLayout({
-  children,
-  activePath = "/calendar",
-}: AdminLayoutProps) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen" style={{ background: "#ede8e8" }}>
-      {/* Sidebar */}
-      <Sidebar activePath={activePath} />
+    <div className="flex min-h-screen bg-primary-50">
+      <Sidebar activePath="" />
 
       {/* Main */}
       <div className="flex flex-col flex-1 min-h-screen">

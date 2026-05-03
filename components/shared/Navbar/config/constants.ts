@@ -19,7 +19,6 @@ export const NAVBAR_CONFIG: NavbarConfig = {
 
     { label: "Menu", href: "/menu" },
     { label: "About", href: "/about" },
-    { label: "Events", href: "/events" },
     { label: "Experiences", href: "/experience" },
   ],
 

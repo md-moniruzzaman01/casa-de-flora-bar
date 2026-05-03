@@ -61,7 +61,7 @@ const ExperiencePackages = () => {
 
         {/* Packages Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {packageList.map((pkg: any, index) => {
+          {packageList.map((pkg, index) => {
             const isDark = pkg.featured;
 
             return (

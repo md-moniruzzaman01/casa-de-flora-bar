@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${playfair.variable} ${tenor.variable} ${garamond.variable} h-full antialiased`}
     >
-      <body className="min-h-screen bg-white text-black font-display">
+      <body className="min-h-screen bg-white text-black font-sans">
         {children}
       </body>
     </html>

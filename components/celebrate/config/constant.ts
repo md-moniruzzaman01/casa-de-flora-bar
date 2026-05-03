@@ -20,7 +20,8 @@ export const CELEBRATE_CONTENT = {
         "$1,000 per 3 hours + $300 each additional hour",
         "Perfect for birthdays, showers, and corporate events"
       ],
-      ctaText: "CONTACT TO PURCHASE"
+      ctaText: "CONTACT TO PURCHASE",
+      featured:false
     },
     allInclusive: {
       title: "All-Inclusive",
@@ -50,6 +51,7 @@ export const CELEBRATE_CONTENT = {
         "$125 per person - groups of 8 or more"
       ],
       ctaText: "CONTACT TO PURCHASE",
+       featured:false
     },
     privateSipAndClip: {
       title: "Private",
@@ -64,6 +66,7 @@ export const CELEBRATE_CONTENT = {
         "Timed for early evening fun — perfect for celebrating and laughing"
       ],
       ctaText: "RESERVE THIS PACKAGE",
+       featured:false
     }
   },
   formSection: {
