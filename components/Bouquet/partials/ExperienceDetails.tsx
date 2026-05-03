@@ -5,7 +5,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { BOUQUET_CONTENT } from "../config/constant";
 
-const ExperienceDetails = () => {
+
+export default function ExperienceDetails() {
   const container = useRef<HTMLDivElement>(null);
   const { details } = BOUQUET_CONTENT;
 
@@ -26,7 +27,7 @@ const ExperienceDetails = () => {
   return (
     <section ref={container} className="py-16 px-6 md:px-12 lg:px-24 bg-white">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        
+
         {/* Experience Details Table */}
         <div className="detail-card bg-[#FDE8E9] rounded-[30px] p-8 md:p-12">
           <h3 className="text-2xl font-serif italic mb-8 border-b border-[#D6768B]/20 pb-4">
@@ -62,4 +63,3 @@ const ExperienceDetails = () => {
   );
 };
 
-export default ExperienceDetails;

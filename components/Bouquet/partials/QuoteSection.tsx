@@ -6,7 +6,8 @@ import { useGSAP } from "@gsap/react";
 import { BOUQUET_CONTENT } from "../config/constant";
 
 
-const QuoteSection = () => {
+
+  export default function QuoteSection() {
   const container = useRef<HTMLDivElement>(null);
   const { quote } = BOUQUET_CONTENT
 
@@ -43,4 +44,3 @@ const QuoteSection = () => {
   );
 };
 
-export default QuoteSection;

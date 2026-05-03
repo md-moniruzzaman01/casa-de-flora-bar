@@ -5,7 +5,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { BOUQUET_CONTENT } from "../config/constant";
 
-const NoticeSection = () => {
+
+  export default function NoticeSection() {
   const container = useRef<HTMLDivElement>(null);
   const { notice } = BOUQUET_CONTENT;
 
@@ -40,4 +41,3 @@ const NoticeSection = () => {
   );
 };
 
-export default NoticeSection;

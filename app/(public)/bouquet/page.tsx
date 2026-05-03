@@ -6,14 +6,15 @@ import QuoteSection from "@/components/bouquet/partials/QuoteSection";
 
 
 
+
 export default function BouquetPage() {
     return (
-        <>
-            <Hero />
+        <div>
+            <Hero/>
             <QuoteSection />
             <HowItWorks />
             <ExperienceDetails />
             <NoticeSection />
-        </>
+        </div>
     );
 }
