@@ -91,7 +91,7 @@ const ServiceSection = () => {
 
             <div className="relative w-20 md:w-34 h-16 md:h-34 mb-2 md:mb-10 transition-transform duration-500 group-hover:scale-110">
               <Image
-                src={`/services icon/${service.iconName}`}
+                src={`/services/${service.iconName}`}
                 alt={service.title}
                 fill
                 className="object-contain"

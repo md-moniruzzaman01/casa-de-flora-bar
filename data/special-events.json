@@ -1,0 +1,23 @@
+{
+  "events": [
+    {
+      "title": "🌸 Summer Bloom Sale",
+      "subtitle": "Fresh flowers, fresh prices",
+      "description": "Our biggest bouquet sale of the year. Limited time only!",
+      "discount": "25% OFF",
+      "ctaText": "Shop Now",
+      "ctaLink": "/bouquet",
+      "type": "sale",
+      "template": "banner",
+      "bgColor": "#1a1a1a",
+      "accentColor": "#ED80A8",
+      "textColor": "#ffffff",
+      "startDate": "2026-05-03",
+      "endDate": "2026-05-10",
+      "isActive": true,
+      "id": "6f1f113f-692c-4ce8-bcaa-af15d9185315",
+      "createdAt": "2026-05-03T17:49:36.706Z",
+      "updatedAt": "2026-05-03T17:49:36.706Z"
+    }
+  ]
+}

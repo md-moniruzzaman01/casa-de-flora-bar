@@ -163,23 +163,23 @@ export default function MakeBouquet() {
                             <div className="grid grid-cols-4 grid-rows-4 h-full gap-[3px]">
                                 {/* Row 1 & 2 */}
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[0]} className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[0])} />
+                                    <img src={HOME_CONTENT.bouquetSection.gridImages[0]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[0])} />
                                 </div>
                                 <div className="col-span-2 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[1]} className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[1])} />
+                                    <img src={HOME_CONTENT.bouquetSection.gridImages[1]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[1])} />
                                 </div>
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[2]} className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[2])} />
+                                    <img src={HOME_CONTENT.bouquetSection.gridImages[2]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[2])} />
                                 </div>
                                 {/* Row 3 & 4 */}
                                 <div className="col-span-2 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[3]} className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[3])} />
+                                    <img src={HOME_CONTENT.bouquetSection.gridImages[3]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[3])} />
                                 </div>
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[4]} className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[4])} />
+                                    <img src={HOME_CONTENT.bouquetSection.gridImages[4]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[4])} />
                                 </div>
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[5]} className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[5])} />
+                                    <img src={HOME_CONTENT.bouquetSection.gridImages[5]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[5])} />
                                 </div>
                             </div>
 
