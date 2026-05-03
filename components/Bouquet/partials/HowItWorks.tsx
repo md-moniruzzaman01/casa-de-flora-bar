@@ -9,7 +9,7 @@ import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HowItWorks = () => {
+export default function HowItWorks() {
   const container = useRef<HTMLDivElement>(null);
   const { howItWorks } = BOUQUET_CONTENT;
 
@@ -85,4 +85,3 @@ const HowItWorks = () => {
   );
 };
 
-export default HowItWorks;

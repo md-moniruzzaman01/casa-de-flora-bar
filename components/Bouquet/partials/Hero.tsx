@@ -8,7 +8,7 @@ import { BOUQUET_CONTENT } from "../config/constant";
 import Link from "next/link";
 
 
-const Hero = () => {
+export default function Hero() {
     const container = useRef<HTMLDivElement>(null);
     const { hero } = BOUQUET_CONTENT;
 
@@ -67,4 +67,3 @@ const Hero = () => {
     );
 };
 
-export default Hero;
