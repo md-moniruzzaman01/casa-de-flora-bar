@@ -15,7 +15,8 @@
       "Bash(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\" -Recurse -Directory)",
       "Bash(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\" -ErrorAction SilentlyContinue)",
       "Bash(Select-Object Name, FullName)",
-      "PowerShell(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\\\\components\" -Depth 0 | Where-Object { $_.PSIsContainer } | Select-Object Name)"
+      "PowerShell(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\\\\components\" -Depth 0 | Where-Object { $_.PSIsContainer } | Select-Object Name)",
+      "Bash(Get-ChildItem *)"
     ]
   }
 }

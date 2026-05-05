@@ -29,30 +29,30 @@ export default function ExperienceDetails() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
 
         {/* Experience Details Table */}
-        <div className="detail-card bg-[#FDE8E9] rounded-[30px] p-8 md:p-12">
-          <h3 className="text-2xl font-serif italic mb-8 border-b border-[#D6768B]/20 pb-4">
+        <div className="detail-card bg-primary-100 rounded-[30px] p-8 md:p-12">
+          <h3 className="text-2xl font-serif italic mb-8 border-b border-gray/20 pb-4">
             {details.experienceDetails.title}
           </h3>
           <div className="space-y-4">
             {details.experienceDetails.rows.map((row, index) => (
-              <div key={index} className="flex justify-between items-center border-b border-[#D6768B]/10 py-2 text-sm md:text-base">
-                <span className="text-[#4a4a4a]">{row.label}</span>
-                <span className="font-medium text-[#1a1a1a]">{row.value}</span>
+              <div key={index} className="flex justify-between items-center border-b border-gray/10 py-2 text-sm md:text-base">
+                <span className="text-gray">{row.label}</span>
+                <span className="font-medium text-gray">{row.value}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Perfect For List */}
-        <div className="detail-card bg-[#FDE8E9] rounded-[30px] p-8 md:p-12">
-          <h3 className="text-2xl font-serif italic mb-8 border-b border-[#D6768B]/20 pb-4">
+        <div className="detail-card bg-primary-100 rounded-[30px] p-8 md:p-12">
+          <h3 className="text-2xl font-serif italic mb-8 border-b border-gray/20 pb-4">
             {details.perfectFor.title}
           </h3>
           <ul className="space-y-4">
             {details.perfectFor.list.map((item, index) => (
-              <li key={index} className="flex justify-between items-center border-b border-[#D6768B]/10 py-2 text-sm md:text-base">
-                <span className="text-[#4a4a4a]">{item}</span>
-                <span className="text-[#D6768B] text-xs">♥</span>
+              <li key={index} className="flex justify-between items-center border-b border-gray/10 py-2 text-sm md:text-base">
+                <span className="text-gray">{item}</span>
+                <span className="text-primary text-xs">♥</span>
               </li>
             ))}
           </ul>
@@ -62,4 +62,3 @@ export default function ExperienceDetails() {
     </section>
   );
 };
-

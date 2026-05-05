@@ -33,7 +33,7 @@ export default function HowItWorks() {
 
   return (
     <section ref={container} className="px-6 py-12 md:px-12 lg:px-24">
-      <div className="max-w-7xl mx-auto bg-[#FDE8E9] rounded-[40px] p-12 md:p-20 text-center">
+      <div className="max-w-7xl mx-auto bg-primary-100 rounded-[40px] p-12 md:p-20 text-center">
 
         {/* Section Header */}
         <div className="section-header mb-16 space-y-4">
@@ -84,4 +84,3 @@ export default function HowItWorks() {
     </section>
   );
 };
-

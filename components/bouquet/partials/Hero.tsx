@@ -29,7 +29,7 @@ export default function Hero() {
     return (
         <section
             ref={container}
-            className="relative w-full min-h-[80vh] bg-primary-100 flex items-center"
+            className="relative w-full min-h-[80vh] bg-primary-50 flex items-center"
         >
             <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
@@ -66,4 +66,3 @@ export default function Hero() {
         </section>
     );
 };
-

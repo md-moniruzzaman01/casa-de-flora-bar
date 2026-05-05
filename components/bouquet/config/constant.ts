@@ -4,8 +4,8 @@ export const BOUQUET_CONTENT = {
     type: "hero-section",
     title: "MAKE YOUR OWN BOUQUET",
     description: "Enjoy an afternoon of creating, sipping, and socializing in our beautiful flower bar. Whether you're a beginner or have a green thumb, our flower bar is for everyone. Come join us and leave with a beautiful, custom-made bouquet and a heart full of joy. Select your flowers, greenery, and accents to create your own unique arrangement.",
-    buttonText: "Reserve your table",
-    link: "/celebrate",
+    buttonText: "Book a Bouquet",
+    link: "/bouquet#book",
     image: "make your own bouquet.jpg"
   },
   quote: {

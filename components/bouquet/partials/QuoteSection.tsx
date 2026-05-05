@@ -29,7 +29,7 @@ import { BOUQUET_CONTENT } from "../config/constant";
     <section ref={container} className="bg-white my-20 py-20 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start quote-content">
         {/* Main Highlighted Quote */}
-        <div className="border-l-2 border-[#D6768B] pl-8">
+        <div className="border-l-2 border-primary pl-8">
           <h2 className="text-2xl md:text-3xl font-serif leading-relaxed text-[#1a1a1a]">
             &quot;{quote.text}&quot;
           </h2>
@@ -43,4 +43,3 @@ import { BOUQUET_CONTENT } from "../config/constant";
     </section>
   );
 };
-
