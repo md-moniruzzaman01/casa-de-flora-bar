@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(npm run *)",
+      "Bash(Get-ChildItem -Recurse \"D:\\\\client project\\\\frontend\\\\casa-de-flora-bar\\\\app\\\\\\(admin\\)\\\\events\")",
+      "Bash(Get-ChildItem -Recurse \"D:\\\\client project\\\\frontend\\\\casa-de-flora-bar\\\\components\\\\admin\\\\events\")",
+      "Bash(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\\\\components\\\\shared\" -Recurse)",
+      "Bash(npx tsc *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Format-Table)",
+      "Bash(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\" -Recurse -Directory)",
+      "Bash(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Name, FullName)",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\\\\components\" -Depth 0 | Where-Object { $_.PSIsContainer } | Select-Object Name)"
+    ]
+  }
+}
