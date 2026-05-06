@@ -19,7 +19,7 @@ export default function EventsPage() {
             </p>
           </div>
           <Link
-            href="/events/create"
+            href="/admin/events/create"
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 transition-opacity flex-shrink-0"
             style={{ background: '#ED80A8' }}
           >

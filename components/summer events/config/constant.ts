@@ -23,11 +23,11 @@ export const SUMMER_EVENTS_CONTENT = {
     whatsIncluded: {
       title: "What's included",
       items: [
-        "Fresh flowers & materials for floral arrangements",
-        "Guided instructions from experienced floral designers",
-        "Dining includes a brunch-style meal with beverages",
-        "Professional photographs taken throughout the session",
-        "Take-home gift bags and self-curated floral arrangement"
+        { title: "Fresh flowers & materials", desc: "Seasonal blooms, wrapping & ribbon" },
+        { title: "Guided bouquet session", desc: "Step-by-step guidance from our floral team" },
+        { title: "Dinner & drinks", desc: "Curated menu with signature drinks and mocktails" },
+        { title: "Styled décor & photo moments", desc: "Elegant setups with Instagram-worthy corners" },
+        { title: "Music & ambiance", desc: "Soft curated music and a warm, inviting atmosphere" }
       ]
     }
   },
@@ -53,6 +53,7 @@ export const SUMMER_EVENTS_CONTENT = {
   },
   flow: {
     title: "How the evening flows",
+    img:"/summer events/image-02.jpg",
     steps: [
       {
         id: 1,

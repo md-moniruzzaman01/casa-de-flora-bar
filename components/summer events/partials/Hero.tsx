@@ -45,7 +45,7 @@ const HeroSection = () => {
   return (
     <section 
       ref={containerRef}
-      className="min-h-screen w-full bg-[#F9F1F1] flex items-center justify-center p-6 md:p-12"
+      className="min-h-screen w-full bg-primary-150 flex items-center justify-center p-6 md:p-12"
     >
       <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         

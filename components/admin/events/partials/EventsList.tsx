@@ -104,7 +104,7 @@ export default function EventsList() {
           </p>
           {filter === 'all' && (
             <Link
-              href="/events/create"
+              href="/admin/events/create"
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 transition-opacity"
               style={{ background: '#ED80A8' }}
             >
@@ -209,7 +209,7 @@ export default function EventsList() {
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link
-                          href={`/events/${event.id}/edit`}
+                          href={`/admin/events/${event.id}/edit`}
                           className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
                           title="Edit"
                         >
