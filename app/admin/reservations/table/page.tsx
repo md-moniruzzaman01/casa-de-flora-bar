@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import {
   Plus, ArrowUpRight, MoreHorizontal, Save,
   ChevronUp, ChevronDown, Search, SlidersHorizontal,
-  ChevronLeft, ChevronRight, X, Check,
+  ChevronLeft, ChevronRight, X, Check, RefreshCw,
 } from "lucide-react";
+import { api } from "@/lib/api";
+import {
+  STATUS_TO_BACKEND,
+  tableBookingToRow,
+  type AdminStatus,
+  type BackendTableBooking,
+} from "@/lib/admin-mappers";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type Status    = "Pending" | "Confirmed" | "In review" | "Cancelled";
+type Status    = AdminStatus;
 type SortKey   = "guest" | "bookingFor" | "date" | "time" | "guests" | "status";
 type SortDir   = "asc" | "desc";
 type FilterTab = "All" | "Confirmed" | "Pending" | "Cancelled";
 
 interface Reservation {
-  id:         number;
+  id:         string;
   guest:      string;
   email:      string;
   phone:      string;
@@ -42,11 +49,6 @@ const BOOKING_TYPES = [
   "Events Hall", "Private Suite", "Garden Terrace",
 ];
 const STATUSES: Status[] = ["Pending", "Confirmed", "In review", "Cancelled"];
-const GUEST_NAMES = [
-  "Russel Petter", "Maria Chen",    "James Okafor",  "Sophie Laurent",
-  "Ahmed Hassan",  "Priya Nair",    "Lucas Müller",  "Yuki Tanaka",
-  "Isabella Rossi","Carlos Mendez",
-];
 const TIME_SLOTS = [
   "10:00 AM – 11:30 AM",
   "11:30 AM – 1:00 PM",
@@ -57,27 +59,8 @@ const TIME_SLOTS = [
   "9:30 PM – 11:00 PM",
 ];
 
-const INITIAL_RESERVATIONS: Reservation[] = Array.from({ length: 30 }, (_, i) => {
-  const name   = GUEST_NAMES[i % GUEST_NAMES.length];
-  const day    = (i % 28) + 1;
-  const mo     = i < 15 ? 2 : 3; // 0-indexed: 2=Mar, 3=Apr
-  const moLabel = mo === 2 ? "Mar" : "Apr";
-  const moNum   = mo === 2 ? "03" : "04";
-  return {
-    id:         i + 1,
-    guest:      name,
-    email:      `${name.toLowerCase().replace(/\s+/g, ".")}@email.com`,
-    phone:      `+1 (555) ${String(200 + i).padStart(3, "0")}-${String(1000 + i * 17).slice(0, 4)}`,
-    bookingFor: BOOKING_TYPES[i % BOOKING_TYPES.length],
-    date:       `${moLabel} ${day}, 2026`,
-    dateValue:  `2026-${moNum}-${String(day).padStart(2, "0")}`,
-    dateTs:     new Date(2026, mo, day).getTime(),
-    time:       TIME_SLOTS[i % TIME_SLOTS.length],
-    guests:     [2, 4, 6, 8, 10, 12][i % 6],
-    status:     STATUSES[i % STATUSES.length],
-    notes:      i % 4 === 0 ? "Celebrating anniversary — please set up flowers." : "",
-  };
-});
+// Static seed data has been replaced by a live fetch from /api/table-bookings.
+// (See useEffect inside TableReservations below.)
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -623,7 +606,9 @@ function EditDrawer({ reservation, onClose, onSave }: {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function TableReservations() {
-  const [data,        setData]        = useState<Reservation[]>(INITIAL_RESERVATIONS);
+  const [data,        setData]        = useState<Reservation[]>([]);
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState<string | null>(null);
   const [activeTab,   setActiveTab]   = useState<FilterTab>("All");
   const [search,      setSearch]      = useState("");
   const [sortKey,     setSortKey]     = useState<SortKey>("date");
@@ -633,6 +618,35 @@ export default function TableReservations() {
   const [filters,     setFilters]     = useState<FilterState>(EMPTY_FILTERS);
   const [filterCount, setFilterCount] = useState(0);
   const [editing,     setEditing]     = useState<Reservation | null>(null);
+
+  const fetchData = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    api
+      .get<{ bookings: BackendTableBooking[] }>('/api/table-bookings?limit=200')
+      .then((res) => {
+        setData((res.bookings ?? []).map((b) => tableBookingToRow(b, 'Table') as Reservation));
+      })
+      .catch((e: { message?: string }) => {
+        setError(e.message ?? 'Failed to load reservations');
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<{ bookings: BackendTableBooking[] }>('/api/table-bookings?limit=200')
+      .then((res) => {
+        if (cancelled) return;
+        setData((res.bookings ?? []).map((b) => tableBookingToRow(b, 'Table') as Reservation));
+      })
+      .catch((e: { message?: string }) => {
+        if (!cancelled) setError(e.message ?? 'Failed to load reservations');
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   function resetPage() { setPage(1); }
 
@@ -661,18 +675,50 @@ export default function TableReservations() {
     applyFilters({ ...filters, bookingFor: filters.bookingFor.filter(v => v !== b) });
   }
 
-  function handleSave(updated: Reservation) {
-    setData(d => d.map(r => r.id === updated.id ? updated : r));
+  async function handleSave(updated: Reservation) {
+    // Backend currently only persists status changes for table bookings.
+    // Other fields are kept locally so the UI reflects the edit.
+    const previous = data.find((r) => r.id === updated.id);
+    setData((d) => d.map((r) => (r.id === updated.id ? updated : r)));
     setEditing(null);
+    if (previous && previous.status !== updated.status) {
+      try {
+        await api.patch(`/api/table-bookings/${updated.id}/status`, {
+          status: STATUS_TO_BACKEND[updated.status],
+        });
+      } catch (e) {
+        const err = e as { message?: string };
+        setError(err.message ?? 'Failed to update status');
+        if (previous) setData((d) => d.map((r) => (r.id === updated.id ? previous : r)));
+      }
+    }
   }
 
-  function handleStatusChange(id: number, status: Status) {
-    setData(d => d.map(r => r.id === id ? { ...r, status } : r));
+  async function handleStatusChange(id: string, status: Status) {
+    const previous = data.find((r) => r.id === id);
+    setData((d) => d.map((r) => (r.id === id ? { ...r, status } : r)));
+    try {
+      await api.patch(`/api/table-bookings/${id}/status`, {
+        status: STATUS_TO_BACKEND[status],
+      });
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to update status');
+      if (previous) setData((d) => d.map((r) => (r.id === id ? previous : r)));
+    }
   }
 
-  function handleDelete(id: number) {
-    setData(d => d.filter(r => r.id !== id));
+  async function handleDelete(id: string) {
+    const previous = data;
+    setData((d) => d.filter((r) => r.id !== id));
     resetPage();
+    try {
+      await api.delete(`/api/table-bookings/${id}`);
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to delete reservation');
+      setData(previous);
+    }
   }
 
   // ── Data pipeline ──────────────────────────────────────────────────────────
@@ -746,6 +792,19 @@ export default function TableReservations() {
 
       <div className="flex-1 flex flex-col min-h-screen bg-white">
         <main className="flex-1 px-8 py-7 flex flex-col gap-7">
+
+          {error && (
+            <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center justify-between">
+              <span>{error}</span>
+              <button onClick={fetchData} className="text-red-700 underline">Retry</button>
+            </div>
+          )}
+
+          {loading && data.length === 0 ? (
+            <div className="py-20 flex items-center justify-center">
+              <RefreshCw className="w-5 h-5 text-gray-300 animate-spin" />
+            </div>
+          ) : null}
 
           {/* Stat cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

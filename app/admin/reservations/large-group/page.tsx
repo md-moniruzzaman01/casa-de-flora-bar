@@ -1,11 +1,17 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import {
   ArrowUpRight, MoreHorizontal, Save,
   ChevronUp, ChevronDown, Search,
-  ChevronLeft, ChevronRight, X,
+  ChevronLeft, ChevronRight, X, RefreshCw,
 } from "lucide-react";
+import { api } from "@/lib/api";
+import {
+  isoDateOnly,
+  formatTimeRangeBetween,
+  type BackendEventBooking,
+} from "@/lib/admin-mappers";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -16,7 +22,7 @@ type SortKey   = "host" | "date" | "guests" | "package" | "status";
 type SortDir   = "asc" | "desc";
 
 interface GroupEvent {
-  id:            number;
+  id:            string;
   host:          string;
   email:         string;
   phone:         string;
@@ -56,40 +62,35 @@ const OCCASIONS = [
   "Engagement Celebration",
 ];
 
-type RowSeed = [string, string, string, number, Package, string, Status];
+// Static seed data has been replaced by a live fetch from /api/event-bookings.
+// (See useEffect inside LargeGroupReservations below.)
 
-const SEEDS: RowSeed[] = [
-  ["Russel Petter", "Mar 2, 2026",  "2026-03-02",  6,  "All Inclusive",     "Birthday Dinner",    "Pending"],
-  ["Russel Petter", "Mar 2, 2026",  "2026-03-02",  6,  "Brunch Sip & Clip", "Bridal Shower",      "Confirm"],
-  ["Russel Petter", "Mar 2, 2026",  "2026-03-02",  6,  "All Inclusive",     "Birthday Dinner",    "Pending"],
-  ["Russel Petter", "Mar 2, 2026",  "2026-03-02",  6,  "Brunch Sip & Clip", "Bridal Shower",      "Confirm"],
-  ["Russel Petter", "Mar 7, 2026",  "2026-03-07",  6,  "All Inclusive",     "Birthday Dinner",    "Pending"],
-  ["Russel Petter", "Mar 9, 2026",  "2026-03-09",  6,  "Brunch Sip & Clip", "Bridal Shower",      "Confirm"],
-  ["Russel Petter", "Mar 10, 2026", "2026-03-10",  6,  "All Inclusive",     "Birthday Dinner",    "Pending"],
-  ["Russel Petter", "Mar 12, 2026", "2026-03-12",  6,  "Brunch Sip & Clip", "Bridal Shower",      "Confirm"],
-  ["Amanda Clarke", "Mar 14, 2026", "2026-03-14",  12, "All Inclusive",     "Anniversary Dinner", "Pending"],
-  ["Tom Harrison",  "Mar 15, 2026", "2026-03-15",  20, "Brunch Sip & Clip", "Corporate Event",    "Confirm"],
-  ["Sarah Mills",   "Mar 18, 2026", "2026-03-18",  8,  "All Inclusive",     "Baby Shower",        "Pending"],
-  ["James Wong",    "Mar 20, 2026", "2026-03-20",  15, "Brunch Sip & Clip", "Graduation Party",   "Confirm"],
-  ["Emily Russo",   "Mar 22, 2026", "2026-03-22",  10, "All Inclusive",     "Birthday Dinner",    "Pending"],
-  ["Russel Petter", "Mar 25, 2026", "2026-03-25",  6,  "Brunch Sip & Clip", "Bridal Shower",      "Confirm"],
-];
+const STATUS_FROM_BACKEND_LG = (s: BackendEventBooking['status']): Status =>
+  s === 'CONFIRMED' || s === 'COMPLETED' ? 'Confirm' : 'Pending';
 
-const INITIAL_EVENTS: GroupEvent[] = SEEDS.map(([host, date, dv, guests, pkg, occasion, status], i) => ({
-  id:            i + 1,
-  host,
-  email:         `${host.toLowerCase().replace(/\s+/g, ".")}@email.com`,
-  phone:         `+1 (555) ${String(400 + i).padStart(3, "0")}-${String(2000 + i * 17).slice(0, 4)}`,
-  date,
-  dateValue:     dv,
-  dateTs:        new Date(dv).getTime(),
-  time:          GROUP_TIMES[i % GROUP_TIMES.length],
-  guests,
-  package:       pkg,
-  occasion,
-  internalNotes: i % 4 === 0 ? "Set up floral centerpieces 30 min before arrival." : "",
-  status,
-}));
+const STATUS_TO_BACKEND_LG: Record<Status, BackendEventBooking['status']> = {
+  Pending: 'PENDING',
+  Confirm: 'CONFIRMED',
+};
+
+const eventBookingToGroupEvent = (b: BackendEventBooking): GroupEvent => {
+  const dv = isoDateOnly(b.date);
+  return {
+    id:            b.id,
+    host:          b.name,
+    email:         b.email,
+    phone:         b.phone,
+    date:          formatDisplayDate(dv),
+    dateValue:     dv,
+    dateTs:        new Date(dv).getTime(),
+    time:          formatTimeRangeBetween(b.startTime, b.endTime),
+    guests:        b.guests,
+    package:       b.cateringRequired ? 'All Inclusive' : 'Brunch Sip & Clip',
+    occasion:      b.eventType.charAt(0) + b.eventType.slice(1).toLowerCase(),
+    internalNotes: b.specialRequests ?? '',
+    status:        STATUS_FROM_BACKEND_LG(b.status),
+  };
+};
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -435,7 +436,9 @@ function EditDrawer({ event, onClose, onSave }: {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function LargeGroupPage() {
-  const [data,      setData]      = useState<GroupEvent[]>(INITIAL_EVENTS);
+  const [data,      setData]      = useState<GroupEvent[]>([]);
+  const [loading,   setLoading]   = useState(true);
+  const [error,     setError]     = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
   const [search,    setSearch]    = useState("");
   const [sortKey,   setSortKey]   = useState<SortKey>("date");
@@ -452,18 +455,76 @@ export default function LargeGroupPage() {
     resetPage();
   }
 
-  function handleSave(updated: GroupEvent) {
+  const fetchData = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    api
+      .get<{ bookings: BackendEventBooking[] }>('/api/event-bookings?limit=200')
+      .then((res) =>
+        setData((res.bookings ?? []).map(eventBookingToGroupEvent)),
+      )
+      .catch((e: { message?: string }) =>
+        setError(e.message ?? 'Failed to load events'),
+      )
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<{ bookings: BackendEventBooking[] }>('/api/event-bookings?limit=200')
+      .then((res) => {
+        if (!cancelled) setData((res.bookings ?? []).map(eventBookingToGroupEvent));
+      })
+      .catch((e: { message?: string }) => {
+        if (!cancelled) setError(e.message ?? 'Failed to load events');
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  async function handleSave(updated: GroupEvent) {
+    const previous = data.find((e) => e.id === updated.id);
     setData(d => d.map(e => e.id === updated.id ? updated : e));
     setEditing(null);
+    if (previous && previous.status !== updated.status) {
+      try {
+        await api.patch(`/api/event-bookings/${updated.id}/status`, {
+          status: STATUS_TO_BACKEND_LG[updated.status],
+        });
+      } catch (e) {
+        const err = e as { message?: string };
+        setError(err.message ?? 'Failed to update status');
+        if (previous) setData(d => d.map(e => e.id === updated.id ? previous : e));
+      }
+    }
   }
 
-  function handleStatusChange(id: number, status: Status) {
+  async function handleStatusChange(id: string, status: Status) {
+    const previous = data.find((e) => e.id === id);
     setData(d => d.map(e => e.id === id ? { ...e, status } : e));
+    try {
+      await api.patch(`/api/event-bookings/${id}/status`, {
+        status: STATUS_TO_BACKEND_LG[status],
+      });
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to update status');
+      if (previous) setData(d => d.map(e => e.id === id ? previous : e));
+    }
   }
 
-  function handleDelete(id: number) {
+  async function handleDelete(id: string) {
+    const previous = data;
     setData(d => d.filter(e => e.id !== id));
     resetPage();
+    try {
+      await api.delete(`/api/event-bookings/${id}`);
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to delete event');
+      setData(previous);
+    }
   }
 
   const processed = useMemo(() => {
@@ -519,12 +580,25 @@ export default function LargeGroupPage() {
       <div className="flex-1 flex flex-col min-h-screen bg-white">
         <main className="flex-1 px-8 py-7 flex flex-col gap-7">
 
+          {error && (
+            <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center justify-between">
+              <span>{error}</span>
+              <button onClick={fetchData} className="text-red-700 underline">Retry</button>
+            </div>
+          )}
+
+          {loading && data.length === 0 ? (
+            <div className="py-20 flex items-center justify-center">
+              <RefreshCw className="w-5 h-5 text-gray-300 animate-spin" />
+            </div>
+          ) : null}
+
           {/* Stat cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard label="Events today"  value={4}                                               sub="vs yesterday"      badge="1↑" />
-            <StatCard label="Guests today"  value={24}                                              sub="across 4 events"              />
+            <StatCard label="Total events"  value={data.length}                                     sub="all bookings"                 />
+            <StatCard label="Total guests"  value={data.reduce((s, e) => s + e.guests, 0)}          sub="across all events"            />
             <StatCard label="Pending"       value={data.filter(e => e.status === "Pending").length} sub="awaiting confirm"             />
-            <StatCard label="Revenue today" value="$2,400"                                          sub="$50–$80 per guest"            />
+            <StatCard label="Confirmed"     value={data.filter(e => e.status === "Confirm").length} sub="ready to host"                />
           </div>
 
           {/* Table section */}

@@ -6,8 +6,11 @@ import EventPopup from "@/components/shared/EventPopup";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Navbar />
+      {/* Promo banner / popup. The banner renders inline above the navbar so
+          it pushes the page down instead of overlaying the sticky header.
+          The popup variant stays fixed full-screen and is unaffected by DOM order. */}
       <EventPopup />
+      <Navbar />
       <main className="flex-1">
         <SmoothScroll>{children}</SmoothScroll>
       </main>

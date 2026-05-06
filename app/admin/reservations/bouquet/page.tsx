@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import {
   Plus, ArrowUpRight, MoreHorizontal, Save,
   ChevronUp, ChevronDown, Search, SlidersHorizontal,
-  ChevronLeft, ChevronRight, X, Check,
+  ChevronLeft, ChevronRight, X, Check, RefreshCw,
 } from "lucide-react";
+import { api } from "@/lib/api";
+import {
+  STATUS_TO_BACKEND,
+  tableBookingToRow,
+  type AdminStatus,
+  type BackendTableBooking,
+} from "@/lib/admin-mappers";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type Status    = "Pending" | "Confirmed" | "In review" | "Cancelled";
+type Status    = AdminStatus;
 type FilterTab = "All" | "Confirmed" | "Pending" | "Cancelled";
 type SortKey   = "guest" | "bookingFor" | "date" | "time" | "guests" | "status";
 type SortDir   = "asc" | "desc";
 
 interface Reservation {
-  id:         number;
+  id:         string;
   guest:      string;
   email:      string;
   phone:      string;
@@ -59,34 +66,11 @@ const SESSION_TIMES = [
   "8:00 PM – 9:30 PM",
 ];
 
-const GUEST_NAMES = [
-  "Russel Petter", "Maria Chen",    "James Okafor",  "Sophie Laurent",
-  "Ahmed Hassan",  "Priya Nair",    "Lucas Müller",  "Yuki Tanaka",
-  "Isabella Rossi","Carlos Mendez",
-];
 const STATUSES: Status[] = ["Pending", "Confirmed", "In review", "Cancelled"];
 
-const INITIAL_RESERVATIONS: Reservation[] = Array.from({ length: 30 }, (_, i) => {
-  const name   = GUEST_NAMES[i % GUEST_NAMES.length];
-  const day    = (i % 28) + 1;
-  const mo     = i < 15 ? 2 : 3;
-  const moLabel = mo === 2 ? "Mar" : "Apr";
-  const moNum   = mo === 2 ? "03" : "04";
-  return {
-    id:         i + 1,
-    guest:      name,
-    email:      `${name.toLowerCase().replace(/\s+/g, ".")}@email.com`,
-    phone:      `+1 (555) ${String(300 + i).padStart(3, "0")}-${String(1000 + i * 11).slice(0, 4)}`,
-    bookingFor: "Make your Bouquet",
-    date:       `${moLabel} ${day}, 2026`,
-    dateValue:  `2026-${moNum}-${String(day).padStart(2, "0")}`,
-    dateTs:     new Date(2026, mo, day).getTime(),
-    time:       SESSION_TIMES[i % SESSION_TIMES.length],
-    guests:     [2, 4, 6, 8, 10, 12][i % 6],
-    status:     STATUSES[i % STATUSES.length],
-    notes:      i % 5 === 0 ? "Allergy note: nut-free arrangement please." : "",
-  };
-});
+// Static seed data has been replaced by a live fetch — see useEffect inside
+// BouquetReservations below. Only table bookings with at least one bouquet
+// add-on are shown.
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -577,7 +561,9 @@ function EditDrawer({ reservation, onClose, onSave }: {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function MakeYourBouquet() {
-  const [data,        setData]        = useState<Reservation[]>(INITIAL_RESERVATIONS);
+  const [data,        setData]        = useState<Reservation[]>([]);
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState<string | null>(null);
   const [activeTab,   setActiveTab]   = useState<FilterTab>("All");
   const [search,      setSearch]      = useState("");
   const [sortKey,     setSortKey]     = useState<SortKey>("date");
@@ -611,18 +597,80 @@ export default function MakeYourBouquet() {
 
   function resetFilters() { setFilters(EMPTY_FILTERS); setFilterCount(0); resetPage(); }
 
-  function handleSave(updated: Reservation) {
+  const mapRows = (bookings: BackendTableBooking[]): Reservation[] =>
+    bookings
+      .filter((b) => b.bouquetBookings.length > 0)
+      .map((b) => ({
+        ...(tableBookingToRow(b, 'Make your Bouquet') as Reservation),
+        bookingFor: 'Make your Bouquet',
+      }));
+
+  const fetchData = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    api
+      .get<{ bookings: BackendTableBooking[] }>('/api/table-bookings?limit=200')
+      .then((res) => setData(mapRows(res.bookings ?? [])))
+      .catch((e: { message?: string }) =>
+        setError(e.message ?? 'Failed to load bouquet reservations'),
+      )
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<{ bookings: BackendTableBooking[] }>('/api/table-bookings?limit=200')
+      .then((res) => { if (!cancelled) setData(mapRows(res.bookings ?? [])); })
+      .catch((e: { message?: string }) => {
+        if (!cancelled) setError(e.message ?? 'Failed to load bouquet reservations');
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  async function handleSave(updated: Reservation) {
+    const previous = data.find((r) => r.id === updated.id);
     setData(d => d.map(r => r.id === updated.id ? updated : r));
     setEditing(null);
+    if (previous && previous.status !== updated.status) {
+      try {
+        await api.patch(`/api/table-bookings/${updated.id}/status`, {
+          status: STATUS_TO_BACKEND[updated.status],
+        });
+      } catch (e) {
+        const err = e as { message?: string };
+        setError(err.message ?? 'Failed to update status');
+        if (previous) setData(d => d.map(r => r.id === updated.id ? previous : r));
+      }
+    }
   }
 
-  function handleStatusChange(id: number, status: Status) {
+  async function handleStatusChange(id: string, status: Status) {
+    const previous = data.find((r) => r.id === id);
     setData(d => d.map(r => r.id === id ? { ...r, status } : r));
+    try {
+      await api.patch(`/api/table-bookings/${id}/status`, {
+        status: STATUS_TO_BACKEND[status],
+      });
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to update status');
+      if (previous) setData(d => d.map(r => r.id === id ? previous : r));
+    }
   }
 
-  function handleDelete(id: number) {
+  async function handleDelete(id: string) {
+    const previous = data;
     setData(d => d.filter(r => r.id !== id));
     resetPage();
+    try {
+      await api.delete(`/api/table-bookings/${id}`);
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to delete reservation');
+      setData(previous);
+    }
   }
 
   const processed = useMemo(() => {
@@ -694,12 +742,25 @@ export default function MakeYourBouquet() {
       <div className="flex-1 flex flex-col min-h-screen bg-white">
         <main className="flex-1 px-8 py-7 flex flex-col gap-7">
 
+          {error && (
+            <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center justify-between">
+              <span>{error}</span>
+              <button onClick={fetchData} className="text-red-700 underline">Retry</button>
+            </div>
+          )}
+
+          {loading && data.length === 0 ? (
+            <div className="py-20 flex items-center justify-center">
+              <RefreshCw className="w-5 h-5 text-gray-300 animate-spin" />
+            </div>
+          ) : null}
+
           {/* Stat cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard label="Sessions today"     value={5}                                           sub="vs yesterday"    badge="2↑" />
-            <StatCard label="Participants today" value={11}                                          sub="vs yesterday"    badge="7↑" />
-            <StatCard label="Pending"            value={data.filter(r => r.status === "Pending").length} sub="awaiting confirm"          />
-            <StatCard label="Revenue today"      value="$600"                                        sub="$50/person"                   />
+            <StatCard label="Bookings"           value={data.length}                                  sub="with bouquet add-ons" />
+            <StatCard label="Total guests"       value={data.reduce((s, r) => s + r.guests, 0)}       sub="across all bookings"  />
+            <StatCard label="Pending"            value={data.filter(r => r.status === "Pending").length} sub="awaiting confirm"  />
+            <StatCard label="Confirmed"          value={data.filter(r => r.status === "Confirmed").length} sub="ready to prep"   />
           </div>
 
           <div className="flex gap-6 items-start">

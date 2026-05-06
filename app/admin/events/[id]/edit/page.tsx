@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import EventForm from '@/components/admin/events/partials/EventForm';
 import type { SpecialEvent, EventFormData } from '@/components/admin/events/config/types';
 import { RefreshCw } from 'lucide-react';
+import { api } from '@/lib/api';
 
 export default function EditEventPage() {
   const { id } = useParams<{ id: string }>();
@@ -13,13 +14,10 @@ export default function EditEventPage() {
   const [error,   setError]   = useState(false);
 
   useEffect(() => {
-    fetch('/api/events', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then(({ events }: { events: SpecialEvent[] }) => {
-        const found = events.find((e) => e.id === id) ?? null;
-        setEvent(found);
-        if (!found) setError(true);
-      })
+    if (!id) return;
+    api
+      .get<{ data: SpecialEvent }>(`/api/events/${id}`)
+      .then(({ data }) => setEvent(data))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [id]);

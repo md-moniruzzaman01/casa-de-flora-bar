@@ -1,11 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
-import { Save } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Save, RefreshCw } from "lucide-react";
+import { api } from "@/lib/api";
 
 // ── Types & Constants ─────────────────────────────────────────────────────────
 
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"] as const;
+type DayLabel = typeof DAYS[number];
+
+const DAY_TO_BACKEND: Record<DayLabel, BackendWeekday> = {
+  Monday: "MONDAY", Tuesday: "TUESDAY", Wednesday: "WEDNESDAY",
+  Thursday: "THURSDAY", Friday: "FRIDAY", Saturday: "SATURDAY", Sunday: "SUNDAY",
+};
+const BACKEND_TO_DAY: Record<BackendWeekday, DayLabel> = {
+  MONDAY: "Monday", TUESDAY: "Tuesday", WEDNESDAY: "Wednesday",
+  THURSDAY: "Thursday", FRIDAY: "Friday", SATURDAY: "Saturday", SUNDAY: "Sunday",
+};
+
+type BackendWeekday =
+  | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY"
+  | "FRIDAY" | "SATURDAY" | "SUNDAY";
 
 interface DayHours {
   open:   string;
@@ -13,15 +28,34 @@ interface DayHours {
   closed: boolean;
 }
 
-const DEFAULT_HOURS: Record<string, DayHours> = {
-  Monday:    { open: "10:00", close: "22:00", closed: false },
-  Tuesday:   { open: "10:00", close: "22:00", closed: false },
-  Wednesday: { open: "10:00", close: "22:00", closed: false },
-  Thursday:  { open: "10:00", close: "22:00", closed: false },
-  Friday:    { open: "10:00", close: "23:00", closed: false },
-  Saturday:  { open: "09:00", close: "23:00", closed: false },
-  Sunday:    { open: "09:00", close: "21:00", closed: false },
-};
+interface BackendSetting {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  bio: string;
+  maxPartySize: number;
+  bookingWindowDays: number;
+  sessionDurationMin: number;
+  cancelNoticeHours: number;
+  notifyNewBooking: boolean;
+  notifyCancellation: boolean;
+  notifyReminder: boolean;
+  notifyWeeklyReport: boolean;
+}
+
+interface BackendHour {
+  day: BackendWeekday;
+  open: string;
+  close: string;
+  closed: boolean;
+}
+
+const EMPTY_HOURS: Record<DayLabel, DayHours> = DAYS.reduce(
+  (acc, d) => ({ ...acc, [d]: { open: "10:00", close: "22:00", closed: false } }),
+  {} as Record<DayLabel, DayHours>,
+);
 
 // ── Toggle ────────────────────────────────────────────────────────────────────
 
@@ -100,16 +134,16 @@ function Section({ title, sub, children }: {
 
 export default function SettingPage() {
   // ── Restaurant info ────────────────────────────────────────────────────────
-  const [resName,  setResName]  = useState("Casa de Flora Bar");
-  const [address,  setAddress]  = useState("Bloomfield, NJ 07003");
-  const [phone,    setPhone]    = useState("+1 (973) 555-0100");
-  const [email,    setEmail]    = useState("hello@casadeflora.com");
-  const [bio,      setBio]      = useState("A cozy floral-themed bar & brunch spot in the heart of Bloomfield, NJ.");
+  const [resName,  setResName]  = useState("");
+  const [address,  setAddress]  = useState("");
+  const [phone,    setPhone]    = useState("");
+  const [email,    setEmail]    = useState("");
+  const [bio,      setBio]      = useState("");
 
   // ── Hours ──────────────────────────────────────────────────────────────────
-  const [hours, setHours] = useState<Record<string, DayHours>>(DEFAULT_HOURS);
+  const [hours, setHours] = useState<Record<DayLabel, DayHours>>(EMPTY_HOURS);
 
-  function updateHours(day: string, field: keyof DayHours, value: string | boolean) {
+  function updateHours(day: DayLabel, field: keyof DayHours, value: string | boolean) {
     setHours(h => ({ ...h, [day]: { ...h[day], [field]: value } }));
   }
 
@@ -131,17 +165,108 @@ export default function SettingPage() {
     setNotifs(n => ({ ...n, [key]: !n[key] }));
   }
 
-  // ── Save ───────────────────────────────────────────────────────────────────
-  const [saved, setSaved] = useState(false);
+  // ── Save / load state ──────────────────────────────────────────────────────
+  const [loading, setLoading] = useState(true);
+  const [saving,  setSaving]  = useState(false);
+  const [saved,   setSaved]   = useState(false);
+  const [error,   setError]   = useState<string | null>(null);
 
-  function handleSave() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2200);
+  // Initial load from backend
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      api.get<{ data: BackendSetting }>("/api/settings"),
+      api.get<{ data: BackendHour[] }>("/api/hours"),
+    ])
+      .then(([s, h]) => {
+        if (cancelled) return;
+        const setting = s.data;
+        setResName(setting.name);
+        setAddress(setting.address);
+        setPhone(setting.phone);
+        setEmail(setting.email);
+        setBio(setting.bio);
+        setMaxParty(String(setting.maxPartySize));
+        setBookingWindow(String(setting.bookingWindowDays));
+        setSessionDur(String(setting.sessionDurationMin));
+        setCancelNotice(String(setting.cancelNoticeHours));
+        setNotifs({
+          newBooking:   setting.notifyNewBooking,
+          cancellation: setting.notifyCancellation,
+          reminder:     setting.notifyReminder,
+          weeklyReport: setting.notifyWeeklyReport,
+        });
+        const next = { ...EMPTY_HOURS };
+        for (const row of h.data) {
+          next[BACKEND_TO_DAY[row.day]] = {
+            open: row.open, close: row.close, closed: row.closed,
+          };
+        }
+        setHours(next);
+      })
+      .catch((e: { message?: string }) => {
+        if (!cancelled) setError(e.message ?? "Failed to load settings");
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  async function handleSave() {
+    setSaving(true);
+    setError(null);
+    try {
+      await Promise.all([
+        api.put("/api/settings", {
+          name: resName,
+          address,
+          phone,
+          email,
+          bio,
+          maxPartySize:       parseInt(maxParty, 10) || 0,
+          bookingWindowDays:  parseInt(bookingWindow, 10) || 0,
+          sessionDurationMin: parseInt(sessionDur, 10) || 0,
+          cancelNoticeHours:  parseInt(cancelNotice, 10) || 0,
+          notifyNewBooking:   notifs.newBooking,
+          notifyCancellation: notifs.cancellation,
+          notifyReminder:     notifs.reminder,
+          notifyWeeklyReport: notifs.weeklyReport,
+        }),
+        api.put("/api/hours", {
+          hours: DAYS.map((day) => ({
+            day: DAY_TO_BACKEND[day],
+            open: hours[day].open,
+            close: hours[day].close,
+            closed: hours[day].closed,
+          })),
+        }),
+      ]);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2200);
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? "Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-white min-h-screen">
+        <RefreshCw className="w-5 h-5 text-gray-300 animate-spin" />
+      </div>
+    );
   }
 
   return (
     <div className="flex-1 bg-white min-h-screen">
       <main className="max-w-3xl mx-auto px-8 py-7 flex flex-col gap-8">
+
+        {error && (
+          <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         {/* ── Restaurant Info ── */}
         <Section title="Restaurant Info" sub="Basic details shown on the public website">
@@ -269,14 +394,15 @@ export default function SettingPage() {
         <div className="flex justify-end pb-6">
           <button
             onClick={handleSave}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${
+            disabled={saving}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-50 ${
               saved
                 ? "bg-emerald-500 text-white"
                 : "bg-black text-white hover:bg-gray-800"
             }`}
           >
             <Save size={14} />
-            {saved ? "Saved!" : "Save Changes"}
+            {saving ? "Saving…" : saved ? "Saved!" : "Save Changes"}
           </button>
         </div>
 
