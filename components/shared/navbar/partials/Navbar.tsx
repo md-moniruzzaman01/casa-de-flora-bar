@@ -144,6 +144,7 @@ export default function Navbar() {
                 src={logo}
                 alt="Logo"
                 fill
+                sizes="96px"
                 className="object-contain"
                 priority
               />

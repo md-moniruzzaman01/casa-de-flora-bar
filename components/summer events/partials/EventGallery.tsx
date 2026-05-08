@@ -2,39 +2,34 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { InfiniteColumnProps } from "../config/types";
+import { SUMMER_EVENTS_CONTENT } from "../config/constant";
 
-interface ImageItem { src: string; alt: string; aspect: string; }
 
-const col1Images: ImageItem[] = [
-  { src: "/summer events/image-01.jpg", alt: "Guest with bouquet",   aspect: "aspect-[4/3]"  },
-  { src: "/summer events/image-02.jpg", alt: "Floral ambiance",      aspect: "aspect-[16/9]" },
-  { src: "/summer events/image-03.jpg", alt: "Dinner setup",         aspect: "aspect-[4/3]"  },
-  { src: "/summer events/image-04.jpg", alt: "Event decor",          aspect: "aspect-[16/9]" },
-];
+// const col1Images: ImageItem[] = [
+//   { src: "/summer events/image-01.jpg", alt: "Guest with bouquet",   aspect: "aspect-[4/3]"  },
+//   { src: "/summer events/image-02.jpg", alt: "Floral ambiance",      aspect: "aspect-[16/9]" },
+//   { src: "/summer events/image-03.jpg", alt: "Dinner setup",         aspect: "aspect-[4/3]"  },
+//   { src: "/summer events/image-04.jpg", alt: "Event decor",          aspect: "aspect-[16/9]" },
+// ];
 
-const col2Images: ImageItem[] = [
-  { src: "/summer events/image-02.jpg", alt: "Inside the venue",     aspect: "aspect-[16/9]" },
-  { src: "/summer events/image-05.jpg", alt: "Guest dining",         aspect: "aspect-[4/3]"  },
-  { src: "/summer events/image-03.jpg", alt: "Tablescape",           aspect: "aspect-[4/3]"  },
-  { src: "/summer events/image-01.jpg", alt: "Bouquet workshop",     aspect: "aspect-[4/3]"  },
-  { src: "/summer events/image-04.jpg", alt: "Photo moment",         aspect: "aspect-[16/9]" },
-  { src: "/summer events/image-05.jpg", alt: "Elegant tablescape",   aspect: "aspect-[4/3]"  },
-];
+// const col2Images: ImageItem[] = [
+//   { src: "/summer events/image-02.jpg", alt: "Inside the venue",     aspect: "aspect-[16/9]" },
+//   { src: "/summer events/image-05.jpg", alt: "Guest dining",         aspect: "aspect-[4/3]"  },
+//   { src: "/summer events/image-03.jpg", alt: "Tablescape",           aspect: "aspect-[4/3]"  },
+//   { src: "/summer events/image-01.jpg", alt: "Bouquet workshop",     aspect: "aspect-[4/3]"  },
+//   { src: "/summer events/image-04.jpg", alt: "Photo moment",         aspect: "aspect-[16/9]" },
+//   { src: "/summer events/image-05.jpg", alt: "Elegant tablescape",   aspect: "aspect-[4/3]"  },
+// ];
 
-const col3Images: ImageItem[] = [
-  { src: "/summer events/image-03.jpg", alt: "Overhead view",   aspect: "aspect-[4/3]"  },
-  { src: "/summer events/image-02.jpg", alt: "Friends laughing", aspect: "aspect-[16/9]" },
-  { src: "/summer events/image-01.jpg", alt: "Take-home gift",   aspect: "aspect-[4/3]"  },
-  { src: "/summer events/image-04.jpg", alt: "Event highlights", aspect: "aspect-[16/9]" },
-];
+// const col3Images: ImageItem[] = [
+//   { src: "/summer events/image-03.jpg", alt: "Overhead view",   aspect: "aspect-[4/3]"  },
+//   { src: "/summer events/image-02.jpg", alt: "Friends laughing", aspect: "aspect-[16/9]" },
+//   { src: "/summer events/image-01.jpg", alt: "Take-home gift",   aspect: "aspect-[4/3]"  },
+//   { src: "/summer events/image-04.jpg", alt: "Event highlights", aspect: "aspect-[16/9]" },
+// ];
 
-interface InfiniteColumnProps {
-  images:    ImageItem[];
-  direction?: "up" | "down";
-  speed?:    number;
-  className?: string;
-  height:    number;
-}
+
 
 function InfiniteColumn({
   images, direction = "up", speed = 35, className = "", height,
@@ -132,20 +127,20 @@ function ResponsiveGallery() {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
       <InfiniteColumn
-        images={col1Images}
+        images={SUMMER_EVENTS_CONTENT.gallery.column1}
         direction="up"
         speed={isMobile ? 22 : 35}
         height={height}
       />
       <InfiniteColumn
-        images={col2Images}
+        images={SUMMER_EVENTS_CONTENT.gallery.column2}
         direction="down"
         speed={isMobile ? 18 : 15}
         height={height}
         className="mt-[-20px] sm:mt-[-30px] lg:mt-[-40px]"
       />
       <InfiniteColumn
-        images={col3Images}
+        images={SUMMER_EVENTS_CONTENT.gallery.column1}
         direction="up"
         speed={isMobile ? 20 : 30}
         height={height}

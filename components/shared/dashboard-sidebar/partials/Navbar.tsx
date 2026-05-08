@@ -45,7 +45,7 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Link href="/events/create">
+        <Link href="/admin/events/create">
           <button
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium border rounded-lg hover:bg-gray-50 transition-colors"
             style={{ borderColor: "#eee" }}
@@ -54,7 +54,7 @@ export default function Navbar() {
           </button>
         </Link>
 
-        <Link href="/reservations/add">
+        <Link href="/admin/reservations/add">
           <button className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-white bg-black hover:bg-gray-800 transition-colors">
             + New Reservation
           </button>

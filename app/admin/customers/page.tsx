@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Search, MoreHorizontal, ArrowUpRight,
-  ChevronLeft, ChevronRight, ChevronUp, ChevronDown, X,
+  ChevronLeft, ChevronRight, ChevronUp, ChevronDown, X, RefreshCw,
 } from "lucide-react";
+import { api } from "@/lib/api";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -14,7 +15,7 @@ type SortKey     = "name" | "email" | "bookings" | "lastVisit" | "tag";
 type SortDir     = "asc" | "desc";
 
 interface Customer {
-  id:          number;
+  id:          string;
   name:        string;
   email:       string;
   phone:       string;
@@ -24,36 +25,46 @@ interface Customer {
   tag:         CustomerTag;
 }
 
-// ── Mock data ─────────────────────────────────────────────────────────────────
-
-const NAMES: string[] = [
-  "Russel Petter",  "Maria Chen",     "James Okafor",   "Sophie Laurent",
-  "Ahmed Hassan",   "Priya Nair",     "Lucas Müller",   "Yuki Tanaka",
-  "Isabella Rossi", "Carlos Mendez",  "Emma Williams",  "Noah Johnson",
-  "Olivia Brown",   "Liam Davis",     "Ava Wilson",
-];
-
-const TAGS: CustomerTag[] = [
-  "VIP","Returning","New","Returning","VIP","New","Returning",
-  "Returning","VIP","New","Returning","New","VIP","Returning","New",
-];
-
-const BOOKING_COUNTS = [1, 3, 5, 8, 12, 2, 4, 7];
-
-const CUSTOMERS: Customer[] = NAMES.map((name, i) => {
-  const day = (i % 28) + 1;
-  const mo  = i < 8 ? 3 : 4;
-  return {
-    id:          i + 1,
-    name,
-    email:       `${name.toLowerCase().replace(/\s+/g, ".")}@email.com`,
-    phone:       `+1 (555) ${String(200 + i).padStart(3, "0")}-${String(1000 + i * 17).slice(0, 4)}`,
-    bookings:    BOOKING_COUNTS[i % BOOKING_COUNTS.length],
-    lastVisit:   `${mo === 3 ? "Mar" : "Apr"} ${day}, 2026`,
-    lastVisitTs: new Date(2026, mo, day).getTime(),
-    tag:         TAGS[i],
+interface BackendCustomer {
+  id:        string;
+  name:      string;
+  email:     string;
+  phone:     string;
+  createdAt: string;
+  _count?: {
+    tableBookings: number;
+    eventBookings: number;
+    inquiries:     number;
   };
-});
+}
+
+// VIP at 8+ visits, Returning at 2+, New for first-timers.
+function tagFor(bookings: number): CustomerTag {
+  if (bookings >= 8) return "VIP";
+  if (bookings >= 2) return "Returning";
+  return "New";
+}
+
+const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function formatJoinedDate(iso: string): string {
+  const d = new Date(iso);
+  return `${MONTH_ABBR[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+function backendToRow(c: BackendCustomer): Customer {
+  const bookings = (c._count?.tableBookings ?? 0) + (c._count?.eventBookings ?? 0);
+  return {
+    id:          c.id,
+    name:        c.name,
+    email:       c.email,
+    phone:       c.phone,
+    bookings,
+    lastVisit:   formatJoinedDate(c.createdAt),
+    lastVisitTs: new Date(c.createdAt).getTime(),
+    tag:         tagFor(bookings),
+  };
+}
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -129,12 +140,41 @@ function ColHeader({ label, sortKey, currentKey, dir, onSort }: {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function CustomerList() {
+  const [data,      setData]      = useState<Customer[]>([]);
+  const [loading,   setLoading]   = useState(true);
+  const [error,     setError]     = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
   const [search,    setSearch]    = useState("");
   const [sortKey,   setSortKey]   = useState<SortKey>("lastVisit");
   const [sortDir,   setSortDir]   = useState<SortDir>("desc");
   const [page,      setPage]      = useState(1);
   const [pageSize,  setPageSize]  = useState(10);
+
+  const fetchData = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    api
+      .get<{ customers: BackendCustomer[] }>("/api/customers?limit=200")
+      .then((res) => setData((res.customers ?? []).map(backendToRow)))
+      .catch((e: { message?: string }) =>
+        setError(e.message ?? "Failed to load customers"),
+      )
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<{ customers: BackendCustomer[] }>("/api/customers?limit=200")
+      .then((res) => {
+        if (!cancelled) setData((res.customers ?? []).map(backendToRow));
+      })
+      .catch((e: { message?: string }) => {
+        if (!cancelled) setError(e.message ?? "Failed to load customers");
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) setSortDir(d => d === "asc" ? "desc" : "asc");
@@ -143,7 +183,7 @@ export default function CustomerList() {
   }
 
   const processed = useMemo(() => {
-    let rows = [...CUSTOMERS];
+    let rows = [...data];
 
     if (activeTab !== "All") rows = rows.filter(r => r.tag === activeTab);
 
@@ -168,7 +208,7 @@ export default function CustomerList() {
     });
 
     return rows;
-  }, [activeTab, search, sortKey, sortDir]);
+  }, [data, activeTab, search, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(processed.length / pageSize));
   const paginated  = processed.slice((page - 1) * pageSize, page * pageSize);
@@ -183,16 +223,42 @@ export default function CustomerList() {
     return nums;
   }, [page, totalPages]);
 
+  const stats = useMemo(() => {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+    const total       = data.length;
+    const returning   = data.filter(r => r.tag === "Returning").length;
+    const vip         = data.filter(r => r.tag === "VIP").length;
+    const newThisMonth = data.filter(r => r.lastVisitTs >= monthStart).length;
+    const retention   = total > 0 ? Math.round(((returning + vip) / total) * 100) : 0;
+
+    return { total, returning, vip, newThisMonth, retention };
+  }, [data]);
+
   return (
     <div className="flex-1 flex flex-col bg-white min-h-screen">
       <main className="flex-1 px-8 py-7 flex flex-col gap-7">
 
+        {error && (
+          <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center justify-between">
+            <span>{error}</span>
+            <button onClick={fetchData} className="text-red-700 underline">Retry</button>
+          </div>
+        )}
+
+        {loading && data.length === 0 ? (
+          <div className="py-20 flex items-center justify-center">
+            <RefreshCw className="w-5 h-5 text-gray-300 animate-spin" />
+          </div>
+        ) : null}
+
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total customers"  value={142} sub="all time"            badge="23↑" />
-          <StatCard label="Returning guests" value={87}  sub="61% retention rate"             />
-          <StatCard label="New this month"   value={23}  sub="vs 18 last month"    badge="5↑"  />
-          <StatCard label="VIP members"      value={12}  sub="top spenders"                   />
+          <StatCard label="Total customers"  value={stats.total}        sub="all time"                  />
+          <StatCard label="Returning guests" value={stats.returning}    sub={`${stats.retention}% retention rate`} />
+          <StatCard label="New this month"   value={stats.newThisMonth} sub="joined since month start"  />
+          <StatCard label="VIP members"      value={stats.vip}          sub="8+ visits"                 />
         </div>
 
         {/* Table section */}
@@ -245,7 +311,7 @@ export default function CustomerList() {
                   <ColHeader label="Email"      sortKey="email"     currentKey={sortKey} dir={sortDir} onSort={handleSort} />
                   <th className="text-left px-5 py-3.5 font-medium text-gray-500 text-xs whitespace-nowrap">Phone</th>
                   <ColHeader label="Bookings"   sortKey="bookings"  currentKey={sortKey} dir={sortDir} onSort={handleSort} />
-                  <ColHeader label="Last visit" sortKey="lastVisit" currentKey={sortKey} dir={sortDir} onSort={handleSort} />
+                  <ColHeader label="Joined"     sortKey="lastVisit" currentKey={sortKey} dir={sortDir} onSort={handleSort} />
                   <ColHeader label="Type"       sortKey="tag"       currentKey={sortKey} dir={sortDir} onSort={handleSort} />
                   <th className="px-5 py-3.5 w-10" />
                 </tr>

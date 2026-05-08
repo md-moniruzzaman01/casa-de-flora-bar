@@ -18,6 +18,8 @@ export default function Hero() {
   const { hero } = HOME_CONTENT;
 
   useEffect(() => {
+    if (!ref.current || !videoRef.current || !textRef.current) return;
+
     const ctx = gsap.context(() => {
       gsap.to(videoRef.current, {
         y: 120,
@@ -28,6 +30,7 @@ export default function Hero() {
           start: "top top",
           end: "bottom top",
           scrub: true,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -42,21 +45,27 @@ export default function Hero() {
           scrollTrigger: {
             trigger: textRef.current,
             start: "top 80%",
+            once: true,
           },
         }
       );
 
-      gsap.from(".hero-line", {
-        y: 40,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: textRef.current,
-          start: "top 75%",
-        },
-      });
+      gsap.fromTo(
+        ".hero-line",
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.15,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: textRef.current,
+            start: "top 75%",
+            once: true,
+          },
+        }
+      );
     }, ref);
 
     return () => ctx.revert();
@@ -137,7 +146,7 @@ export default function Hero() {
               {hero.title.map((line, i) => (
                 <span
                   key={i}
-                  className={`block text-[48px] md:text-[72px] lg:text-[80px] xl:text-[100px] ${line === "Beautiful" ? "text-primary" : ""}`}
+                  className={`hero-line block text-[48px] md:text-[72px] lg:text-[80px] xl:text-[100px] ${line === "Beautiful" ? "text-primary" : ""}`}
                 >
                   {line}
                 </span>

@@ -1,16 +1,16 @@
-type StatItem = {
-  label: string;
-  value: string;
-  dotColor: string;
+type Props = {
+  confirmed:   number;
+  pending:     number;
+  totalGuests: number;
 };
 
-const stats: StatItem[] = [
-  { label: "Confirmed", value: "24 today", dotColor: "#7AB648" },
-  { label: "Pending",   value: "8 today",  dotColor: "#F0C040" },
-  { label: "Total guests", value: "192",   dotColor: "#2D5016" },
-];
+export default function StatsPanel({ confirmed, pending, totalGuests }: Props) {
+  const stats = [
+    { label: "Confirmed",    value: `${confirmed} today`, dotColor: "#7AB648" },
+    { label: "Pending",      value: `${pending} today`,   dotColor: "#F0C040" },
+    { label: "Total guests", value: String(totalGuests),  dotColor: "#2D5016" },
+  ];
 
-export default function StatsPanel() {
   return (
     <div className="mt-6 flex flex-col gap-2">
       {stats.map((s) => (

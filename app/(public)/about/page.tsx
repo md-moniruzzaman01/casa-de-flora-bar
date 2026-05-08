@@ -1,6 +1,19 @@
 
+import type { Metadata } from "next";
 import Image from "next/image";
 
+export const metadata: Metadata = {
+  title: "About Us — Maritza's Story",
+  description:
+    "Meet Maritza, founder of Casa de Flora Bar. Learn how a Brooklyn native built a floral cafe and event space in Bloomfield, NJ — through fire, flood and pandemic.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About Casa de Flora Bar — Maritza's Story",
+    description:
+      "The founder's journey behind Bloomfield, NJ's floral cafe and event space.",
+    url: "/about",
+  },
+};
 
 function GoldRule({ className = "" }: { className?: string }) {
   return (

@@ -53,30 +53,61 @@ export const SUMMER_EVENTS_CONTENT = {
   },
   flow: {
     title: "How the evening flows",
-    img:"/summer events/image-02.jpg",
+    img: "/summer events/image-02.jpg",
+    polaroids: [
+      "/summer events/image-02.jpg",
+      "/summer events/image-03.jpg",
+      "/summer events/image-04.jpg",
+      "/summer events/image-05.jpg",
+    ],
+    closing:
+      "Times are a guide, not a clock — the evening flows naturally and we'll never rush you out the door.",
     steps: [
       {
         id: 1,
+        time: "5:30 PM",
+        duration: "60 min",
+        icon: "wine",
         title: "Arrival & Welcome",
-        description: "Enjoy a welcome drink and light refreshments."
+        description:
+          "Walk into a room set with fresh blooms. A welcome drink, light bites and a personal hello from the team.",
       },
       {
         id: 2,
+        time: "6:30 PM",
+        duration: "60 min",
+        icon: "flower",
         title: "Floral Workshop",
-        description: "Design your own floral masterpiece with guidance."
+        description:
+          "Design your own bouquet under the guidance of our floral team — every stem is yours to shape.",
       },
       {
         id: 3,
+        time: "7:30 PM",
+        duration: "90 min",
+        icon: "plate",
         title: "Dinner Experience",
-        description: "Savor a delicious curated meal with new friends."
+        description:
+          "Sit down to a chef-curated meal with seasonal sides, signature mocktails and good conversation.",
       },
       {
         id: 4,
+        time: "9:00 PM",
+        duration: "Until close",
+        icon: "camera",
         title: "Celebrate & Capture",
-        description: "Take home your creations and event memories."
-      }
-    ]
+        description:
+          "Take home your bouquet, the photos from the styled corners and the kind of evening you'll talk about for weeks.",
+      },
+    ],
   },
+  sessions: [
+    { date: "Jul 06", day: "Monday", spots: 4, capacity: 20, isoDate: "2026-07-06" },
+    { date: "Jul 13", day: "Monday", spots: 8, capacity: 20, isoDate: "2026-07-13" },
+    { date: "Jul 20", day: "Monday", spots: 12, capacity: 20, isoDate: "2026-07-20" },
+    { date: "Jul 27", day: "Monday", spots: 6, capacity: 20, isoDate: "2026-07-27" },
+    { date: "Aug 03", day: "Monday", spots: 10, capacity: 20, isoDate: "2026-08-03" },
+  ],
   faq: {
     title: "Everything You",
     titleHighlight: "Need to Know",
@@ -91,6 +122,28 @@ export const SUMMER_EVENTS_CONTENT = {
       { q: "Do you accommodate dietary restrictions?", a: "" },
       { q: "What is the age limit for this event?", a: "" },
       { q: "Is parking available?", a: "" }
+    ]
+  },
+  gallery: {
+    column1: [
+      { src: "/summer events/image-01.jpg", alt: "Guest with bouquet", aspect: "aspect-[4/3]" },
+      { src: "/summer events/image-02.jpg", alt: "Floral ambiance", aspect: "aspect-[16/9]" },
+      { src: "/summer events/image-03.jpg", alt: "Dinner setup", aspect: "aspect-[4/3]" },
+      { src: "/summer events/image-04.jpg", alt: "Event decor", aspect: "aspect-[16/9]" },
+    ],
+    column2: [
+      { src: "/summer events/image-02.jpg", alt: "Inside the venue", aspect: "aspect-[16/9]" },
+      { src: "/summer events/image-05.jpg", alt: "Guest dining", aspect: "aspect-[4/3]" },
+      { src: "/summer events/image-03.jpg", alt: "Tablescape", aspect: "aspect-[4/3]" },
+      { src: "/summer events/image-01.jpg", alt: "Bouquet workshop", aspect: "aspect-[4/3]" },
+      { src: "/summer events/image-04.jpg", alt: "Photo moment", aspect: "aspect-[16/9]" },
+      { src: "/summer events/image-05.jpg", alt: "Elegant tablescape", aspect: "aspect-[4/3]" },
+    ],
+    column3: [
+      { src: "/summer events/image-03.jpg", alt: "Overhead view", aspect: "aspect-[4/3]" },
+      { src: "/summer events/image-02.jpg", alt: "Friends laughing", aspect: "aspect-[16/9]" },
+      { src: "/summer events/image-01.jpg", alt: "Take-home gift", aspect: "aspect-[4/3]" },
+      { src: "/summer events/image-04.jpg", alt: "Event highlights", aspect: "aspect-[16/9]" },
     ]
   },
   footer: {

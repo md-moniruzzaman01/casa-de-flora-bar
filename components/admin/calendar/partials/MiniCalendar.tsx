@@ -4,12 +4,13 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SelectedDate } from "../config/types";
 import { getDaysInMonth, getFirstDayOfMonth, getPrevMonthDays, nextMonth, prevMonth } from "../config/utils";
-import { DAY_NAMES_SHORT, EVENT_DAYS, MONTHS } from "../config/constant";
+import { DAY_NAMES_SHORT, MONTHS } from "../config/constant";
 
 type Props = {
   currentYear: number;
   currentMonth: number;
   selectedDate: SelectedDate;
+  eventDays?: number[];
   onMonthChange: (year: number, month: number) => void;
   onDateSelect: (date: SelectedDate) => void;
 };
@@ -18,6 +19,7 @@ export default function MiniCalendar({
   currentYear,
   currentMonth,
   selectedDate,
+  eventDays = [],
   onMonthChange,
   onDateSelect,
 }: Props) {
@@ -90,7 +92,7 @@ export default function MiniCalendar({
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = i + 1;
           const selected = isSelected(day);
-          const hasEvent = EVENT_DAYS.includes(day) && !selected;
+          const hasEvent = eventDays.includes(day) && !selected;
 
           return (
             <div key={`day-${day}`} className="flex items-center justify-center">

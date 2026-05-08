@@ -11,7 +11,7 @@ export const menuItems = [
     category: 'Breakfast',
     items: [
       { src: '/menu/Pink waffles.jpg', name: 'Fruit Plate', price: '$10' },
-      { src: '/menu/Side of Eggs.jpg.jpg', name: 'Eggs (2) Any Style', price: '$5' },
+      { src: '/menu/Side of Eggs.jpg', name: 'Eggs (2) Any Style', price: '$5' },
       { src: '/menu/Turkey Bacon.jpg', name: 'Turkey Bacon', price: '$3' },
       { src: '/menu/Chicken & waffles.jpg', name: 'Chicken & Waffles', price: '$22.99' },
       { src: '/menu/Chicken & waffles 3.jpg', name: 'Turkey Sausage', price: '$3' },

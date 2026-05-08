@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import {
   Plus, ArrowUpRight, MoreHorizontal, Save,
   ChevronUp, ChevronDown, Search, SlidersHorizontal,
@@ -50,21 +51,29 @@ interface FilterState {
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
-const SESSION_CAPACITY: SessionCapacity[] = [
-  { label: "10:00 AM session", filled: 5,  total: 30 },
-  { label: "1:00 PM session",  filled: 6,  total: 30 },
-  { label: "4:00 PM session",  filled: 15, total: 30 },
-  { label: "6:00 PM session",  filled: 24, total: 30 },
-  { label: "8:00 PM session",  filled: 24, total: 30 },
-];
-
+// Aligned with backend table slots (10:00, 12:00, 14:00, 16:00, 18:00, 20:00).
 const SESSION_TIMES = [
   "10:00 AM – 11:30 AM",
-  "1:00 PM – 2:30 PM",
+  "12:00 PM – 1:30 PM",
+  "2:00 PM – 3:30 PM",
   "4:00 PM – 5:30 PM",
   "6:00 PM – 7:30 PM",
   "8:00 PM – 9:30 PM",
 ];
+
+const SESSION_TO_BACKEND: Record<string, string> = {
+  "10:00 AM – 11:30 AM": "10:00",
+  "12:00 PM – 1:30 PM":  "12:00",
+  "2:00 PM – 3:30 PM":   "14:00",
+  "4:00 PM – 5:30 PM":   "16:00",
+  "6:00 PM – 7:30 PM":   "18:00",
+  "8:00 PM – 9:30 PM":   "20:00",
+};
+
+const SESSION_CAPACITY_TOTAL = 30;
+
+const BOUQUET_TYPES = ["ROSE", "MIXED", "LILY", "SUNFLOWER", "TULIP", "ORCHID", "CUSTOM"] as const;
+type BouquetType = typeof BOUQUET_TYPES[number];
 
 const STATUSES: Status[] = ["Pending", "Confirmed", "In review", "Cancelled"];
 
@@ -207,29 +216,74 @@ function ActionMenu({ onEdit, onDelete, onStatusChange }: {
 }) {
   const [open,       setOpen]       = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [coords,     setCoords]     = useState<{ top: number; left: number } | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef    = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function h(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false); setStatusOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
+  const positionMenu = useCallback(() => {
+    const btn = triggerRef.current;
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const menuW = 176;
+    setCoords({ top: rect.bottom + 4, left: Math.max(8, rect.right - menuW) });
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+
+    positionMenu();
+
+    function handleOutside(e: MouseEvent) {
+      const t = e.target as Node;
+      if (triggerRef.current?.contains(t) || menuRef.current?.contains(t)) return;
+      setOpen(false);
+    }
+    function handleEsc(e: KeyboardEvent) { if (e.key === "Escape") setOpen(false); }
+    function handleScroll() { setOpen(false); }
+
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("keydown",   handleEsc);
+    window.addEventListener("scroll",      handleScroll, true);
+    window.addEventListener("resize",      handleScroll);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("keydown",   handleEsc);
+      window.removeEventListener("scroll",      handleScroll, true);
+      window.removeEventListener("resize",      handleScroll);
+    };
+  }, [open, positionMenu]);
+
+  function toggle(e: React.MouseEvent) {
+    e.stopPropagation();
+    setOpen(o => {
+      const next = !o;
+      if (!next) setStatusOpen(false);
+      return next;
+    });
+  }
+
   return (
-    <div className="relative" ref={ref}>
+    <>
       <button
-        onClick={() => setOpen(o => !o)}
-        className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 transition-colors"
+        ref={triggerRef}
+        onClick={toggle}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className={`p-1.5 rounded-md hover:bg-gray-100 text-gray-400 transition-colors ${
+          open ? "opacity-100 bg-gray-100" : "opacity-0 group-hover:opacity-100"
+        }`}
       >
         <MoreHorizontal size={16} />
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-1 w-44 bg-white border border-gray-100 rounded-xl shadow-lg z-40 py-1 overflow-hidden">
+      {open && coords && typeof window !== "undefined" && createPortal(
+        <div
+          ref={menuRef}
+          role="menu"
+          style={{ position: "fixed", top: coords.top, left: coords.left }}
+          className="w-44 bg-white border border-gray-100 rounded-xl shadow-lg z-[100] py-1"
+          onClick={e => e.stopPropagation()}
+        >
           <button
             onClick={() => { onEdit(); setOpen(false); }}
             className="w-full px-3.5 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
@@ -247,7 +301,7 @@ function ActionMenu({ onEdit, onDelete, onStatusChange }: {
               <ChevronRight size={12} className="text-gray-400" />
             </button>
             {statusOpen && (
-              <div className="absolute right-full top-0 mr-1 w-36 bg-white border border-gray-100 rounded-xl shadow-lg z-50 py-1 overflow-hidden">
+              <div className="absolute right-full top-0 mr-1 w-36 bg-white border border-gray-100 rounded-xl shadow-lg py-1 overflow-hidden">
                 {STATUSES.map(s => (
                   <button
                     key={s}
@@ -269,9 +323,10 @@ function ActionMenu({ onEdit, onDelete, onStatusChange }: {
           >
             Delete
           </button>
-        </div>
+        </div>,
+        document.body,
       )}
-    </div>
+    </>
   );
 }
 
@@ -558,6 +613,230 @@ function EditDrawer({ reservation, onClose, onSave }: {
   );
 }
 
+// ── AddDrawer ─────────────────────────────────────────────────────────────────
+
+interface AddForm {
+  guest:       string;
+  email:       string;
+  phone:       string;
+  dateValue:   string;
+  time:        string;
+  guests:      number;
+  bouquetType: BouquetType;
+  quantity:    number;
+  occasion:    string;
+  cardMessage: string;
+  notes:       string;
+}
+
+function todayIso(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function AddDrawer({ onClose, onCreated }: {
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [form, setForm] = useState<AddForm>({
+    guest:       "",
+    email:       "",
+    phone:       "",
+    dateValue:   todayIso(),
+    time:        SESSION_TIMES[0],
+    guests:      2,
+    bouquetType: "CUSTOM",
+    quantity:    1,
+    occasion:    "",
+    cardMessage: "",
+    notes:       "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [error,      setError]      = useState<string | null>(null);
+
+  function set<K extends keyof AddForm>(key: K, value: AddForm[K]) {
+    setForm(f => ({ ...f, [key]: value }));
+  }
+
+  async function handleSave() {
+    setError(null);
+    if (!form.guest.trim() || !form.email.trim() || !form.phone.trim()) {
+      setError("Name, email and phone are required.");
+      return;
+    }
+    const timeSlot = SESSION_TO_BACKEND[form.time];
+    if (!timeSlot) { setError("Please pick a valid session time."); return; }
+
+    setSubmitting(true);
+    try {
+      await api.post("/api/table-bookings", {
+        name:    form.guest.trim(),
+        email:   form.email.trim(),
+        phone:   form.phone.trim(),
+        guests:  form.guests,
+        date:    form.dateValue,
+        timeSlot,
+        ...(form.notes.trim() ? { specialRequests: form.notes.trim() } : {}),
+        bouquets: [
+          {
+            bouquetType: form.bouquetType,
+            quantity:    form.quantity,
+            ...(form.occasion.trim()    ? { occasion:    form.occasion.trim() }    : {}),
+            ...(form.cardMessage.trim() ? { cardMessage: form.cardMessage.trim() } : {}),
+          },
+        ],
+      });
+      onCreated();
+      onClose();
+    } catch (e) {
+      const err = e as { message?: string; errors?: { message: string }[] };
+      setError(err.errors?.[0]?.message ?? err.message ?? "Failed to create reservation");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const inp = "w-full border border-gray-200 px-3.5 py-2.5 rounded-xl text-sm text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-pink-300 focus:border-pink-300 transition-all";
+
+  return (
+    <div className="fixed inset-0 z-50 flex">
+      <div className="flex-1 bg-black/25 backdrop-blur-[2px]" onClick={onClose} />
+      <aside
+        className="w-[440px] bg-white h-full shadow-2xl flex flex-col overflow-hidden"
+        style={{ animation: "drawerIn 0.22s ease-out" }}
+      >
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">New Bouquet Session</h2>
+            <p className="text-[11px] text-gray-400 mt-0.5">Create a table booking with a bouquet add-on</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+          <section>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Guest Information</p>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-gray-500 block mb-1.5">Full Name</label>
+                <input value={form.guest} onChange={e => set("guest", e.target.value)} className={inp} placeholder="Guest name" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">Email</label>
+                  <input type="email" value={form.email} onChange={e => set("email", e.target.value)} className={inp} placeholder="email@example.com" />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">Phone</label>
+                  <input type="tel" value={form.phone} onChange={e => set("phone", e.target.value)} className={inp} placeholder="+1 555 0123" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div className="border-t border-gray-100" />
+
+          <section>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Session Details</p>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">Date</label>
+                  <input type="date" value={form.dateValue} min={todayIso()} onChange={e => set("dateValue", e.target.value)} className={inp} />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">No. of Guests</label>
+                  <select value={form.guests} onChange={e => set("guests", Number(e.target.value))} className={`${inp} cursor-pointer`}>
+                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(n => (
+                      <option key={n} value={n}>{n} {n === 1 ? "Guest" : "Guests"}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1.5">Session Time</label>
+                <select value={form.time} onChange={e => set("time", e.target.value)} className={`${inp} cursor-pointer`}>
+                  {SESSION_TIMES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <div className="border-t border-gray-100" />
+
+          <section>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Bouquet Add-on</p>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">Bouquet Type</label>
+                  <select value={form.bouquetType} onChange={e => set("bouquetType", e.target.value as BouquetType)} className={`${inp} cursor-pointer`}>
+                    {BOUQUET_TYPES.map(t => <option key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">Quantity</label>
+                  <input type="number" min={1} max={100} value={form.quantity} onChange={e => set("quantity", Math.max(1, Number(e.target.value) || 1))} className={inp} />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1.5">Occasion (optional)</label>
+                <input value={form.occasion} onChange={e => set("occasion", e.target.value)} className={inp} placeholder="Birthday, anniversary…" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1.5">Card Message (optional)</label>
+                <textarea value={form.cardMessage} onChange={e => set("cardMessage", e.target.value)} rows={2} className={`${inp} resize-none`} placeholder="A short note for the bouquet card" />
+              </div>
+            </div>
+          </section>
+
+          <div className="border-t border-gray-100" />
+
+          <section>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Internal Notes</p>
+            <textarea
+              value={form.notes}
+              onChange={e => set("notes", e.target.value)}
+              rows={3}
+              placeholder="Allergy notes, special arrangements, staff reminders…"
+              className={`${inp} resize-none`}
+            />
+          </section>
+
+          {error && (
+            <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+        </div>
+
+        <div className="px-6 py-4 border-t border-gray-100 flex gap-3 flex-shrink-0">
+          <button
+            onClick={onClose}
+            disabled={submitting}
+            className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={submitting}
+            className="flex-1 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 bg-black text-white hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+          >
+            {submitting ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+            {submitting ? "Saving…" : "Create Reservation"}
+          </button>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function MakeYourBouquet() {
@@ -573,6 +852,7 @@ export default function MakeYourBouquet() {
   const [filters,     setFilters]     = useState<FilterState>(EMPTY_FILTERS);
   const [filterCount, setFilterCount] = useState(0);
   const [editing,     setEditing]     = useState<Reservation | null>(null);
+  const [adding,      setAdding]      = useState(false);
 
   function resetPage() { setPage(1); }
 
@@ -703,6 +983,16 @@ export default function MakeYourBouquet() {
       });
     }
 
+    if (filters.dateRange !== "any") {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      let end = Infinity;
+      if (filters.dateRange === "today")      end = start + 24 * 60 * 60 * 1000;
+      else if (filters.dateRange === "this-week")  end = start + 7 * 24 * 60 * 60 * 1000;
+      else if (filters.dateRange === "this-month") end = new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime();
+      rows = rows.filter(r => r.dateTs >= start && r.dateTs < end);
+    }
+
     rows.sort((a, b) => {
       const av = sortKey === "date" ? a.dateTs : (a[sortKey as keyof Reservation] as string | number);
       const bv = sortKey === "date" ? b.dateTs : (b[sortKey as keyof Reservation] as string | number);
@@ -729,6 +1019,17 @@ export default function MakeYourBouquet() {
 
   const hasActiveFilters = !!search || filterCount > 0;
 
+  // Today's session capacity from live data (filled = guests booked into each slot today).
+  const sessionCapacity = useMemo<SessionCapacity[]>(() => {
+    const todayIso = new Date().toISOString().slice(0, 10);
+    return SESSION_TIMES.map((label) => {
+      const filled = data
+        .filter((r) => r.dateValue === todayIso && r.time === label && r.status !== "Cancelled")
+        .reduce((sum, r) => sum + r.guests, 0);
+      return { label, filled, total: SESSION_CAPACITY_TOTAL };
+    });
+  }, [data]);
+
   return (
     <>
       {editing && (
@@ -736,6 +1037,13 @@ export default function MakeYourBouquet() {
           reservation={editing}
           onClose={() => setEditing(null)}
           onSave={handleSave}
+        />
+      )}
+
+      {adding && (
+        <AddDrawer
+          onClose={() => setAdding(false)}
+          onCreated={fetchData}
         />
       )}
 
@@ -804,7 +1112,10 @@ export default function MakeYourBouquet() {
 
                   <FilterDropdown onApply={applyFilters} onReset={resetFilters} activeCount={filterCount} />
 
-                  <button className="flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                  <button
+                    onClick={() => setAdding(true)}
+                    className="flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
                     <Plus size={14} /> Add
                   </button>
                 </div>
@@ -869,13 +1180,11 @@ export default function MakeYourBouquet() {
                         <td className="px-5 py-3.5 text-gray-600 text-sm">{r.guests} Guests</td>
                         <td className="px-5 py-3.5"><StatusBadge status={r.status} /></td>
                         <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <ActionMenu
-                              onEdit={() => setEditing(r)}
-                              onDelete={() => handleDelete(r.id)}
-                              onStatusChange={s => handleStatusChange(r.id, s)}
-                            />
-                          </div>
+                          <ActionMenu
+                            onEdit={() => setEditing(r)}
+                            onDelete={() => handleDelete(r.id)}
+                            onStatusChange={s => handleStatusChange(r.id, s)}
+                          />
                         </td>
                       </tr>
                     ))}
@@ -951,7 +1260,7 @@ export default function MakeYourBouquet() {
             <aside className="w-72 flex-shrink-0 sticky top-6">
               <div className="bg-pink-50 rounded-2xl p-5">
                 <h3 className="text-base font-semibold text-gray-900 mb-2">Session capacity</h3>
-                {SESSION_CAPACITY.map(s => (
+                {sessionCapacity.map(s => (
                   <SessionCapacityCard key={s.label} session={s} />
                 ))}
               </div>

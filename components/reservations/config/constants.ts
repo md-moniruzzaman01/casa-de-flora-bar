@@ -35,14 +35,14 @@ export function getDateKey(year: number, month: number, day: number) {
 }
 
 export const badgeStyles: Record<SlotLevel, string> = {
-  many: "bg-green-50 text-green-800",
-  few:  "bg-amber-50 text-amber-800",
-  last: "bg-red-50 text-red-800",
+  many: "bg-primary-100 text-primary",
+  few:  "bg-amber-50 text-amber-700",
+  last: "bg-rose-50 text-rose-700",
 };
 export const badgeLabels: Record<SlotLevel, string> = {
-  many: "Available",
+  many: "Open",
   few:  "Filling up",
-  last: "Last seats",
+  last: "Last few",
 };
 
 export const QUICK_OPTIONS = [
