@@ -85,6 +85,110 @@ export const WEDDING_FLORALS_CONTENT = {
     "title": "Our Portfolio",
     "view_all_link": "/portfolio"
   },
+"wedding_gallery": {
+    "label": "Real Weddings",
+    "headline_part_1": "Stories",
+    "headline_part_2": "in bloom",
+    "subheadline":
+      "A glimpse into the love stories and celebrations we've had the honour of designing — every petal, every detail, made by hand.",
+    "collections": [
+      {
+        "id": "ashley-isaac",
+        "title": "Ashley & Isaac",
+        "subtitle": "Timeless · Garden Romance",
+        "folder": "/florals/gellery/Ashley & Isaac",
+        "images": [
+          "DSC00102+copy.webp",
+          "DSC00178+copy.webp",
+          "DSC00201+copy.webp",
+          "DSC00427.webp",
+          "DSC00430.webp",
+          "DSC00522.webp",
+          "DSC00526.webp",
+          "DSC00526+(1).webp",
+          "DSC00672-Edit.webp",
+          "DSC00723+copy.webp",
+          "DSC09803.webp"
+        ]
+      },
+      {
+        "id": "antinise-deryck",
+        "title": "Antinise & Deryck",
+        "subtitle": "Modern · Spring Affair",
+        "folder": "/florals/gellery/Antinise & Deryck",
+        "images": [
+          "049_20220320_AD.webp",
+          "129_20220320_AD.webp",
+          "131_20220320_AD.webp",
+          "235_20220320_AD.webp",
+          "307_20220320_AD.webp",
+          "312_20220320_AD.webp",
+          "315_20220320_AD.webp",
+          "323_20220320_AD.webp",
+          "324_20220320_AD.webp",
+          "337_20220320_AD.webp",
+          "492_20220320_AD.webp"
+        ]
+      },
+      {
+        "id": "jillian-cherrod",
+        "title": "Jillian & Cherrod",
+        "subtitle": "Classic · Summer Celebration",
+        "folder": "/florals/gellery/Jillian & Cherrod",
+        "images": [
+          "342_20210725_JC.webp",
+          "351_20210725_JC.webp",
+          "353_20210725_JC.webp",
+          "378_20210725_JC.webp",
+          "378_20210725_JC+(1).webp",
+          "383_20210725_JC.webp",
+          "418_20210725_JC.webp",
+          "420_20210725_JC.webp",
+          "422_20210725_JC.webp",
+          "424_20210725_JC.webp",
+          "509_20210725_JC.webp",
+          "523_20210725_JC.webp",
+          "525_20210725_JC.webp",
+          "611_20210725_JC.webp"
+        ]
+      },
+      {
+        "id": "art-from-scratch",
+        "title": "Behind the Scenes",
+        "subtitle": "Creating jaw-dropping art from scratch",
+        "folder": "/florals/gellery/Creating Jaw Dropping Art from Scratch",
+        "images": [
+          "Maritza+11-10-21+(12).webp",
+          "Maritza+11-10-21+(38).webp",
+          "Maritza+11-10-21+(43).webp",
+          "Maritza+11-10-21+(45).webp",
+          "0012CB59-C5C5-48C0-B0AE-D1CCC88D2E2D.webp",
+          "1C785A2E-056A-4D2F-A7B0-E0CC0925C028_1_201_a.webp",
+          "1F6300B1-A147-456F-9637-A8EB725374BD.webp",
+          "2560E4C0-7B49-43B3-8DCE-971BA8D9E037.webp",
+          "25A1CC44-5B21-4144-99E8-B006BE0AB06F.webp",
+          "2E1E18CF-51CC-489F-91E1-0EADD28C6BEF.webp",
+          "3892A262-5623-4371-A91D-DBAAE1F17D70.webp",
+          "3B9E9EBB-E16E-4AB3-BB13-20E26D384BCA.webp",
+          "4244F8C9-77C6-4C48-AD78-DB9E160249E5.webp",
+          "53C133E6-D391-429A-9588-D7AA22E6F6D4.webp",
+          "6DE14BAF-9A54-425C-AE8C-CA7D22BFF0FA.webp",
+          "729F0956-2500-49C1-9CA0-A93A38A68EE5.webp",
+          "73E7EFB0-8BAE-4401-93C0-E898220142DB.webp",
+          "Capturewewe.webp",
+          "CFC2A484-A29F-42B4-9A08-5BA27715EF69.webp",
+          "DD2BE584-09D2-4240-A201-7BE0AA20DD37.webp",
+          "E4D85413-93D4-4ECC-9FF1-00C9D5F9A000.webp",
+          "fhfhsthhrhsht.webp",
+          "IMG_1569.webp",
+          "IMG_3772.webp",
+          "IMG_3774.webp",
+          "IMG_6528_preview.webp",
+          "IMG_6609.webp"
+        ]
+      }
+    ]
+  },
 "testimonials": [
   {
     "photo": "/florals/image-03.jpg",

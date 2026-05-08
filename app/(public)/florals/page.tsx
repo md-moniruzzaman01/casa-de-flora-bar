@@ -4,6 +4,7 @@ import ConsultationSection from "@/components/florals/partials/ConsultationSecti
 import HeroSection from "@/components/florals/partials/Hero";
 import IntroFairytaleSection from "@/components/florals/partials/IntroFairytaleSection";
 import TestimonialsSection from "@/components/florals/partials/TestimonialsSection";
+import WeddingGallerySection from "@/components/florals/partials/WeddingGallerySection";
 import WeddingVideoSection from "@/components/florals/partials/WeddingVideoSection";
 import type { Metadata } from "next";
 
@@ -33,6 +34,7 @@ export default function FloralsPage() {
            <IntroFairytaleSection/>
            <WeddingVideoSection/>
            <ArtFromScratchSection/>
+           <WeddingGallerySection/>
            <TestimonialsSection/>
            <ConsultationSection/>
         </div>
