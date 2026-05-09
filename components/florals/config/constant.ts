@@ -95,7 +95,7 @@ export const WEDDING_FLORALS_CONTENT = {
       {
         "id": "ashley-isaac",
         "title": "Ashley & Isaac",
-        "subtitle": "Timeless · Garden Romance",
+        "subtitle": "The Weilyn · Williamsburg, Brooklyn NY",
         "folder": "/florals/gellery/Ashley & Isaac",
         "images": [
           "DSC00102+copy.webp",

@@ -1,85 +1,153 @@
-'use client'; // Required for accessing DOM via ref
+'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Pause, Play, Volume2, VolumeX } from 'lucide-react';
 
-// To keep it simple, I've used the same serif font as your design 
-// for the main headline. Ensure you have a similar serif font 
-// available (like Playfair Display or Cormorant Garamond).
-const WeddingVideoSection = () => {
+const VIDEO_SRC = '/florals/Fairytale Nigerian & Belize Wedding in Brooklyn.mp4';
+
+const WeddingVideoSection: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
-    // Wait for the video to be ready and loaded to a point 
-    // where it can jump to the 30-second mark.
-    const handleLoadedMetadata = () => {
-      if (videoRef.current) {
-        // Set start time to 30 seconds
-        videoRef.current.currentTime = 30;
-        // Attempt to auto-play after setting the time.
-        // Modern browsers usually allow it when 'muted' is set.
-        videoRef.current.play().catch(error => {
-          console.error("Auto-play was prevented:", error);
-        });
-      }
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoaded = () => {
+      video.currentTime = 30;
+      video.play().catch(() => {
+        /* autoplay can be blocked — user can still press play */
+      });
     };
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    const onVolumeChange = () => setIsMuted(video.muted);
 
-    const videoNode = videoRef.current;
-    if (videoNode) {
-      videoNode.addEventListener('loadedmetadata', handleLoadedMetadata);
-    }
+    video.addEventListener('loadedmetadata', handleLoaded);
+    video.addEventListener('play', onPlay);
+    video.addEventListener('pause', onPause);
+    video.addEventListener('volumechange', onVolumeChange);
 
-    // Cleanup: remove the event listener
     return () => {
-      if (videoNode) {
-        videoNode.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      }
+      video.removeEventListener('loadedmetadata', handleLoaded);
+      video.removeEventListener('play', onPlay);
+      video.removeEventListener('pause', onPause);
+      video.removeEventListener('volumechange', onVolumeChange);
     };
-  }, []); // Empty dependency array means this runs only once on mount
+  }, []);
+
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) video.play().catch(() => {});
+    else video.pause();
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+  };
 
   return (
-    <section className="relative w-full h-[80vh] overflow-hidden  mt-24 mb-16 px-6 lg:px-12 xl:px-24">
-      {/* Container to handle the overall layout - similar to your figma cards */}
-      <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl shadow-[#E18F99]/10">
-        
-        {/* Background Video */}
-        <video
-          ref={videoRef}
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 h-full w-full object-cover z-0"
-        >
-          <source 
-            src="/florals/Fairytale Nigerian & Belize Wedding in Brooklyn.mp4" 
-            type="video/mp4" 
-          />
-          Your browser does not support the video tag.
-        </video>
+    <section className="relative bg-white overflow-hidden py-20 md:py-28 lg:py-32">
+      {/* Decorative pink blooms — match the gallery section's atmosphere */}
+      <div className="pointer-events-none absolute -top-40 -left-40 w-[460px] h-[460px] rounded-full bg-primary-100 blur-3xl opacity-50" />
+      <div className="pointer-events-none absolute -bottom-32 -right-40 w-[520px] h-[520px] rounded-full bg-primary-200 blur-3xl opacity-40" />
 
-        {/* --- Content Overlay (Redesign for Beauty) --- */}
-        {/* We'll use a softer, light overlay and central text like your cards */}
-        
-        {/* Light Overlay to help text legibility */}
-        <div className="absolute inset-0 bg-white/20 backdrop-blur-sm z-10" />
+      <div className="relative max-w-[1440px] mx-auto px-4 md:px-8 lg:px-[72px]">
+        {/* Section heading — editorial style, mirrors WeddingGallerySection */}
 
-        {/* Content Container (z-index ensures it's above everything) */}
-        <div className="relative z-20 flex h-full items-center justify-center text-center px-6">
-          <div className="max-w-4xl space-y-8 bg-white/80 p-12 md:p-16 rounded-3xl shadow-lg border border-white/50 backdrop-blur-md">
-            
-            {/* Themed Accent Line (pink like your titles) */}
-            <div className="w-20 h-0.5  mx-auto" />
 
-            <h2 className="font-serif text-4xl md:text-5xl font-normal leading-tight text-[#2D2D2D] tracking-tight">
-              A Moment in Time, Forever Captured
-            </h2>
+        {/* Cinematic video card with corner-frame accents */}
+        <div className="relative  mx-auto">
+          {/* Corner brackets — pulls in the design system's corner-frame motif */}
+          <span className="hidden md:block absolute -top-3 -left-3 h-10 w-10 border-t border-l border-primary/60" />
+          <span className="hidden md:block absolute -top-3 -right-3 h-10 w-10 border-t border-r border-primary/60" />
+          <span className="hidden md:block absolute -bottom-3 -left-3 h-10 w-10 border-b border-l border-primary/60" />
+          <span className="hidden md:block absolute -bottom-3 -right-3 h-10 w-10 border-b border-r border-primary/60" />
 
-            <p className="text-xl font-light text-[#555] max-w-2xl mx-auto italic">
-              From Brooklyn with Love: A glance into the fairytale celebration of two cultures uniting.
-            </p>
+          <div className="relative aspect-[16/9] overflow-hidden rounded-[18px] bg-black shadow-[0_30px_80px_rgba(26,16,8,0.18)]">
+            <video
+              ref={videoRef}
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            >
+              <source src={VIDEO_SRC} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
 
-            <button className="mt-10 bg-[#E18F99] text-white px-10 py-3.5 text-sm uppercase tracking-widest rounded-full transition-all hover:bg-[#D07E88] shadow-md hover:shadow-lg hover:-translate-y-0.5">
-              Watch The Highlights
-            </button>
+            {/* Cinematic gradient veil for legibility */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/20" />
+
+            {/* Top-left chapter label */}
+            <div className="absolute top-5 left-5 md:top-7 md:left-7 flex items-center gap-3 z-10">
+              <span className="block h-px w-8 bg-white/70" />
+              <span className="font-sans text-[10px] md:text-[11px] tracking-[0.4em] uppercase text-white/85">
+                Chapter · Brooklyn
+              </span>
+            </div>
+
+            {/* Bottom-left caption */}
+            <div className="absolute bottom-5 left-5 md:bottom-8 md:left-8 max-w-[70%] z-10">
+              <p className="font-serif italic text-white/95 text-[18px] md:text-[24px] leading-snug drop-shadow-md">
+                Nigerian &amp; Belizean love, bloomed through florals.
+              </p>
+            </div>
+
+            {/* Bottom-right controls */}
+            <div className="absolute bottom-5 right-5 md:bottom-8 md:right-8 flex items-center gap-2.5 z-10">
+              <button
+                type="button"
+                onClick={togglePlay}
+                aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                className="inline-flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md hover:bg-white/30 transition-all cursor-pointer"
+              >
+                {isPlaying ? (
+                  <Pause className="h-4 w-4" strokeWidth={1.6} />
+                ) : (
+                  <Play className="h-4 w-4 ml-0.5" strokeWidth={1.6} />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={toggleMute}
+                aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                className="inline-flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white backdrop-blur-md hover:bg-white/30 transition-all cursor-pointer"
+              >
+                {isMuted ? (
+                  <VolumeX className="h-4 w-4" strokeWidth={1.6} />
+                ) : (
+                  <Volume2 className="h-4 w-4" strokeWidth={1.6} />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Credits / CTA row beneath the card */}
+          <div className="mt-10 md:mt-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between px-1">
+            <div className="flex items-start gap-4">
+              <span className="block h-px w-10 mt-3 bg-primary/40 flex-shrink-0" />
+              <div>
+                <p className="font-sans text-[10px] tracking-[0.4em] uppercase text-[#a08778]">
+                  Featured Wedding
+                </p>
+                <p className="mt-2 font-serif italic text-[20px] md:text-[24px] text-[#1a1008]">
+                  Fairytale in Brooklyn
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="/florals#gallery"
+              className="group inline-flex items-center gap-3 self-start md:self-end font-sans text-[11px] tracking-[0.32em] uppercase text-[#1a1008] hover:text-primary transition-colors"
+            >
+              <span>Watch the highlights</span>
+              <span className="block h-px w-10 bg-current transition-all group-hover:w-16" />
+            </a>
           </div>
         </div>
       </div>

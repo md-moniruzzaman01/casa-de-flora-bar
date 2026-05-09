@@ -1,3 +1,7 @@
+import HeroSection from "@/components/vanue/partials/Hero";
+import IntroSection from "@/components/vanue/partials/IntroSection";
+import BookingSection from "@/components/vanue/partials/BookingSection";
+import PackagesSection from "@/components/vanue/partials/PackagesSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,9 +24,12 @@ export const metadata: Metadata = {
 };
 
 export default function VanuePage() {
-    return (
-        <div className="min-h-screen flex items-center justify-center">
-            <p className="text-6xl">Vanue page</p>
-        </div>
-    );
+  return (
+    <div>
+      <HeroSection />
+      <IntroSection />
+      <PackagesSection />
+      <BookingSection />
+    </div>
+  );
 }
