@@ -18,7 +18,9 @@
       "PowerShell(Get-ChildItem -Path \"D:\\\\client project\\\\casa de flora bar\\\\frontend\\\\components\" -Depth 0 | Where-Object { $_.PSIsContainer } | Select-Object Name)",
       "Bash(Get-ChildItem *)",
       "Bash(node *)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(npx --no-install next lint --dir components/venue --dir \"app/\\(public\\)/venue\" --max-warnings 999)",
+      "Bash(npx --no-install eslint \"components/venue/**/*.{ts,tsx}\" \"app/\\(public\\)/venue/**/*.{ts,tsx}\")"
     ]
   }
 }

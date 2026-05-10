@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     "corporate event venue",
     "pop-up space Bloomfield",
   ],
-  alternates: { canonical: "/vanue" },
+  alternates: { canonical: "/venue" },
   openGraph: {
     title: "Rent the Casa de Flora Venue",
     description: "Private event space rental in Bloomfield, NJ.",
-    url: "/vanue",
+    url: "/venue",
   },
 };
 
@@ -29,8 +29,8 @@ export default function VanuePage() {
   return (
     <div>
       <HeroSection />
-      <IntroSection />
       <PackagesSection />
+      <IntroSection />
       <GrandBloomSection/>
       <UndergroundSection/>
       <BookingSection />

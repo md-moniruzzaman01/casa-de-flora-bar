@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -69,70 +68,53 @@ const BookingSection: React.FC = () => {
         ease: "power3.out",
         scrollTrigger: { trigger: ".bk-form", start: "top 78%", once: true },
       });
-
-      gsap.to(".bk-bg-img", {
-        yPercent: 14,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 0.8,
-        },
-      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   const inputBase =
-    "w-full bg-transparent border-0 border-b border-white/15  font-serif text-[16px] py-3 outline-none focus:border-primary transition-colors duration-300";
+    "w-full border border-pink-100 bg-pink-50/20 p-4 outline-none text-black placeholder:text-gray-400 font-serif text-[15px] focus:border-primary transition-colors duration-300";
+  const selectBase =
+    "w-full border border-pink-100 bg-pink-50/20 p-4 outline-none text-black font-serif text-[15px] focus:border-primary transition-colors duration-300 appearance-none cursor-pointer pr-10";
   const textareaBase =
-    "w-full bg-white/[0.025] border border-white/12  font-serif text-[15px] leading-[1.7] p-4 outline-none focus:border-primary/70 focus:bg-white/[0.04] transition-colors resize-none";
-  const labelBase =
-    "block font-sans text-[9px] tracking-[0.4em] uppercase  mb-2";
-  const errorBase = "mt-2 font-sans text-[10px] text-primary/85";
+    "w-full border border-pink-100 bg-pink-50/20 p-4 outline-none text-black placeholder:text-gray-400 font-serif text-[15px] leading-[1.7] focus:border-primary transition-colors resize-none";
+  const labelBase = "block text-sm text-gray-700 mb-2";
+  const errorBase = "mt-1.5 text-sm text-primary";
 
   return (
     <section
       ref={sectionRef}
-      className="relative   py-20 md:py-32 overflow-hidden"
+      className="relative bg-white py-16 md:py-24 lg:py-32 overflow-hidden"
     >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
 
-
-
-      <div className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* LEFT — Editorial */}
-          <div className="lg:col-span-5">
-            <div className="bk-fade flex items-center gap-3 mb-7">
-              <span className="block w-7 h-px bg-primary" />
-              <span className="font-sans text-[10px] tracking-[0.46em] uppercase text-primary">
-                {label}
+        {/* Section header — centred, matching home page style */}
+        <div className="bk-fade text-center mb-12 md:mb-16">
+          <h2 className="font-serif text-[clamp(28px,6vw,56px)] tracking-widest uppercase mb-3">
+            <span className="block overflow-hidden">
+              <span className="bk-rise block">{headline_line_1}</span>
+            </span>
+            <span className="block overflow-hidden">
+              <span className="bk-rise block italic text-primary normal-case tracking-normal">
+                {headline_line_2}.
               </span>
-              <span className="font-sans text-[10px] tracking-[0.4em] uppercase ">
-                · Ch. 04 / Fin
-              </span>
-            </div>
+            </span>
+          </h2>
+          <p className="text-lg md:text-xl tracking-wide uppercase italic text-gray-600 font-serif">
+            Host your next memorable event at Casa De Flora Bar
+          </p>
+        </div>
 
-            <h2 className="font-serif text-[clamp(40px,5vw,72px)] leading-[1.02] tracking-[-0.01em] mb-8">
-              <span className="block overflow-hidden">
-                <span className="bk-rise block">{headline_line_1}</span>
-              </span>
-              <span className="block overflow-hidden">
-                <span className="bk-rise block italic text-primary">
-                  {headline_line_2}.
-                </span>
-              </span>
-            </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
 
-            <p className="bk-fade font-serif italic text-[17px] leading-[1.8]  mb-12 max-w-[440px]">
+          {/* LEFT — Info + contact */}
+          <div className="lg:col-span-4 space-y-8">
+            <p className="bk-fade text-lg leading-relaxed text-gray-700 font-serif">
               {description}
             </p>
 
-            <div className="bk-fade w-20 h-px bg-primary/55 mb-10" />
-
-            <ul className="bk-fade flex flex-col gap-7 mb-12">
+            <ul className="bk-fade flex flex-col gap-5">
               {[
                 {
                   Icon: Phone,
@@ -142,7 +124,7 @@ const BookingSection: React.FC = () => {
                 },
                 {
                   Icon: Mail,
-                  small: "By Letter",
+                  small: "By Email",
                   value: contact.email,
                   href: `mailto:${contact.email}`,
                 },
@@ -153,174 +135,144 @@ const BookingSection: React.FC = () => {
                   href: null as string | null,
                 },
               ].map(({ Icon, small, value, href }) => (
-                <li key={small} className="group flex items-start gap-5">
-                  <span className="mt-1 flex items-center justify-center w-9 h-9 rounded-full border border-white/15 group-hover:border-primary group-hover:bg-primary/10 transition-colors shrink-0">
+                <li key={small} className="group flex items-start gap-4">
+                  <span className="mt-0.5 flex items-center justify-center w-9 h-9 rounded-full border border-pink-100 bg-pink-50/30 group-hover:border-primary group-hover:bg-primary/10 transition-colors shrink-0">
                     <Icon className="w-3.5 h-3.5 text-primary" strokeWidth={1.6} />
                   </span>
                   <div>
-                    <p className="font-sans text-[9px] tracking-[0.4em] uppercase  mb-1.5">
-                      {small}
-                    </p>
+                    <p className="text-sm text-gray-500 mb-0.5">{small}</p>
                     {href ? (
-                      <a
-                        href={href}
-                        className="font-serif text-[18px]  hover:text-primary transition-colors"
-                      >
+                      <a href={href} className="font-serif text-base text-black hover:text-primary transition-colors break-all">
                         {value}
                       </a>
                     ) : (
-                      <p className="font-serif text-[18px] ">{value}</p>
+                      <p className="font-serif text-base text-black">{value}</p>
                     )}
                   </div>
                 </li>
               ))}
             </ul>
 
-            <p className="bk-fade font-sans text-[10px] tracking-[0.32em] uppercase ">
-              Tours by appointment · Tuesday – Saturday
-            </p>
+            <button
+              type="button"
+              className="bk-fade bg-black text-white px-10 py-4 uppercase tracking-tighter hover:bg-gray-900 transition-colors font-serif"
+            >
+              Reserve your Seat
+            </button>
           </div>
 
           {/* RIGHT — Form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="bk-form lg:col-span-7 lg:pl-4"
+            className="bk-form lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             {isSubmitSuccessful ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center border border-white/10 px-6">
-                <span className="block w-12 h-px bg-primary mx-auto mb-8" />
-                <p className="font-display italic text-[34px]  mb-4">
-                  Merci.
-                </p>
-                <p className="font-sans text-[13px]  max-w-[320px] leading-[1.85]">
-                  Your enquiry has reached us. We&apos;ll respond personally within
-                  twenty-four hours.
+              <div className="md:col-span-2 flex flex-col items-center justify-center py-20 text-center border border-pink-100 bg-pink-50/20 px-6">
+                <span className="block w-12 h-px bg-primary mx-auto mb-7" />
+                <p className="font-serif italic text-[32px] text-black mb-3">Merci.</p>
+                <p className="text-sm text-gray-600 max-w-xs leading-relaxed">
+                  Your enquiry has reached us. We&apos;ll respond personally within twenty-four hours.
                 </p>
               </div>
             ) : (
               <>
-                <div className="bk-fade flex items-center justify-between mb-12 pb-5 border-b border-white/10">
-                  <span className="font-sans text-[10px] tracking-[0.4em] uppercase ">
-                    Enquiry Form
-                  </span>
-                  <span className="font-display italic text-[15px] ">
-                    Reservation No. 04
-                  </span>
+                <div className="bk-form-row md:col-span-2 space-y-2">
+                  <label className={labelBase}>Name (required)</label>
+                  <input
+                    {...register("name", { required: "Name is required" })}
+                    placeholder="Your full name"
+                    className={inputBase}
+                  />
+                  {errors.name && <p className={errorBase}>{errors.name.message}</p>}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-9">
-                  <div className="bk-form-row">
-                    <label className={labelBase}>Full Name</label>
-                    <input
-                      {...register("name", { required: "Name is required" })}
-                      placeholder="Jane Smith"
-                      className={inputBase}
-                    />
-                    {errors.name && <p className={errorBase}>{errors.name.message}</p>}
-                  </div>
-
-                  <div className="bk-form-row">
-                    <label className={labelBase}>Email Address</label>
-                    <input
-                      {...register("email", {
-                        required: "Email is required",
-                        pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email" },
-                      })}
-                      type="email"
-                      placeholder="jane@example.com"
-                      className={inputBase}
-                    />
-                    {errors.email && <p className={errorBase}>{errors.email.message}</p>}
-                  </div>
-
-                  <div className="bk-form-row">
-                    <label className={labelBase}>Phone Number</label>
-                    <input
-                      {...register("phone")}
-                      type="tel"
-                      placeholder="+1 (000) 000-0000"
-                      className={inputBase}
-                    />
-                  </div>
-
-                  <div className="bk-form-row relative">
-                    <label className={labelBase}>Event Type</label>
-                    <select
-                      {...register("event_type", {
-                        required: "Please select an event type",
-                      })}
-                      className={`${inputBase} appearance-none cursor-pointer pr-8`}
-                      defaultValue=""
-                    >
-                      <option value="" disabled>
-                        Select type…
-                      </option>
-                      {event_types.map((t) => (
-                        <option key={t} value={t} className="bg-[#0e0805] ">
-                          {t}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      className="pointer-events-none absolute right-2 bottom-3.5 w-4 h-4 "
-                      strokeWidth={1.6}
-                    />
-                    {errors.event_type && (
-                      <p className={errorBase}>{errors.event_type.message}</p>
-                    )}
-                  </div>
-
-                  <div className="bk-form-row">
-                    <label className={labelBase}>Event Date</label>
-                    <input
-                      {...register("event_date")}
-                      type="date"
-                      className={`${inputBase} [color-scheme:dark]`}
-                    />
-                  </div>
-
-                  <div className="bk-form-row">
-                    <label className={labelBase}>Expected Guests</label>
-                    <input
-                      {...register("guests")}
-                      type="number"
-                      placeholder="80"
-                      min={1}
-                      max={150}
-                      className={inputBase}
-                    />
-                  </div>
-
-                  <div className="bk-form-row md:col-span-2">
-                    <label className={labelBase}>Tell us about your event</label>
-                    <textarea
-                      {...register("message")}
-                      rows={3}
-                      placeholder="Share your vision, theme, or any questions…"
-                      className={textareaBase}
-                    />
-                  </div>
+                <div className="bk-form-row space-y-2">
+                  <label className={labelBase}>Email (required)</label>
+                  <input
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email" },
+                    })}
+                    type="email"
+                    placeholder="jane@example.com"
+                    className={inputBase}
+                  />
+                  {errors.email && <p className={errorBase}>{errors.email.message}</p>}
                 </div>
 
-                <div className="bk-form-row mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-                  <p className="font-sans text-[10px] tracking-[0.32em] uppercase ">
-                    No spam · 24-hour reply
-                  </p>
+                <div className="bk-form-row space-y-2">
+                  <label className={labelBase}>Phone</label>
+                  <input
+                    {...register("phone")}
+                    type="tel"
+                    placeholder="+1 (000) 000-0000"
+                    className={inputBase}
+                  />
+                </div>
+
+                <div className="bk-form-row relative space-y-2">
+                  <label className={labelBase}>Event Type (required)</label>
+                  <select
+                    {...register("event_type", { required: "Please select an event type" })}
+                    className={selectBase}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Select type…</option>
+                    {event_types.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="pointer-events-none absolute right-4 bottom-4 w-4 h-4 text-gray-400"
+                    strokeWidth={1.6}
+                  />
+                  {errors.event_type && <p className={errorBase}>{errors.event_type.message}</p>}
+                </div>
+
+                <div className="bk-form-row space-y-2">
+                  <label className={labelBase}>Event Date</label>
+                  <input
+                    {...register("event_date")}
+                    type="date"
+                    className={inputBase}
+                  />
+                </div>
+
+                <div className="bk-form-row space-y-2">
+                  <label className={labelBase}>Expected Guests</label>
+                  <input
+                    {...register("guests")}
+                    type="number"
+                    placeholder="e.g. 80"
+                    min={1}
+                    max={150}
+                    className={inputBase}
+                  />
+                </div>
+
+                <div className="bk-form-row md:col-span-2 space-y-2">
+                  <label className={labelBase}>Message (required)</label>
+                  <textarea
+                    {...register("message")}
+                    rows={5}
+                    placeholder="Tell us what kind of event you're planning…"
+                    className={textareaBase}
+                  />
+                </div>
+
+                <div className="bk-form-row md:col-span-2 flex justify-center mt-2">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative inline-flex items-center gap-4 bg-primary  px-10 py-4 font-sans text-[11px] tracking-[0.28em] uppercase overflow-hidden disabled:opacity-60 cursor-pointer"
+                    className="bg-black text-white w-full md:w-1/2 py-4 uppercase tracking-widest hover:scale-105 transition-transform font-serif disabled:opacity-60 cursor-pointer"
                   >
-                    <span className="relative z-10">
-                      {isSubmitting ? "Sending…" : "Send Enquiry"}
-                    </span>
-                    <span className="relative z-10 block w-5 h-px  transition-all duration-300 group-hover:w-9" />
-                    <span className="absolute inset-0 bg-white scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100" />
+                    {isSubmitting ? "Sending…" : "Submit"}
                   </button>
                 </div>
               </>
             )}
           </form>
+
         </div>
       </div>
     </section>
