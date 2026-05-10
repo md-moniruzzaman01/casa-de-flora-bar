@@ -83,15 +83,14 @@ export const VANUE_CONTENT = {
     },
   },
   hero_section: {
-    tag: "Private Venue Rental",
-    headline_part_1: "Where Every Event",
-    headline_part_2: "Becomes",
-    headline_part_3: "Unforgettable",
+    tag: "Venue Rental · Bloomfield, NJ",
+    headline_part_1: "Host Your Next",
+    headline_part_2: "Unforgettable",
+    headline_part_3: "Event With Us",
     sub_headline:
-      "A floral-inspired private venue available for weddings, corporate gatherings, pop-ups, and intimate celebrations — fully customisable to your event.",
+      "Grow Bold. Rise Together. Bloom on Purpose.",
     buttons: [
-      { label: "Book Your Event", link: "/contact" },
-      { label: "View the Space", link: "#gallery" },
+      { label: "Book Your Event", link: "/venue#query" },
     ],
     stats: {
       capacity: "150",

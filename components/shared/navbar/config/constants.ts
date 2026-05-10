@@ -10,7 +10,7 @@ export const NAVBAR_CONFIG: NavbarConfig = {
     { label: "Home", href: "/" },
 
     { label: "Wedding Florals", href: "/florals" },
-    { label: "Venue Rental", href: "/vanue" },
+    { label: "Venue Rental", href: "/venue" },
     { label: "Catering", href: "/catering" },
     { label: "Menu", href: "/menu" },
     { label: "Summer Events", href: "/summer-events" },

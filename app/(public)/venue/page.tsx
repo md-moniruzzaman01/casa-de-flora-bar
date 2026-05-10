@@ -1,8 +1,10 @@
-import HeroSection from "@/components/vanue/partials/Hero";
-import IntroSection from "@/components/vanue/partials/IntroSection";
-import BookingSection from "@/components/vanue/partials/BookingSection";
-import PackagesSection from "@/components/vanue/partials/PackagesSection";
+import HeroSection from "@/components/venue/partials/Hero";
+import IntroSection from "@/components/venue/partials/IntroSection";
+import BookingSection from "@/components/venue/partials/BookingSection";
+import PackagesSection from "@/components/venue/partials/PackagesSection";
 import type { Metadata } from "next";
+import GrandBloomSection from "@/components/venue/partials/GrandBloomSection";
+import UndergroundSection from "@/components/venue/partials/UndergroundSection";
 
 export const metadata: Metadata = {
   title: "Venue Rental — Private Event Space in Bloomfield, NJ",
@@ -29,6 +31,8 @@ export default function VanuePage() {
       <HeroSection />
       <IntroSection />
       <PackagesSection />
+      <GrandBloomSection/>
+      <UndergroundSection/>
       <BookingSection />
     </div>
   );
