@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { Mail, Lock, ShieldCheck, ArrowLeft, RefreshCw } from "lucide-react";
+import { Mail, Lock, ShieldCheck, ArrowLeft, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { requestOtp, verifyOtp, useAuth } from "@/lib/auth";
 
 type Step = "credentials" | "otp";
+
+const SAVED_EMAIL_KEY    = "adminSavedEmail";
+const SAVED_PASSWORD_KEY = "adminSavedPassword";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -14,13 +17,23 @@ export default function AdminLoginPage() {
   const next = params.get("next") || "/admin/dashboard";
   const { isAuthenticated } = useAuth();
 
-  const [step,     setStep]     = useState<Step>("credentials");
-  const [email,    setEmail]    = useState("");
-  const [password, setPassword] = useState("");
-  const [otp,      setOtp]      = useState("");
-  const [busy,     setBusy]     = useState(false);
-  const [error,    setError]    = useState<string | null>(null);
-  const [info,     setInfo]     = useState<string | null>(null);
+  const [step,         setStep]         = useState<Step>("credentials");
+  const [email,        setEmail]        = useState("");
+  const [password,     setPassword]     = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe,   setRememberMe]   = useState(false);
+  const [otp,          setOtp]          = useState("");
+  const [busy,         setBusy]         = useState(false);
+  const [error,        setError]        = useState<string | null>(null);
+  const [info,         setInfo]         = useState<string | null>(null);
+
+  // Pre-fill saved credentials on mount.
+  useEffect(() => {
+    const savedEmail    = localStorage.getItem(SAVED_EMAIL_KEY);
+    const savedPassword = localStorage.getItem(SAVED_PASSWORD_KEY);
+    if (savedEmail)    { setEmail(savedEmail);       setRememberMe(true); }
+    if (savedPassword) { setPassword(savedPassword); }
+  }, []);
 
   // If the user is already signed in, bounce straight to the destination.
   useEffect(() => {
@@ -34,6 +47,13 @@ export default function AdminLoginPage() {
     setInfo(null);
     try {
       const res = await requestOtp(email.trim().toLowerCase(), password);
+      if (rememberMe) {
+        localStorage.setItem(SAVED_EMAIL_KEY,    email.trim().toLowerCase());
+        localStorage.setItem(SAVED_PASSWORD_KEY, password);
+      } else {
+        localStorage.removeItem(SAVED_EMAIL_KEY);
+        localStorage.removeItem(SAVED_PASSWORD_KEY);
+      }
       setInfo(res.message ?? "OTP sent to your email.");
       setStep("otp");
     } catch (e) {
@@ -123,15 +143,35 @@ export default function AdminLoginPage() {
 
               <Field label="Password" icon={<Lock size={15} />}>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-all"
+                  className="w-full pl-9 pr-10 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-all"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
               </Field>
+
+              {/* Remember me */}
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 accent-pink-400 cursor-pointer"
+                />
+                <span className="text-xs text-gray-500">Remember me on this device</span>
+              </label>
 
               <button
                 type="submit"

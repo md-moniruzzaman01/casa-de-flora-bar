@@ -2,7 +2,7 @@
 // survive a refresh, with a tiny event bus so React components stay in sync.
 
 import { useEffect, useState } from 'react';
-import { api, setAdminToken } from './api';
+import { api, setAdminToken, setRefreshToken } from './api';
 
 const USER_KEY  = 'adminUser';
 const EVENT     = 'casa-flora:auth-changed';
@@ -41,6 +41,7 @@ export const getCurrentUser = (): AdminUser | null => readUser();
 
 export const signOut = () => {
   setAdminToken(null);
+  setRefreshToken(null);
   writeUser(null);
   emit();
 };
@@ -54,11 +55,12 @@ export const verifyOtp = async (
   email: string,
   otp: string,
 ): Promise<AdminUser> => {
-  const res = await api.post<{ token: string; user: AdminUser }>(
+  const res = await api.post<{ accessToken: string; refreshToken?: string; user: AdminUser }>(
     '/api/users/verify-otp',
     { email, otp },
   );
-  setAdminToken(res.token);
+  setAdminToken(res.accessToken);
+  if (res.refreshToken) setRefreshToken(res.refreshToken);
   writeUser(res.user);
   emit();
   return res.user;

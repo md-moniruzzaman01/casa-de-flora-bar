@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { Slot, SelectedDate } from "../config/types";
+import React, { useState, useMemo, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
+import { Slot, SlotLevel, SelectedDate } from "../config/types";
 import TimeSlotCard from "./TimeSlotCard";
 import {
-  buildAvailMap,
   DAY_NAMES,
   getDateKey,
   MONTHS,
   QUICK_OPTIONS,
   WEEKDAYS,
+  badgeStyles,
+  badgeLabels,
 } from "../config/constants";
+import { useFormConfig, toWeekday } from "@/lib/formConfig";
+import { apiFetch } from "@/lib/api";
 
 interface Props {
   selectedDate: SelectedDate | null;
@@ -24,12 +27,8 @@ interface Props {
 function StepLabel({ step, label }: { step: string; label: string }) {
   return (
     <div className="flex items-baseline gap-3">
-      <span className="font-serif text-primary text-sm tabular-nums">
-        {step}
-      </span>
-      <span className="text-[10px] uppercase tracking-[0.28em] text-gray-500">
-        {label}
-      </span>
+      <span className="font-serif text-primary text-sm tabular-nums">{step}</span>
+      <span className="text-[10px] uppercase tracking-[0.28em] text-gray-500">{label}</span>
     </div>
   );
 }
@@ -46,18 +45,59 @@ export default function BookingCalendar({
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [activeQuick, setActiveQuick] = useState<string | null>(null);
 
-  const availMap = useMemo(
-    () => buildAvailMap(viewYear, viewMonth),
-    [viewYear, viewMonth],
-  );
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+
+  const { config } = useFormConfig();
+
+  // Check if a calendar cell should show the availability dot
+  const isOpenDay = (year: number, month: number, day: number): boolean => {
+    if (!config) return false;
+    const date = new Date(year, month, day);
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    if (date < todayStart) return false;
+    const maxDate = new Date(todayStart);
+    maxDate.setDate(todayStart.getDate() + config.bookingWindowDays);
+    if (date > maxDate) return false;
+    return config.openDays.includes(toWeekday(year, month, day));
+  };
+
+  // Fetch real availability when a date is selected
+  useEffect(() => {
+    if (!selectedDate) { setSlots([]); return; }
+    if (!config) return;
+
+    setSlotsLoading(true);
+    const iso = `${selectedDate.year}-${String(selectedDate.month + 1).padStart(2, "0")}-${String(selectedDate.day).padStart(2, "0")}`;
+    const weekday = toWeekday(selectedDate.year, selectedDate.month, selectedDate.day);
+    const totalPossible = config.slotsByDay[weekday]?.length ?? 0;
+
+    apiFetch<{ data: { from: string; to: string }[] }>(`/api/availability?type=table&date=${iso}`)
+      .then((r) => {
+        const available = r.data.length;
+        const level = (i: number): SlotLevel =>
+          available === 1 ? "last"
+          : available <= 2 || i >= available - 1 ? "few"
+          : available < totalPossible ? "few"
+          : "many";
+
+        setSlots(
+          r.data.map((s, i) => ({
+            from: s.from,
+            to: s.to,
+            seats: config.maxPartySize,
+            level: level(i),
+          })),
+        );
+      })
+      .catch(() => setSlots([]))
+      .finally(() => setSlotsLoading(false));
+  }, [selectedDate, config]);
+
   const firstDayOfMonth = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
 
-  const todayKey = getDateKey(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  );
+  const todayKey = getDateKey(today.getFullYear(), today.getMonth(), today.getDate());
   const selectedKey = selectedDate
     ? getDateKey(selectedDate.year, selectedDate.month, selectedDate.day)
     : null;
@@ -65,14 +105,8 @@ export default function BookingCalendar({
   function shiftMonth(delta: number) {
     let m = viewMonth + delta;
     let y = viewYear;
-    if (m > 11) {
-      m = 0;
-      y++;
-    }
-    if (m < 0) {
-      m = 11;
-      y--;
-    }
+    if (m > 11) { m = 0; y++; }
+    if (m < 0)  { m = 11; y--; }
     setViewMonth(m);
     setViewYear(y);
   }
@@ -89,34 +123,23 @@ export default function BookingCalendar({
       selectDay(d.getFullYear(), d.getMonth(), d.getDate());
     } else if (value === "tomorrow") {
       d.setDate(d.getDate() + 1);
-      setViewYear(d.getFullYear());
-      setViewMonth(d.getMonth());
+      setViewYear(d.getFullYear()); setViewMonth(d.getMonth());
       selectDay(d.getFullYear(), d.getMonth(), d.getDate());
     } else if (value === "weekend") {
       const diff = d.getDay() === 0 ? 6 : 6 - d.getDay();
       d.setDate(d.getDate() + diff);
-      setViewYear(d.getFullYear());
-      setViewMonth(d.getMonth());
+      setViewYear(d.getFullYear()); setViewMonth(d.getMonth());
       selectDay(d.getFullYear(), d.getMonth(), d.getDate());
     } else if (value === "next7") {
       d.setDate(d.getDate() + 1);
-      setViewYear(d.getFullYear());
-      setViewMonth(d.getMonth());
+      setViewYear(d.getFullYear()); setViewMonth(d.getMonth());
       selectDay(d.getFullYear(), d.getMonth(), d.getDate());
     }
   }
 
-  const slotsForDay = selectedKey ? (availMap[selectedKey] ?? []) : [];
-  // Group by daypart for clearer reading order.
-  const brunchSlots = slotsForDay.filter(
-    (s) => s.from.includes("AM") || s.from.startsWith("12"),
-  );
-  const afternoonSlots = slotsForDay.filter(
-    (s) => !s.from.includes("AM") && !s.from.startsWith("12") && parseInt(s.from) < 5,
-  );
-  const eveningSlots = slotsForDay.filter(
-    (s) => !s.from.includes("AM") && parseInt(s.from) >= 5,
-  );
+  const brunchSlots    = slots.filter((s) => s.from.includes("AM") || s.from.startsWith("12"));
+  const afternoonSlots = slots.filter((s) => !s.from.includes("AM") && !s.from.startsWith("12") && parseInt(s.from) < 5);
+  const eveningSlots   = slots.filter((s) => !s.from.includes("AM") && parseInt(s.from) >= 5);
 
   const selectedDayLabel = selectedDate
     ? `${DAY_NAMES[new Date(selectedDate.year, selectedDate.month, selectedDate.day).getDay()]}, ${MONTHS[selectedDate.month]} ${selectedDate.day}`
@@ -134,20 +157,12 @@ export default function BookingCalendar({
           </p>
         </div>
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => shiftMonth(-1)}
-            aria-label="Previous month"
-            className="w-9 h-9 rounded-full border border-primary-100 text-gray-500 flex items-center justify-center hover:border-primary hover:text-primary transition-colors"
-          >
+          <button type="button" onClick={() => shiftMonth(-1)} aria-label="Previous month"
+            className="w-9 h-9 rounded-full border border-primary-100 text-gray-500 flex items-center justify-center hover:border-primary hover:text-primary transition-colors">
             <ChevronLeft size={15} />
           </button>
-          <button
-            type="button"
-            onClick={() => shiftMonth(1)}
-            aria-label="Next month"
-            className="w-9 h-9 rounded-full border border-primary-100 text-gray-500 flex items-center justify-center hover:border-primary hover:text-primary transition-colors"
-          >
+          <button type="button" onClick={() => shiftMonth(1)} aria-label="Next month"
+            className="w-9 h-9 rounded-full border border-primary-100 text-gray-500 flex items-center justify-center hover:border-primary hover:text-primary transition-colors">
             <ChevronRight size={15} />
           </button>
         </div>
@@ -157,10 +172,7 @@ export default function BookingCalendar({
       <div>
         <div className="grid grid-cols-7 mb-2">
           {WEEKDAYS.map((wd) => (
-            <div
-              key={wd}
-              className="text-center text-[10px] uppercase tracking-[0.22em] text-gray-400 py-1"
-            >
+            <div key={wd} className="text-center text-[10px] uppercase tracking-[0.22em] text-gray-400 py-1">
               {wd}
             </div>
           ))}
@@ -168,29 +180,25 @@ export default function BookingCalendar({
 
         {/* Day cells */}
         <div className="grid grid-cols-7 gap-1">
-          {Array.from({ length: firstDayOfMonth }).map((_, i) => (
-            <div key={`empty-${i}`} />
-          ))}
+          {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`empty-${i}`} />)}
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1;
             const key = getDateKey(viewYear, viewMonth, day);
             const cellDate = new Date(viewYear, viewMonth, day);
-            const isPast =
-              cellDate <
-              new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const isPast = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
             const isToday = key === todayKey;
             const isSelected = key === selectedKey;
-            const hasAvail = !isPast && !!availMap[key];
+            const hasAvail = !isPast && isOpenDay(viewYear, viewMonth, day);
 
             return (
               <button
                 key={day}
                 type="button"
-                onClick={() => !isPast && selectDay(viewYear, viewMonth, day)}
-                disabled={isPast}
+                onClick={() => !isPast && hasAvail && selectDay(viewYear, viewMonth, day)}
+                disabled={isPast || !hasAvail}
                 className={[
                   "relative h-10 sm:h-11 flex items-center justify-center text-sm rounded-xl select-none transition-all",
-                  isPast
+                  isPast || !hasAvail
                     ? "text-gray-300 cursor-not-allowed"
                     : isSelected
                       ? "bg-primary text-white font-medium shadow-sm"
@@ -212,7 +220,7 @@ export default function BookingCalendar({
         </div>
       </div>
 
-      {/* Legend + quick select row */}
+      {/* Legend + quick select */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-1">
         <div className="flex items-center gap-4 text-[11px] text-gray-500">
           <span className="flex items-center gap-1.5">
@@ -247,9 +255,7 @@ export default function BookingCalendar({
           <div className="flex items-end justify-between">
             <div>
               <StepLabel step="02" label="Pick a time" />
-              <h3 className="font-serif text-2xl text-black mt-2 leading-none">
-                {selectedDayLabel}
-              </h3>
+              <h3 className="font-serif text-2xl text-black mt-2 leading-none">{selectedDayLabel}</h3>
             </div>
             <button
               type="button"
@@ -260,47 +266,45 @@ export default function BookingCalendar({
             </button>
           </div>
 
-          {slotsForDay.length === 0 && (
+          {slotsLoading ? (
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Loader2 size={14} className="animate-spin" />
+              <span>Checking availability…</span>
+            </div>
+          ) : slots.length === 0 ? (
             <p className="text-sm text-gray-500 italic">
               No slots available for this date — try another day.
             </p>
-          )}
-
-          {brunchSlots.length > 0 && (
-            <SlotGroup label="Brunch">
-              {brunchSlots.map((slot) => (
-                <TimeSlotCard
-                  key={slot.from}
-                  slot={slot}
-                  selected={selectedSlot?.from === slot.from}
-                  onSelect={() => onSlotSelect(slot)}
-                />
-              ))}
-            </SlotGroup>
-          )}
-          {afternoonSlots.length > 0 && (
-            <SlotGroup label="Afternoon">
-              {afternoonSlots.map((slot) => (
-                <TimeSlotCard
-                  key={slot.from}
-                  slot={slot}
-                  selected={selectedSlot?.from === slot.from}
-                  onSelect={() => onSlotSelect(slot)}
-                />
-              ))}
-            </SlotGroup>
-          )}
-          {eveningSlots.length > 0 && (
-            <SlotGroup label="Evening">
-              {eveningSlots.map((slot) => (
-                <TimeSlotCard
-                  key={slot.from}
-                  slot={slot}
-                  selected={selectedSlot?.from === slot.from}
-                  onSelect={() => onSlotSelect(slot)}
-                />
-              ))}
-            </SlotGroup>
+          ) : (
+            <>
+              {brunchSlots.length > 0 && (
+                <SlotGroup label="Brunch">
+                  {brunchSlots.map((slot) => (
+                    <TimeSlotCard key={slot.from} slot={slot}
+                      selected={selectedSlot?.from === slot.from}
+                      onSelect={() => onSlotSelect(slot)} />
+                  ))}
+                </SlotGroup>
+              )}
+              {afternoonSlots.length > 0 && (
+                <SlotGroup label="Afternoon">
+                  {afternoonSlots.map((slot) => (
+                    <TimeSlotCard key={slot.from} slot={slot}
+                      selected={selectedSlot?.from === slot.from}
+                      onSelect={() => onSlotSelect(slot)} />
+                  ))}
+                </SlotGroup>
+              )}
+              {eveningSlots.length > 0 && (
+                <SlotGroup label="Evening">
+                  {eveningSlots.map((slot) => (
+                    <TimeSlotCard key={slot.from} slot={slot}
+                      selected={selectedSlot?.from === slot.from}
+                      onSelect={() => onSlotSelect(slot)} />
+                  ))}
+                </SlotGroup>
+              )}
+            </>
           )}
         </div>
       )}
@@ -325,21 +329,14 @@ export default function BookingCalendar({
   );
 }
 
-function SlotGroup({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function SlotGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-[0.28em] text-primary mb-3">
-        {label}
-      </p>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-        {children}
-      </div>
+      <p className="text-[10px] uppercase tracking-[0.28em] text-primary mb-3">{label}</p>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">{children}</div>
     </div>
   );
 }
+
+// Re-export so tree-shaking doesn't warn about unused imports in this file
+export { badgeStyles, badgeLabels };

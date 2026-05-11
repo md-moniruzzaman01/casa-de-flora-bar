@@ -1,155 +1,120 @@
-"use client";
+import React from 'react';
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CATERING_CONTENT } from "../config/constant";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+interface PricingTier {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  features: string[];
+  note?: string;
 }
 
-export default function ProcessSteps() {
-  const { process, trust } = CATERING_CONTENT;
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const railRef = useRef<HTMLDivElement | null>(null);
+const cateringOptions: PricingTier[] = [
+  {
+    id: '01',
+    name: 'Casa Brunch Catering',
+    price: 38,
+    description: 'Perfect for bridal showers and morning celebrations.',
+    features: ['2 Signature Brunch Options', '1 Breakfast Protein', 'Scrambled Eggs & Biscuits Included'],
+  },
+  {
+    id: '02',
+    name: 'Cocktail & Finger Food',
+    price: 28,
+    description: 'Our most popular social hour experience.',
+    features: ['Choice of 4-8 Items', 'Beautiful Platters Included', '2-Hour Service Time'],
+    note: 'Starts at $28/person'
+  },
+  {
+    id: '03',
+    name: 'Casa Dinner Catering',
+    price: 48,
+    description: 'Full buffet style with premium main entrees.',
+    features: ['2 Main Entrees', '3 Gourmet Sides', 'Spring Salad & Rolls Included'],
+  }
+];
 
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".proc-head > *",
-        { y: 28, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
-        },
-      );
-
-      gsap.fromTo(
-        ".proc-step",
-        { y: 36, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          stagger: 0.12,
-          ease: "power2.out",
-          scrollTrigger: { trigger: ".proc-grid", start: "top 80%" },
-        },
-      );
-
-      if (railRef.current) {
-        gsap.fromTo(
-          railRef.current,
-          { scaleX: 0, transformOrigin: "left" },
-          {
-            scaleX: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".proc-grid",
-              start: "top 80%",
-              end: "bottom 50%",
-              scrub: 1,
-            },
-          },
-        );
-      }
-
-      gsap.fromTo(
-        ".trust-stat",
-        { y: 16, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.08,
-          ease: "power2.out",
-          scrollTrigger: { trigger: ".trust-bar", start: "top 90%" },
-        },
-      );
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
+const CateringSection = () => {
   return (
-    <section
-      ref={sectionRef}
-      id="process"
-      className="bg-white px-6 sm:px-8 md:px-12 lg:px-16 py-20 sm:py-24 md:py-28 lg:py-32"
-    >
-      <div className="max-w-[1240px] mx-auto">
+    <section className="bg-[#FAF9F6] py-20 px-6 font-sans text-[#1A1A1A]">
+      <div className="max-w-7xl mx-auto">
+        
         {/* Header */}
-        <div className="proc-head text-center max-w-3xl mx-auto mb-14 sm:mb-20">
-          <p className="text-[11px] sm:text-xs uppercase tracking-[0.32em] text-primary mb-3 sm:mb-4">
-            {process.eyebrow}
-          </p>
-          <h2 className="font-serif uppercase leading-[0.95] tracking-tight text-[#222] text-[36px] sm:text-[48px] md:text-[60px] lg:text-[72px]">
-            {process.title}
-          </h2>
+        <div className="text-center mb-20">
+          <span className="uppercase tracking-[0.3em] text-sm mb-4 block text-gray-500">Exquisite Dining</span>
+          <h2 className="text-5xl md:text-6xl font-serif mb-6 italic">Catering Collections</h2>
+          <div className="h-px w-24 bg-[#D4AF37] mx-auto"></div>
         </div>
 
-        {/* Timeline grid */}
-        <div className="proc-grid relative">
-          {/* Horizontal rail (desktop) */}
-          <div className="hidden lg:block absolute top-7 left-0 right-0 h-px bg-primary/30">
-            <div
-              ref={railRef}
-              className="absolute inset-0 w-full bg-primary origin-left"
-            />
-          </div>
-
-          <ol className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-6">
-            {process.steps.map((step) => (
-              <li key={step.id} className="proc-step relative pt-0 lg:pt-20">
-                {/* Marker dot (desktop) */}
-                <span
-                  aria-hidden="true"
-                  className="hidden lg:flex absolute top-3 left-0 w-9 h-9 rounded-full bg-white border border-primary text-primary items-center justify-center font-serif text-sm shadow-[0_6px_18px_-4px_rgba(237,128,168,0.45)]"
-                >
-                  {String(step.id).padStart(2, "0")}
-                </span>
-
-                <div className="bg-white border border-primary-100 rounded-2xl p-6 sm:p-7 hover:border-primary/40 hover:shadow-[0_24px_50px_-25px_rgba(0,0,0,0.18)] hover:-translate-y-0.5 transition-all duration-300">
-                  <div className="flex items-baseline justify-between gap-3 mb-4">
-                    <span className="font-serif text-2xl sm:text-3xl text-primary leading-none tabular-nums lg:hidden">
-                      {String(step.id).padStart(2, "0")}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-[0.28em] text-gray-500">
-                      {step.time}
-                    </span>
-                  </div>
-
-                  <h3 className="font-serif text-xl sm:text-2xl text-[#222] leading-tight mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        {/* Trust bar */}
-        <div className="trust-bar mt-16 sm:mt-20 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 border-t border-primary-100 pt-10 sm:pt-12">
-          {trust.items.map((stat) => (
-            <div key={stat.label} className="trust-stat text-center sm:text-left">
-              <p className="font-serif text-3xl sm:text-4xl text-primary tabular-nums leading-none">
-                {stat.value}
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {cateringOptions.map((option) => (
+            <div 
+              key={option.id} 
+              className="group relative bg-white border border-gray-100 p-10 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2"
+            >
+              <span className="text-xs font-light text-gray-400 mb-2 block">{option.id}</span>
+              <h3 className="text-2xl font-serif mb-4 group-hover:text-[#D4AF37] transition-colors">
+                {option.name}
+              </h3>
+              <p className="text-gray-500 text-sm leading-relaxed mb-8">
+                {option.description}
               </p>
-              <p className="text-[10px] uppercase tracking-[0.28em] text-gray-600 mt-3">
-                {stat.label}
-              </p>
+              
+              <div className="mb-8">
+                <span className="text-4xl font-light">${option.price}</span>
+                <span className="text-sm text-gray-400 tracking-widest uppercase ml-2">/ person</span>
+              </div>
+
+              <ul className="space-y-4 border-t border-gray-50 pt-8">
+                {option.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-center text-sm text-gray-600 italic">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] mr-3"></span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <button className="mt-12 w-full py-4 border border-[#1A1A1A] uppercase tracking-widest text-xs hover:bg-[#1A1A1A] hover:text-white transition-all duration-300">
+                Inquire Now
+              </button>
             </div>
           ))}
+        </div>
+
+        {/* Comparison Table (Luxury Style) */}
+        <div className="mt-32 overflow-hidden border border-gray-200 bg-white">
+          <div className="p-8 bg-[#1A1A1A] text-white text-center">
+            <h3 className="text-2xl font-serif italic">Pricing at a Glance</h3>
+          </div>
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-100 uppercase text-[10px] tracking-[0.2em] text-gray-400">
+                <th className="p-6 font-medium">Package</th>
+                <th className="p-6 font-medium">Per Person</th>
+                <th className="p-6 font-medium">25 Guests</th>
+                <th className="p-6 font-medium">50 Guests</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm">
+              <tr className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td className="p-6 font-serif text-lg">Brunch Catering</td>
+                <td className="p-6">$38</td>
+                <td className="p-6">$950</td>
+                <td className="p-6">$1,900</td>
+              </tr>
+              <tr className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td className="p-6 font-serif text-lg">Dinner Catering</td>
+                <td className="p-6">$48</td>
+                <td className="p-6">$1,200</td>
+                <td className="p-6">$2,400</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default CateringSection;
