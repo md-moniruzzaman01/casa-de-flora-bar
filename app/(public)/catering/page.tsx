@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import Hero from "@/components/catering/partials/Hero";
-import ServicesGrid from "@/components/catering/partials/ServicesGrid";
-import MenusTabs from "@/components/catering/partials/MenusTabs";
-import ProcessSteps from "@/components/catering/partials/ProcessSteps";
-import InquiryForm from "@/components/catering/partials/InquiryForm";
-import ClosingCTA from "@/components/catering/partials/ClosingCTA";
 import HeroSection from "@/components/catering/partials/HeroSection";
 import BrunchSection from "@/components/catering/partials/BrunchSection";
-import SectionDivider from "@/components/catering/partials/SectionDivider";
 import CocktailSection from "@/components/catering/partials/CocktailSection";
 import DinnerSection from "@/components/catering/partials/DinnerSection";
 import PricingTable from "@/components/catering/partials/PricingTable";
+import CateringSection from "@/components/catering/partials/CateringSection";
 
 export const metadata: Metadata = {
   title: "Catering — On-Site & Off-Site Service",
@@ -36,19 +30,13 @@ export const metadata: Metadata = {
 export default function CateringPage() {
   return (
     <>
-          <HeroSection/>
+      <HeroSection />
       <BrunchSection />
-      <SectionDivider />
+      <CateringSection/>
       <CocktailSection />
-      <SectionDivider />
       <DinnerSection />
-      <PricingTable/>
-      {/* <Hero />
-      <ServicesGrid />
-      <MenusTabs />
-      <ProcessSteps />
-      <InquiryForm />
-      <ClosingCTA /> */}
+      <PricingTable />
+  
     </>
   );
 }

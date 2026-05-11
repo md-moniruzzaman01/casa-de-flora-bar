@@ -1,73 +1,67 @@
 "use client";
 
-import { useRef } from "react";
-import SectionHeader from "./SectionHeader";
-import ChoiceGrid from "./ChoiceGrid";
-import AddonStrip, { Sep } from "./AddonStrip";
-import DetailRow from "./DetailRow";
-import CloserNote from "./CloserNote";
-import { ChoiceColumn, DetailItem } from "../config/types";
-
-
-const choices: ChoiceColumn[] = [
+const stats = [
   {
-    label: "Choose Two",
-    title: "Signature Brunch",
-    items: ["Chicken & Waffles", "Shrimp & Grits", "French Toast", "Rasta Pasta"],
+    num: "4,200",
+    unit: "sq ft",
+    label: "TOTAL FOOTPRINT",
+    detail: "Across three connected rooms and one garden terrace.",
   },
   {
-    label: "Choose One",
-    title: "Breakfast Protein",
-    items: ["Turkey Sausage", "Beef Sausage", "Turkey Bacon", "Beef Bacon"],
+    num: "120",
+    unit: "",
+    label: "MAXIMUM CAPACITY",
+    detail: "Cocktail reception. Seated dinner accommodates ninety.",
   },
   {
-    label: "Always Included",
-    title: "With Every Package",
-    items: ["Scrambled Eggs & Breakfast Potatoes", "Biscuits"],
+    num: "22",
+    unit: "ft",
+    label: "CATHEDRAL CEILINGS",
+    detail: "In the Grand Hall, with restored beams and skylights.",
+  },
+  {
+    num: "365",
+    unit: "",
+    label: "DAYS A YEAR",
+    detail: "Our florists arrange new seasonal stems daily.",
   },
 ];
 
-const details: DetailItem[] = [
-  { label: "Minimum", text: "15 guests to book" },
-  { label: "Setup", text: "Chafing dishes &amp; utensils included" },
-  { label: "Pricing", text: "$38/person pickup<br/>Delivery +$75–$150" },
-  { label: "Deposit", text: "50% at booking<br/>Balance 5 days before" },
-];
-
-export default function BrunchSection() {
-
-
+export default function StatsBand() {
   return (
-    <section
+    <section className="bg-[#2D2424] text-white py-24 px-[6vw]">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-0">
+        {stats.map((stat, idx) => (
+          <div
+            key={idx}
+            className={`flex flex-col px-8 py-4 ${
+              idx !== 0 ? "md:border-l border-white/10" : ""
+            }`}
+          >
+            {/* Number and Unit */}
+            <div className="flex items-baseline gap-1 mb-4">
+              <span className="font-serif text-7xl text-[#e8a0b0] font-light leading-none tracking-tighter">
+                {stat.num}
+              </span>
+              {stat.unit && (
+                <span className="text-white/40 text-lg font-serif italic">
+                  {stat.unit}
+                </span>
+              )}
+            </div>
 
-      className="px-[6vw] py-28"
-      style={{ opacity: 0 }}
-    >
-      <SectionHeader
-        number="01"
-        eyebrow="Casa Catering · Package One"
-        title="Casa"
-        titleItalic="Brunch Catering"
-        price="$38"
-        priceLabel="per person · min 15 guests"
-      />
+            {/* Label */}
+            <h4 className="text-[11px] font-bold tracking-[0.25em] text-white/50 mb-4 uppercase">
+              {stat.label}
+            </h4>
 
-      <div >
-        <ChoiceGrid columns={choices} />
+            {/* Detail */}
+            <p className="text-[15px] leading-relaxed text-white/80 font-normal">
+              {stat.detail}
+            </p>
+          </div>
+        ))}
       </div>
-
-      <AddonStrip>
-        Additional option <em>+$8/person</em>
-        <Sep /> Fruit display <em>+$4/person</em>
-      </AddonStrip>
-
-      <DetailRow items={details} />
-
-      <CloserNote>
-        Pair the Brunch package with our Cocktail Hour tier for a full morning
-        experience. Ideal for baby showers, bridal brunches, and birthday
-        celebrations.
-      </CloserNote>
     </section>
   );
 }

@@ -1,191 +1,95 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 
-export default function HeroSection() {
-  const containerRef = useRef<HTMLElement>(null);
+const HeroSection = () => {
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      tl.fromTo(
-        ".hero-meta",
-        { opacity: 0, x: -30 },
-        { opacity: 1, x: 0, duration: 1 }
-      )
-        .fromTo(
-          ".hero-title",
-          { opacity: 0, y: 60, skewY: 2 },
-          { opacity: 1, y: 0, skewY: 0, duration: 1.2 },
-          "-=0.5"
-        )
-        .fromTo(
-          ".hero-sub",
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 1 },
-          "-=0.6"
-        )
-        .fromTo(
-          ".hero-ornament",
-          { opacity: 0, scale: 0.85, rotation: -10 },
-          { opacity: 0.55, scale: 1, rotation: 0, duration: 1.4 },
-          "-=1"
-        )
-        .fromTo(
-          ".hero-scroll",
-          { opacity: 0 },
-          { opacity: 1, duration: 0.8 },
-          "-=0.4"
-        );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-[90vh] flex items-center px-[6vw] pt-16 pb-24 overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(ellipse at top left, rgba(252,228,228,0.4) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(245,237,226,0.6) 0%, transparent 60%)",
-      }}
-    >
-      {/* Text content */}
-      <div className="relative z-10 max-w-3xl">
-        {/* Meta line */}
-        <div className="hero-meta flex items-center gap-6 mb-12 opacity-0">
-          <span
-            className="block h-px w-15 bg-espresso-soft"
-            style={{ width: 60, height: 1, background: "#4a3a32" }}
-          />
-          <span
-            className="font-sans text-[0.65rem] tracking-[0.3em] uppercase text-espresso-soft"
-            style={{ fontFamily: "Inter, sans-serif", color: "#4a3a32", letterSpacing: "0.3em" }}
-          >
-            Casa · Catering Menu
-          </span>
-          <span style={{ color: "#4a3a32" }}>·</span>
-          <span
-            className="font-sans text-[0.65rem] tracking-[0.3em] uppercase"
-            style={{ fontFamily: "Inter, sans-serif", color: "#4a3a32" }}
-          >
-            Est. Care
-          </span>
+   <section className="relative h-screen min-h-[720px] flex items-end px-8 md:px-16 pb-20 overflow-hidden">
+        {/* Background Gradients */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#1a1014] to-[#2d1a25]" />
+          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(ellipse_at_70%_20%,_rgba(232,160,176,0.2)_0%,transparent_50%)]" />
         </div>
 
-        {/* Main title */}
-        <h1
-          className="hero-title opacity-0"
+        {/* Hero Photo with Mask */}
+        <div 
+          className="absolute right-0 top-0 bottom-0 w-full md:w-1/2 opacity-60 z-10"
           style={{
-            fontFamily: "Italiana, serif",
-            fontSize: "clamp(4rem, 12vw, 11rem)",
-            lineHeight: 0.9,
-            letterSpacing: "-0.02em",
-            color: "#1a1410",
-          }}
-        >
-          A table
-          <br />
-          set{" "}
-          <span
-            style={{
-              fontFamily: "Cormorant Garamond, serif",
-              fontStyle: "italic",
-              fontWeight: 300,
-              color: "#d4a5a5",
-              padding: "0 0.1em",
-            }}
-          >
-            &amp;
-          </span>{" "}
-          shared
-        </h1>
-
-        {/* Subtext */}
-        <p
-          className="hero-sub opacity-0 mt-10 max-w-[38ch] leading-relaxed"
-          style={{
-            fontFamily: "Cormorant Garamond, serif",
-            fontStyle: "italic",
-            fontWeight: 300,
-            fontSize: "1.35rem",
-            color: "#4a3a32",
-          }}
-        >
-          Brunch, cocktail hour, and dinner — composed with the same attention
-          we bring to every bouquet, every event, every guest.
-        </p>
-      </div>
-
-      {/* Floral ornament */}
-      <svg
-        className="hero-ornament opacity-0 absolute top-1/2 right-[6vw] -translate-y-1/2 pointer-events-none hidden lg:block"
-        style={{ width: 280, height: 280 }}
-        viewBox="0 0 200 200"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <circle cx="100" cy="100" r="98" stroke="#d4a5a5" strokeWidth="0.5" />
-        <circle
-          cx="100"
-          cy="100"
-          r="78"
-          stroke="#d4a5a5"
-          strokeWidth="0.5"
-          strokeDasharray="2 4"
-        />
-        <g transform="translate(100 100)">
-          {[0, 60, 120, 180, 240, 300].map((deg) => (
-            <path
-              key={deg}
-              d="M0 -50 Q15 -30 0 0 Q-15 -30 0 -50 Z"
-              fill="#f5c9c9"
-              fillOpacity="0.6"
-              transform={`rotate(${deg})`}
-            />
-          ))}
-          <circle r="8" fill="#b8935a" />
-        </g>
-      </svg>
-
-      {/* Scroll indicator */}
-      <div
-        className="hero-scroll opacity-0 absolute bottom-8 left-[6vw] flex items-center gap-4"
-        style={{
-          fontFamily: "Inter, sans-serif",
-          fontSize: "0.65rem",
-          letterSpacing: "0.3em",
-          textTransform: "uppercase",
-          color: "#4a3a32",
-        }}
-      >
-        <span
-          className="w-2 h-2 rounded-full"
-          style={{
-            background: "#d4a5a5",
-            animation: "pulse 2s ease-in-out infinite",
+            backgroundImage: "url('/venue/grand stage-02.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            maskImage: 'linear-gradient(to left, black 30%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to left, black 30%, transparent 100%)'
           }}
         />
-        <span>Three Packages Below</span>
-      </div>
 
-      <style jsx>{`
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 0.4;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.3);
-          }
-        }
-      `}</style>
-    </section>
+        {/* Film Grain Overlay */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay z-20 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27><filter id=%27n%27><feTurbulence baseFrequency=%270.85%27 /></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 /></svg>')]"></div>
+
+        {/* Hero Content */}
+  <div className="relative z-30 w-full max-w-7xl mx-auto flex flex-col items-start gap-10">
+          
+          {/* Tag: Specific outline pill styling */}
+          <div className="border border-white/20 rounded-full px-5 py-2.5">
+            <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-white">
+              Catering & Events
+            </span>
+          </div>
+
+          {/* Title: Mixed serif styles. Beautiful typography match */}
+          <h1 className="font-serif text-[clamp(48px,8vw,110px)] leading-[1.05] tracking-[-0.01em] text-white">
+            Food as{" "}
+            {/* The core 'Beautiful' italic style */}
+            <span className="italic font-light text-[#f0cfd8]">Beautiful</span>{" "}
+            as the<br /> Flowers
+          </h1>
+
+          {/* Paragraph: Exact text, spacing, and weight match */}
+          <p className="max-w-[50ch] text-white/90 text-xl font-normal leading-[1.8] font-sans">
+            From intimate brunches to full wedding receptions — our catering brings
+            the same care and elegance as every bloom we arrange.
+          </p>
+
+          {/* Buttons Group */}
+          <div className="flex items-center gap-6 pt-2">
+            {/* Primary Button: Exact berry-mauve background color */}
+            <a 
+              href="#"
+              className="bg-[#a85b74] text-white text-[12px] font-bold tracking-[0.2em] uppercase px-12 py-5 rounded-full hover:bg-white hover:text-[#1a1014] transition-all"
+            >
+              Request a Quote
+            </a>
+            
+            {/* Secondary Button: Original design ghost button style, updated text */}
+            <a 
+              href="#" 
+              className="text-white text-[12px] font-semibold tracking-[0.2em] uppercase px-12 py-5 rounded-full border border-white/30 hover:bg-white/10 transition-all"
+            >
+              View Menu
+            </a>
+          </div>
+
+        </div>
+
+        {/* Vertical Scroll Indicator */}
+        <div className="absolute bottom-10 right-10 z-30 hidden md:flex flex-col items-center gap-4">
+          <span className="[writing-mode:vertical-rl] text-[10px] font-bold tracking-[0.2em] uppercase text-white/40">
+            Scroll to discover
+          </span>
+          <div className="w-[1px] h-16 bg-gradient-to-b from-white/50 to-transparent animate-pulse origin-top" />
+        </div>
+      </section>
   );
-}
+};
+
+const MetaItem = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex flex-col gap-2">
+    <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40">{label}</h4>
+    <p className="font-serif text-xl md:text-2xl text-white">{value}</p>
+  </div>
+);
+
+export default HeroSection;
