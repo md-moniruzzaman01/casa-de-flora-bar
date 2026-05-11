@@ -1,8 +1,6 @@
 import { Metadata } from "next";
-import Hero from "@/components/reservations/partials/Hero";
 import ReservationContent from "@/components/reservations/partials/ReservationContent";
 import PoliciesAndFaq from "@/components/reservations/partials/PoliciesAndFaq";
-import ClosingCTA from "@/components/reservations/partials/ClosingCTA";
 
 export const metadata: Metadata = {
   title: "Reserve a Table",
@@ -24,10 +22,8 @@ export const metadata: Metadata = {
 export default function ReservationsPage() {
   return (
     <>
-      <Hero />
       <ReservationContent />
       <PoliciesAndFaq />
-      <ClosingCTA />
     </>
   );
 }

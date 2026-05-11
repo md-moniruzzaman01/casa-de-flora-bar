@@ -2,34 +2,34 @@
 
 const stats = [
   {
-    num: "4,200",
-    unit: "sq ft",
-    label: "TOTAL FOOTPRINT",
-    detail: "Across three connected rooms and one garden terrace.",
+    num: "200",
+    unit: "+",
+    label: "EVENTS CATERED",
+    detail: "From bridal brunches to wedding receptions, across NJ and beyond.",
   },
   {
-    num: "120",
+    num: "3",
     unit: "",
-    label: "MAXIMUM CAPACITY",
-    detail: "Cocktail reception. Seated dinner accommodates ninety.",
+    label: "SIGNATURE PACKAGES",
+    detail: "Brunch, cocktail hour, and full dinner — each fully customizable.",
   },
   {
-    num: "22",
-    unit: "ft",
-    label: "CATHEDRAL CEILINGS",
-    detail: "In the Grand Hall, with restored beams and skylights.",
-  },
-  {
-    num: "365",
+    num: "15",
     unit: "",
-    label: "DAYS A YEAR",
-    detail: "Our florists arrange new seasonal stems daily.",
+    label: "MINIMUM GUESTS",
+    detail: "Brunch and cocktail packages begin at fifteen guests.",
+  },
+  {
+    num: "48",
+    unit: "hr",
+    label: "BOOKING RESPONSE",
+    detail: "Most inquiries confirmed within forty-eight hours.",
   },
 ];
 
 export default function StatsBand() {
   return (
-    <section className="bg-[#2D2424] text-white py-24 px-[6vw]">
+    <section className="bg-[#1a1014] text-white py-24 px-[6vw] border-t border-white/5">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-0">
         {stats.map((stat, idx) => (
           <div
@@ -38,7 +38,6 @@ export default function StatsBand() {
               idx !== 0 ? "md:border-l border-white/10" : ""
             }`}
           >
-            {/* Number and Unit */}
             <div className="flex items-baseline gap-1 mb-4">
               <span className="font-serif text-7xl text-[#e8a0b0] font-light leading-none tracking-tighter">
                 {stat.num}
@@ -49,13 +48,9 @@ export default function StatsBand() {
                 </span>
               )}
             </div>
-
-            {/* Label */}
             <h4 className="text-[11px] font-bold tracking-[0.25em] text-white/50 mb-4 uppercase">
               {stat.label}
             </h4>
-
-            {/* Detail */}
             <p className="text-[15px] leading-relaxed text-white/80 font-normal">
               {stat.detail}
             </p>

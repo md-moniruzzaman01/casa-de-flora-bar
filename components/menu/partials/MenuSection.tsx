@@ -33,8 +33,7 @@ export default function MenuSection({
 }: MenuSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  // Alternate the panel between cream/white and the brand pink so sections
-  // get the same visual rhythm as Home → Services → MakeBouquet.
+  // Matches the soft pink from your "Services" section
   const isPink = index % 2 === 0;
   const bg = isPink ? "bg-primary-200" : "bg-white";
 
@@ -51,11 +50,11 @@ export default function MenuSection({
       });
 
       gsap.from(".menu-card", {
-        y: 36,
+        scale: 0.95,
         opacity: 0,
-        duration: 0.7,
-        stagger: 0.06,
-        ease: "power2.out",
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "back.out(1.7)",
         scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
       });
     }, sectionRef);
@@ -67,84 +66,80 @@ export default function MenuSection({
     <section
       ref={sectionRef}
       id={id}
-      data-menu-section={id}
       className="relative w-full scroll-mt-32"
     >
-      {/* Wave divider only when entering a pink panel — matches Home page behavior */}
       {isPink && <WaveDividerUp />}
 
       <div className={`${bg} px-6 py-20 md:px-16 md:py-28`}>
-        <div className="max-w-[1440px] mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           {/* ── Header ── */}
-          <header className="menu-section-head mb-14 md:mb-20">
-            <div className="flex items-baseline gap-4 mb-4 md:mb-6">
-              <span className="font-serif text-2xl md:text-3xl text-primary tabular-nums">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <span className="h-px flex-1 bg-primary/30" />
-              <span className="text-[10px] md:text-[11px] uppercase tracking-[0.32em] text-gray-600">
-                {items.length} {items.length === 1 ? "Item" : "Items"}
-              </span>
-            </div>
-
-            <h2 className="font-serif uppercase leading-[0.95] tracking-tight text-[#222] text-4xl md:text-6xl lg:text-[78px] max-w-3xl">
+          <header className="menu-section-head mb-16 text-center">
+            <span className="text-primary font-serif italic text-lg mb-2 block">
+              Section {String(index + 1).padStart(2, "0")}
+            </span>
+            <h2 className="font-serif text-gray text-4xl md:text-6xl capitalize tracking-tight mb-4">
               {category}
             </h2>
+            <div className="w-24 h-1 bg-primary/20 mx-auto rounded-full" />
           </header>
 
-          {/* ── Editorial menu cards ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-14 md:gap-y-16">
+          {/* ── Scalloped Menu Cards ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-20">
             {items.map((item) => (
               <article
                 key={item.name}
-                className="menu-card group flex flex-col"
+                className="menu-card group flex flex-col items-center text-center"
               >
-                {/* Photo */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-white shadow-sm">
-                  <Image
-                    src={item.src}
-                    alt={item.name}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent transition-opacity duration-500 group-hover:opacity-0" />
+                {/* Photo with Scalloped Effect (using mask-image or clip-path) */}
+                <div className="relative w-full aspect-square mb-8">
+                  <div className="absolute inset-0 bg-primary/10 rounded-[40px] rotate-3 transition-transform group-hover:rotate-6" />
+                  <div 
+                    className="relative w-full h-full overflow-hidden transition-transform duration-500 group-hover:-translate-y-2"
+                    style={{ 
+                        // This approximates the wavy border-radius seen in your "Services" section
+                        borderRadius: "60% 40% 70% 30% / 40% 50% 60% 70%",
+                        border: "8px solid white"
+                    }}
+                  >
+                    <Image
+                      src={item.src}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                    />
+                  </div>
                 </div>
 
-                {/* Editorial caption — name · dotted leader · price */}
-                <div className="pt-6">
-                  <div className="flex items-baseline gap-3">
-                    <h3 className="font-serif text-lg md:text-xl text-[#222] leading-snug tracking-tight">
-                      {item.name}
-                    </h3>
-                    <span
-                      className="flex-1 border-b border-dotted border-primary/40 translate-y-[-4px]"
-                      aria-hidden="true"
-                    />
-                    {item.price && (
-                      <span className="font-serif text-base md:text-lg text-primary tabular-nums whitespace-nowrap">
-                        {item.price}
-                      </span>
-                    )}
-                  </div>
+                {/* Details */}
+                <div className="flex flex-col items-center">
+                  <h3 className="font-serif text-2xl text-[#333] mb-1">
+                    {item.name}
+                  </h3>
+                  
+                  {item.price && (
+                    <span className="text-primary font-medium text-lg mb-3">
+                      {item.price}
+                    </span>
+                  )}
 
                   {item.description && (
-                    <p className="mt-2 text-[13px] text-gray-600 leading-relaxed">
+                    <p className="text-[14px] text-gray-500 leading-relaxed italic mb-4">
                       {item.description}
                     </p>
                   )}
 
                   {item.tags && item.tags.length > 0 && (
-                    <ul className="mt-3 flex flex-wrap gap-2">
+                    <div className="flex flex-wrap justify-center gap-2">
                       {item.tags.map((tag) => (
-                        <li
+                        <span
                           key={tag}
-                          className="text-[9px] uppercase tracking-[0.22em] text-gray-700 border border-primary/40 px-2 py-1 rounded-full"
+                          className="text-[10px] uppercase tracking-widest text-[#B5838D] bg-white border border-[#B5838D]/20 px-3 py-1 rounded-full shadow-sm"
                         >
                           {tag}
-                        </li>
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   )}
                 </div>
               </article>

@@ -71,7 +71,7 @@ const WeddingGalleryChapter: React.FC<WeddingGalleryChapterProps> = ({
               key={`${c.id}-${file}`}
               type="button"
               onClick={() => onTileClick(flatIndex)}
-              className="gallery-tile group relative mb-3 md:mb-4 block w-full min-h-[120px] break-inside-avoid overflow-hidden rounded-[14px] bg-primary-100 cursor-zoom-in shadow-[0_2px_18px_rgba(26,16,8,0.06)] hover:shadow-[0_18px_44px_rgba(26,16,8,0.18)] transition-shadow duration-500"
+              className="gallery-tile group relative mb-3 md:mb-4 block w-full min-h-[120px] max-h-[360px] break-inside-avoid overflow-hidden rounded-[14px] bg-primary-100 cursor-zoom-in shadow-[0_2px_18px_rgba(26,16,8,0.06)] hover:shadow-[0_18px_44px_rgba(26,16,8,0.18)] transition-shadow duration-500"
               aria-label={`Open photo ${i + 1} of ${c.images.length} from ${c.title}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

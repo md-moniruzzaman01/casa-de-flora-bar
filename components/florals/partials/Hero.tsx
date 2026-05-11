@@ -36,7 +36,7 @@ const HeroSection: React.FC = () => {
 
 
           {/* Two-column bottom row */}
-          <div className="flex justify-between items-center  mx-auto md:gap-7 lg:gap-10 xl:gap-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-7 lg:gap-10 xl:gap-16">
 
 
             <div>

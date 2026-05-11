@@ -94,7 +94,7 @@ const WeddingGallerySection: React.FC = () => {
         });
       });
 
-      // Image tile batched reveal (stagger groups of tiles as they enter viewport)
+      // Image tile batched reveal
       gsap.set(".gallery-tile", { y: 50, opacity: 0 });
       ScrollTrigger.batch(".gallery-tile", {
         onEnter: (elements) =>
@@ -122,12 +122,21 @@ const WeddingGallerySection: React.FC = () => {
           },
         });
       });
-
-      ScrollTrigger.refresh();
     }, sectionRef);
+
+    // Refresh ScrollTrigger AFTER all images have loaded so page height is
+    // stable before scroll positions are calculated. Without this, tiles whose
+    // positions shift as images load stay permanently hidden (opacity:0).
+    const refreshTriggers = () => ScrollTrigger.refresh();
+    if (document.readyState === "complete") {
+      requestAnimationFrame(refreshTriggers);
+    } else {
+      window.addEventListener("load", refreshTriggers, { once: true });
+    }
 
     return () => {
       ctx.revert();
+      window.removeEventListener("load", refreshTriggers);
     };
   }, []);
 

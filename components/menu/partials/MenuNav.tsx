@@ -43,7 +43,7 @@ export default function MenuPage() {
       <MenuHero />
 
       {/* ── Intro band ── */}
-      <section className="bg-white border-b border-primary-100">
+      <section className="bg-white border-b border-primary-100 ">
         <div className="max-w-[1440px] mx-auto px-6 md:px-16 py-12 md:py-16">
           <div className="grid md:grid-cols-12 gap-8 items-end">
             <div className="md:col-span-7">
@@ -82,6 +82,7 @@ export default function MenuPage() {
         </div>
       </section>
 
+
       <MenuFilters options={filterOptions} />
 
       {sections.map((cat, i) => (
@@ -94,7 +95,6 @@ export default function MenuPage() {
         />
       ))}
 
-      <MenuOutro />
     </div>
   );
 }

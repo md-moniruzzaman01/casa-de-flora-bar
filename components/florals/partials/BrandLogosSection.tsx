@@ -42,11 +42,11 @@ export default function BrandLogosSection() {
     <section className="w-full bg-white flex justify-center my-20 md:my-32 lg:my-40">
       <div className="w-full max-w-[1440px] px-4 md:px-8 lg:px-[72px]">
         <ScallopBorder id="brand-logos">
-          <div className="flex items-center justify-between gap-6 px-8 md:px-16 lg:px-24 py-10 md:py-14">
+          <div className="flex flex-wrap items-center justify-center gap-8 md:justify-between px-8 md:px-16 lg:px-24 py-10 md:py-14">
             {brandLogos.map((logo) => (
               <div
                 key={logo.alt}
-                className="flex-1 flex items-center justify-center"
+                className="flex items-center justify-center"
               >
                 <Image
                   src={logo.src}
