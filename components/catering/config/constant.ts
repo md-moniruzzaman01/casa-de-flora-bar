@@ -1,14 +1,15 @@
 export const CATERING_CONTENT = {
   hero: {
-    eyebrow: "Casa de Flora · Catering",
-    title: "Catering that arrives",
-    titleAccent: "with flowers.",
+    eyebrow: "Catering & Events",
+    title: "Food as",
+    titleAccent: "Beautiful",
+    titleSuffix: "as the Flowers", // Added to accommodate the "as the Flowers" line
     description:
-      "On-site or off-site, intimate or full-scale — Casa de Flora caters celebrations with the same warm, floral-led hospitality our cafe is known for in Bloomfield, NJ.",
-    image: "/menu/Chicken & waffles.jpg",
+      "From intimate brunches to full wedding receptions — our catering brings the same care and elegance as every bloom we arrange.",
+    image: "/venue/grand stage-02.jpg",
     badge: "Serving NJ + NYC",
     primary: { label: "Request a Quote", href: "#inquiry" },
-    secondary: { label: "Browse Menus", href: "#menus" },
+    secondary: { label: "View Menu", href: "#menus" },
     quickQuote: {
       heading: "Quick Quote",
       subheading: "Most quotes back within 24h",
@@ -20,66 +21,33 @@ export const CATERING_CONTENT = {
       { value: "48h", label: "Quote turnaround" },
     ],
   },
-  services: {
-    eyebrow: "Service Tiers",
-    title: "Pick your level of service",
-    description:
-      "Four ways to bring Casa de Flora to your event. Everything is customizable — these are starting points, not boxes.",
-    items: [
-      {
-        id: "drop-off",
-        icon: "package",
-        title: "Drop-Off",
-        startsAt: "From $18 / person",
-        description:
-          "We arrive, set up the spread, and leave you to host. Perfect for office lunches, baby showers and intimate gatherings.",
-        includes: [
-          "Disposable elegant servingware",
-          "Setup + breakdown",
-          "Detailed labeling & dietary cards",
-        ],
-      },
-      {
-        id: "buffet",
-        icon: "utensils",
-        title: "Buffet",
-        startsAt: "From $35 / person",
-        description:
-          "Family-style buffet with a uniformed attendant who keeps trays full and stations beautiful for the entire event.",
-        includes: [
-          "Chafing dishes & linens",
-          "On-site attendant (3 hr)",
-          "Coffee + non-alcoholic bar",
-        ],
-      },
-      {
-        id: "plated",
-        icon: "chef-hat",
-        title: "Plated Dinner",
-        startsAt: "From $75 / person",
-        description:
-          "Full-service plated dinners with a dedicated kitchen team and waitstaff. The choice for weddings and milestone birthdays.",
-        includes: [
-          "3-course chef-curated menu",
-          "Waitstaff (1 per 12 guests)",
-          "Tabletop styling consult",
-        ],
-      },
-      {
-        id: "bar",
-        icon: "wine",
-        title: "Mobile Bar",
-        startsAt: "From $22 / person",
-        description:
-          "Signature cocktails, mocktails, espresso bar — set up wherever you are. Add to any service tier.",
-        includes: [
-          "Bartender + barista",
-          "Glassware & garnish program",
-          "Custom signature drink menu",
-        ],
-      },
-    ],
-  },
+
+  brunch: [
+    {
+      num: "200",
+      unit: "+",
+      label: "EVENTS CATERED",
+      detail: "From bridal brunches to wedding receptions, across NJ and beyond.",
+    },
+    {
+      num: "3",
+      unit: "",
+      label: "SIGNATURE PACKAGES",
+      detail: "Brunch, cocktail hour, and full dinner — each fully customizable.",
+    },
+    {
+      num: "15",
+      unit: "",
+      label: "MINIMUM GUESTS",
+      detail: "Brunch and cocktail packages begin at fifteen guests.",
+    },
+    {
+      num: "48",
+      unit: "hr",
+      label: "BOOKING RESPONSE",
+      detail: "Most inquiries confirmed within forty-eight hours.",
+    },
+  ],
   menus: {
     eyebrow: "Curated Menus",
     title: "Sample menus, ready to remix",
@@ -143,75 +111,5 @@ export const CATERING_CONTENT = {
       },
     ],
   },
-  process: {
-    eyebrow: "How it works",
-    title: "From inquiry to event day",
-    steps: [
-      {
-        id: 1,
-        time: "Day 0",
-        title: "Tell us about your event",
-        description:
-          "Share the date, headcount and the vibe you're going for. The more we know, the better the proposal.",
-      },
-      {
-        id: 2,
-        time: "Within 48h",
-        title: "Tailored quote + menu",
-        description:
-          "We send a written proposal with menu options, service tier and a transparent line-item quote.",
-      },
-      {
-        id: 3,
-        time: "2 weeks before",
-        title: "Final headcount + tasting",
-        description:
-          "Lock in headcount, dietary notes, and (for plated events) come in for a tasting on us.",
-      },
-      {
-        id: 4,
-        time: "Event day",
-        title: "We arrive ready",
-        description:
-          "Setup, service and breakdown — handled. You stay with your guests; we make it look effortless.",
-      },
-    ],
-  },
-  trust: {
-    items: [
-      { value: "150+", label: "Events catered" },
-      { value: "5★", label: "Average review" },
-      { value: "20–500", label: "Guests per event" },
-      { value: "Bloomfield, NJ", label: "+ NYC metro area" },
-    ],
-  },
-  inquiry: {
-    eyebrow: "Start a conversation",
-    title: "Tell us about your event",
-    description:
-      "Share the basics and the team will reach out within 48 hours with a tailored proposal.",
-    eventTypes: [
-      "Wedding",
-      "Birthday",
-      "Bridal / Baby Shower",
-      "Corporate",
-      "Brunch",
-      "Other",
-    ],
-    serviceTypes: ["Drop-Off", "Buffet", "Plated Dinner", "Mobile Bar", "Not sure yet"],
-    headcountBuckets: ["Under 25", "25–50", "50–100", "100–250", "250+"],
-    submitLabel: "Send Inquiry",
-    successHeading: "Inquiry received.",
-    successBody:
-      "Thanks for reaching out. The events team will follow up within 48 hours with a tailored proposal.",
-  },
-  closing: {
-    eyebrow: "Ready when you are",
-    title: "Let's make it",
-    titleAccent: "unforgettable.",
-    description:
-      "Book a 20-minute call with the events team to walk through your day from start to finish.",
-    primary: { label: "Request a Quote", href: "#inquiry" },
-    secondary: { label: "Email Events", href: "mailto:events@casadeflorabar.com" },
-  },
+
 } as const;
