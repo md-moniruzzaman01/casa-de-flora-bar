@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import type { SpecialEvent } from '@/components/admin/events/config/types';
+import { api } from '@/lib/api';
 
 export default function EventPopup() {
   const [event,   setEvent]   = useState<SpecialEvent | null>(null);
@@ -14,22 +15,20 @@ export default function EventPopup() {
   const cardRef    = useRef<HTMLDivElement>(null);
   const bannerRef  = useRef<HTMLDivElement>(null);
 
-  // Fetch the first currently active event
+  // Fetch the first currently active event from the backend's public endpoint.
   useEffect(() => {
-    fetch('/api/events', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then(({ events = [] }: { events: SpecialEvent[] }) => {
-        const now = new Date();
-        const active = events.find((e) => {
-          if (!e.isActive) return false;
-          const start = new Date(e.startDate);
-          const end   = new Date(e.endDate + 'T23:59:59');
-          if (now < start || now > end) return false;
-          return !sessionStorage.getItem(`promo-dismissed-${e.id}`);
-        });
+    let cancelled = false;
+    api
+      .get<{ events: SpecialEvent[] }>('/api/events/active')
+      .then(({ events = [] }) => {
+        if (cancelled) return;
+        const active = events.find(
+          (e) => !sessionStorage.getItem(`promo-dismissed-${e.id}`),
+        );
         if (active) setEvent(active);
       })
       .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   // Delay appearance slightly so page has time to render
@@ -80,11 +79,14 @@ export default function EventPopup() {
   const { bgColor, accentColor, textColor } = event;
 
   // ── Banner ──────────────────────────────────────────────────────────
+  // Rendered in normal flow above the sticky navbar so it pushes content
+  // down rather than overlaying. As the user scrolls, the banner scrolls
+  // away naturally and the navbar takes over the top of the viewport.
   if (event.template === 'banner') {
     return (
       <div
         ref={bannerRef}
-        className="fixed top-0 left-0 right-0 z-[9999] flex items-center justify-between px-4 md:px-8 py-2.5 gap-4 text-sm shadow-md"
+        className="relative w-full z-40 flex items-center justify-between px-4 md:px-8 py-2.5 gap-4 text-sm shadow-md"
         style={{ background: bgColor, color: textColor }}
       >
         {event.discount && (

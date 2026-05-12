@@ -35,32 +35,41 @@ const ServiceSection = () => {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const isDesktop = window.innerWidth >= 1024;
-      if (!isDesktop) return;
+    const mql = window.matchMedia("(min-width: 1024px)");
+    let ctx: gsap.Context | null = null;
 
-      // 1. Initial State: Set the staircase positions
-      cardsRef.current.forEach((card, index) => {
-        if (card) {
-          gsap.set(card, { y: index * 60 });
-        }
-      });
+    const setup = () => {
+      ctx?.revert();
+      if (!mql.matches) {
+        // Mobile: ensure cards have no leftover transform if user resized down
+        cardsRef.current.forEach((card) => card && gsap.set(card, { y: 0 }));
+        return;
+      }
+      ctx = gsap.context(() => {
+        cardsRef.current.forEach((card, index) => {
+          if (card) gsap.set(card, { y: index * 60 });
+        });
 
-      // 2. The Reposition Effect: 
-      // When the section hits the center, move all cards to y: 0
-      gsap.to(cardsRef.current, {
-        y: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top bottom", // Starts moving as soon as section enters
-          end: "center center", // Reaches a perfect row when section is centered
-          scrub: 2,            // Smoothly follows the scroll
-        }
-      });
-    }, sectionRef);
+        gsap.to(cardsRef.current, {
+          y: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "center center",
+            scrub: 2,
+            invalidateOnRefresh: true,
+          },
+        });
+      }, sectionRef);
+    };
 
-    return () => ctx.revert();
+    setup();
+    mql.addEventListener("change", setup);
+    return () => {
+      mql.removeEventListener("change", setup);
+      ctx?.revert();
+    };
   }, []);
 
   return (
@@ -94,6 +103,7 @@ const ServiceSection = () => {
                 src={`/services/${service.iconName}`}
                 alt={service.title}
                 fill
+                sizes="(max-width: 768px) 80px, 136px"
                 className="object-contain"
               />
             </div>

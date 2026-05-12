@@ -1,7 +1,7 @@
 export type ReservationStatus = "Pending" | "Confirm";
 
 export type Reservation = {
-  id: number;
+  id: string;
   name: string;
   initials: string;
   avatarBg: string;
@@ -10,6 +10,7 @@ export type Reservation = {
   bookingFor: string;
   guests: number;
   status: ReservationStatus;
+  dateValue: string; // "YYYY-MM-DD" for filtering
 };
 
 export type SelectedDate = {

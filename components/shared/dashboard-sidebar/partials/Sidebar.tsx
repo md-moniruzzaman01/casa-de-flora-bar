@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePathname } from "next/navigation"; // ✅ important
+import { usePathname, useRouter } from "next/navigation"; // ✅ important
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -17,10 +17,12 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  LogOut,
 } from "lucide-react";
 
 import { navSections } from "../config/constant";
 import { NavSection, SidebarProps } from "../config/types";
+import { useAuth, signOut } from "@/lib/auth";
 
 const IconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   grid: LayoutGrid,
@@ -37,6 +39,17 @@ const IconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 export default function Sidebar({}: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname(); // ✅ current URL
+  const router   = useRouter();
+  const { user } = useAuth();
+
+  const handleLogout = () => {
+    signOut();
+    router.replace("/admin/login");
+  };
+
+  const initials = user?.name
+    ? user.name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase()
+    : "—";
 
   return (
     <aside
@@ -147,16 +160,40 @@ export default function Sidebar({}: SidebarProps) {
             className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow-sm"
             style={{ background: "linear-gradient(135deg, #e85d7e, #f4a0b5)" }}
           >
-            RP
+            {initials}
           </div>
 
           {!collapsed && (
-            <div className="min-w-0">
-              <p className="text-[12px] font-bold text-gray-800 truncate">Russel Petter</p>
-              <p className="text-[10px] text-gray-500 truncate">petter@portal.com</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] font-bold text-gray-800 truncate">
+                {user?.name ?? "Signed out"}
+              </p>
+              <p className="text-[10px] text-gray-500 truncate">
+                {user?.email ?? "—"}
+              </p>
             </div>
           )}
+
+          {!collapsed && user && (
+            <button
+              onClick={handleLogout}
+              title="Sign out"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition-colors flex-shrink-0"
+            >
+              <LogOut size={14} />
+            </button>
+          )}
         </div>
+
+        {collapsed && user && (
+          <button
+            onClick={handleLogout}
+            title="Sign out"
+            className="w-full mt-2 flex items-center justify-center p-2 rounded-lg text-gray-500 hover:text-pink-600 hover:bg-pink-50 transition-colors"
+          >
+            <LogOut size={16} />
+          </button>
+        )}
       </div>
     </aside>
   );

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Pencil, Trash2, ToggleLeft, ToggleRight, Plus, RefreshCw } from 'lucide-react';
 import type { SpecialEvent, EventStatus } from '../config/types';
 import { getEventStatus, TYPE_OPTIONS } from '../config/constant';
+import { api } from '@/lib/api';
 
 const STATUS_STYLES: Record<EventStatus, { bg: string; color: string; dot: string; label: string }> = {
   active:    { bg: '#D1FAE5', color: '#059669', dot: '#10b981', label: 'Active' },
@@ -18,34 +19,54 @@ const FILTER_TABS: (EventStatus | 'all')[] = ['all', 'active', 'scheduled', 'exp
 export default function EventsList() {
   const [events,  setEvents]  = useState<SpecialEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState<string | null>(null);
   const [filter,  setFilter]  = useState<EventStatus | 'all'>('all');
 
-  const fetchEvents = useCallback(async () => {
+  const fetchEvents = useCallback(() => {
     setLoading(true);
-    try {
-      const res = await fetch('/api/events', { cache: 'no-store' });
-      const { events: data } = await res.json() as { events: SpecialEvent[] };
-      setEvents(data ?? []);
-    } finally {
-      setLoading(false);
-    }
+    setError(null);
+    api
+      .get<{ events: SpecialEvent[] }>('/api/events')
+      .then(({ events: data }) => setEvents(data ?? []))
+      .catch((e: { message?: string }) =>
+        setError(e.message ?? 'Failed to load promotions'),
+      )
+      .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => { fetchEvents(); }, [fetchEvents]);
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<{ events: SpecialEvent[] }>('/api/events')
+      .then(({ events: data }) => { if (!cancelled) setEvents(data ?? []); })
+      .catch((e: { message?: string }) => {
+        if (!cancelled) setError(e.message ?? 'Failed to load promotions');
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   const toggleActive = async (event: SpecialEvent) => {
-    await fetch(`/api/events/${event.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...event, isActive: !event.isActive }),
-    });
-    fetchEvents();
+    try {
+      await api.patch(`/api/events/${event.id}/active`, {
+        isActive: !event.isActive,
+      });
+      fetchEvents();
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to toggle promotion');
+    }
   };
 
   const deleteEvent = async (id: string) => {
     if (!confirm('Delete this promotion? This cannot be undone.')) return;
-    await fetch(`/api/events/${id}`, { method: 'DELETE' });
-    fetchEvents();
+    try {
+      await api.delete(`/api/events/${id}`);
+      fetchEvents();
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to delete promotion');
+    }
   };
 
   const filtered = filter === 'all'
@@ -70,6 +91,12 @@ export default function EventsList() {
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       {/* Filter tabs */}
       <div className="flex items-center gap-2">
         {FILTER_TABS.map((tab) => (
@@ -104,7 +131,7 @@ export default function EventsList() {
           </p>
           {filter === 'all' && (
             <Link
-              href="/events/create"
+              href="/admin/events/create"
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl hover:opacity-90 transition-opacity"
               style={{ background: '#ED80A8' }}
             >
@@ -209,7 +236,7 @@ export default function EventsList() {
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link
-                          href={`/events/${event.id}/edit`}
+                          href={`/admin/events/${event.id}/edit`}
                           className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
                           title="Edit"
                         >

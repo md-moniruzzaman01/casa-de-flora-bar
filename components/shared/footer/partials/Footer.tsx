@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import WaveDivider from "../../WaveDivider";
 import { footerContent, navLinks } from "../config/constants";
+import { whatsappLink } from "@/lib/site";
 
 export default function Footer() {
   return (
@@ -42,6 +43,17 @@ export default function Footer() {
                 className="text-gray text-3xl  font-semibold border-b border-primary-300 pb-1 hover:text-primary transition-colors"
               >
                 {footerContent.contact.email}
+              </a>
+              <a
+                href={whatsappLink("Hi Casa de Flora Bar! I'd like to know more about your events and reservations.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-gray text-sm font-bold tracking-[0.18em] uppercase hover:text-primary transition-colors w-fit"
+              >
+                <svg viewBox="0 0 32 32" className="w-4 h-4 fill-current" aria-hidden="true">
+                  <path d="M19.11 17.27c-.27-.13-1.6-.79-1.85-.88-.25-.09-.43-.13-.61.13-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.13-1.14-.42-2.18-1.34-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.41.12-.55.12-.12.27-.31.4-.47.13-.16.18-.27.27-.45.09-.18.04-.34-.02-.47-.07-.13-.61-1.47-.83-2.01-.22-.53-.45-.46-.61-.46-.16-.01-.34-.01-.52-.01-.18 0-.47.07-.72.34-.25.27-.95.93-.95 2.27 0 1.34.97 2.63 1.11 2.81.13.18 1.91 2.92 4.63 4.09.65.28 1.16.45 1.55.58.65.21 1.24.18 1.71.11.52-.08 1.6-.66 1.83-1.29.23-.63.23-1.17.16-1.29-.07-.13-.25-.2-.52-.34zM16.02 5.33c-5.89 0-10.67 4.78-10.67 10.66 0 1.88.49 3.71 1.43 5.32L5 27l5.86-1.54a10.62 10.62 0 0 0 5.16 1.32h.01c5.88 0 10.66-4.78 10.66-10.67 0-2.85-1.11-5.53-3.12-7.55a10.6 10.6 0 0 0-7.55-3.13zm0 19.55h-.01a8.86 8.86 0 0 1-4.51-1.24l-.32-.19-3.48.91.93-3.39-.21-.35a8.86 8.86 0 0 1-1.36-4.71c0-4.9 3.99-8.88 8.89-8.88 2.37 0 4.6.93 6.28 2.6a8.83 8.83 0 0 1 2.6 6.29c0 4.89-3.99 8.88-8.81 8.88z" />
+                </svg>
+                Message us on WhatsApp
               </a>
             </div>
 

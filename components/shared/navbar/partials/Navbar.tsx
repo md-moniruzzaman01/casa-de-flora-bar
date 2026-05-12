@@ -78,8 +78,8 @@ export default function Navbar() {
             }`}
         >
           {/* LEFT NAV */}
-          <nav className="hidden md:flex items-center gap-10">
-            {navItems.slice(0, 3).map((item) => {
+          <nav className="hidden md:flex items-center justify-between gap-2">
+            {navItems.slice(0, 4).map((item) => {
               const isActive = pathname === item.href;
 
               if (item.children) {
@@ -119,7 +119,7 @@ export default function Navbar() {
                 <Link
                   key={item.label}
                   href={item.href || "#"}
-                  className={`relative text-[10.5px] tracking-[0.24em] uppercase group ${isActive ? "text-primary" : "text-black"
+                  className={`relative text-[12px]  uppercase group ${isActive ? "text-primary" : "text-black"
                     }`}
                 >
                   {item.label}
@@ -144,6 +144,7 @@ export default function Navbar() {
                 src={logo}
                 alt="Logo"
                 fill
+                sizes="96px"
                 className="object-contain"
                 priority
               />
@@ -152,14 +153,14 @@ export default function Navbar() {
 
           {/* RIGHT NAV */}
           <div className="flex justify-end items-center gap-4 md:gap-10 flex-1">
-            <nav className="hidden md:flex items-center gap-10">
-              {navItems.slice(3).map((item) => {
+            <nav className="hidden md:flex items-center justify-between gap-6">
+              {navItems.slice(4).map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.label}
                     href={item.href || "#"}
-                    className={`relative text-[10.5px] uppercase tracking-[0.24em] group ${isActive ? "text-primary" : "text-black"
+                    className={`relative text-[12px] uppercase  group ${isActive ? "text-primary" : "text-black"
                       }`}
                   >
                     {item.label}

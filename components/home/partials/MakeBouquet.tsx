@@ -16,16 +16,21 @@ export default function MakeBouquet() {
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // 1. Entrance Fade for text
+            // 1. Entrance fade — only when the section actually enters view.
             gsap.from(".content-fade", {
                 y: 20,
                 opacity: 0,
                 duration: 0.6,
                 stagger: 0.1,
                 ease: "power2.out",
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                },
             });
 
-            // 2. THE SCROLL ANIMATION (Preserved)
+            // 2. Polaroid scrub animation
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: leftContainerRef.current,

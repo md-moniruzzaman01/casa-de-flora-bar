@@ -1,9 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { X, CalendarDays, Clock } from "lucide-react";
+import {
+  X,
+  CalendarDays,
+  Clock,
+  Loader2,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 import { DAY_NAMES, MONTHS } from "../config/constants";
 import { Slot, SelectedDate } from "../config/types";
+import { api, type ApiError } from "@/lib/api";
 
 interface FormValues {
   name: string;
@@ -20,16 +29,89 @@ interface Props {
   onClearSelection: () => void;
 }
 
-export default function GuestForm({ selectedDate, selectedSlot, onClearSelection }: Props) {
+// "10:00 AM" → "10:00", "1:00 PM" → "13:00", "12:00 AM" → "00:00"
+function to24h(time12: string): string {
+  const [time, period] = time12.trim().split(/\s+/);
+  const [hStr, mStr] = time.split(":");
+  let hour = parseInt(hStr, 10);
+  const minute = parseInt(mStr, 10);
+  if (period?.toUpperCase() === "PM" && hour !== 12) hour += 12;
+  if (period?.toUpperCase() === "AM" && hour === 12) hour = 0;
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+function dateToIso(d: SelectedDate): string {
+  return `${d.year}-${String(d.month + 1).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`;
+}
+
+function isApiError(e: unknown): e is ApiError {
+  return typeof e === "object" && e !== null && "status" in e && "message" in e;
+}
+
+const inputBase =
+  "w-full bg-white border border-primary-100 rounded-xl px-4 py-3 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-colors";
+
+function StepLabel({ step, label }: { step: string; label: string }) {
+  return (
+    <div className="flex items-baseline gap-3">
+      <span className="font-serif text-primary text-sm tabular-nums">
+        {step}
+      </span>
+      <span className="text-[10px] uppercase tracking-[0.28em] text-gray-500">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+export default function GuestForm({
+  selectedDate,
+  selectedSlot,
+  onClearSelection,
+}: Props) {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
-  } = useForm<FormValues>({ defaultValues: { guests: "2" } });
+  } = useForm<FormValues>({
+    defaultValues: { guests: "2" },
+    mode: "onBlur",
+  });
 
-  const onSubmit = (_data: FormValues) => {
-    reset();
+  const onSubmit = async (data: FormValues) => {
+    setSubmitError(null);
+
+    if (!selectedDate || !selectedSlot) {
+      setSubmitError("Please select a date and time slot.");
+      return;
+    }
+
+    try {
+      await api.post("/api/table-bookings", {
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone.trim(),
+        guests: parseInt(data.guests, 10),
+        date: dateToIso(selectedDate),
+        timeSlot: to24h(selectedSlot.from),
+        ...(data.message?.trim()
+          ? { specialRequests: data.message.trim() }
+          : {}),
+      });
+      reset({ guests: "2" } as FormValues);
+    } catch (err) {
+      if (isApiError(err)) {
+        const fieldMsg = err.errors?.[0]?.message;
+        setSubmitError(fieldMsg ?? err.message);
+      } else if (err instanceof Error) {
+        setSubmitError(err.message);
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
+      }
+    }
   };
 
   const dateLabel = selectedDate
@@ -37,163 +119,238 @@ export default function GuestForm({ selectedDate, selectedSlot, onClearSelection
     : null;
 
   return (
-    <aside className="bg-white rounded-3xl border border-[#FDE8E9] shadow-sm h-fit overflow-hidden">
+    <aside className="bg-white rounded-3xl border border-primary-100 shadow-[0_18px_50px_-30px_rgba(0,0,0,0.18)] h-fit overflow-hidden">
       {/* Card header */}
-      <div className="bg-[#FDF1F5] px-6 pt-8 pb-5 border-b border-[#FDE8E9]">
-        <p className="font-sans text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-2">
-          Book Your Seat
+      <div className="bg-primary-100 px-7 pt-8 pb-5 border-b border-primary/15 relative overflow-hidden">
+        <span
+          aria-hidden="true"
+          className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-primary/15"
+        />
+        <p className="text-[10px] uppercase tracking-[0.32em] text-primary mb-2 relative">
+          Step 03 · Your details
         </p>
-        <h2 className="font-serif text-2xl font-normal text-gray-900 leading-snug">
-          Guest Details
+        <h2 className="font-serif text-2xl sm:text-3xl text-black leading-snug relative">
+          Confirm your seat
         </h2>
-        <p className="font-sans text-xs text-gray-500 mt-1">
-          1 hr 30 min · Dine-in
+        <p className="text-xs text-gray-700 mt-2 relative">
+          1 hr 30 min · Dine-in · Free cancellation up to 24 h
         </p>
       </div>
 
-      <div className="px-6 py-6">
+      <div className="px-7 py-7">
         {/* Selected booking summary */}
         {selectedDate ? (
-          <div className="bg-pink-50 border border-pink-100 rounded-xl p-4 mb-6 relative">
+          <div className="bg-primary-50/60 border border-primary-100 rounded-2xl p-4 mb-6 relative">
             <button
               type="button"
               onClick={onClearSelection}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Clear selection"
+              className="absolute top-3 right-3 text-gray-400 hover:text-primary transition-colors"
             >
               <X size={14} />
             </button>
             <div className="flex items-start gap-3">
-              <CalendarDays size={15} className="text-pink-400 mt-0.5 shrink-0" />
+              <CalendarDays size={15} className="text-primary mt-0.5 shrink-0" />
               <div>
-                <p className="text-xs font-medium text-gray-800">{dateLabel}</p>
+                <p className="text-sm font-medium text-black">{dateLabel}</p>
                 {selectedSlot ? (
-                  <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1 font-sans">
-                    <Clock size={11} />
-                    {selectedSlot.from} – {selectedSlot.to} · {selectedSlot.seats} seats left
+                  <p className="text-xs text-gray-600 mt-1 flex items-center gap-1.5">
+                    <Clock size={11} className="text-primary" />
+                    {selectedSlot.from} – {selectedSlot.to} ·{" "}
+                    {selectedSlot.seats} seats left
                   </p>
                 ) : (
-                  <p className="text-xs text-gray-400 mt-0.5 font-sans">No time slot selected yet</p>
+                  <p className="text-xs italic text-gray-500 mt-1">
+                    Pick a time slot to continue →
+                  </p>
                 )}
               </div>
             </div>
           </div>
         ) : (
-          <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-6 text-center">
-            <CalendarDays size={20} className="text-gray-300 mx-auto mb-1" />
-            <p className="text-xs text-gray-400 font-sans">Select a date and time slot first</p>
+          <div className="bg-primary-50/40 border border-dashed border-primary-100 rounded-2xl p-5 mb-6 text-center">
+            <CalendarDays size={20} className="text-primary/60 mx-auto mb-2" />
+            <p className="text-xs text-gray-500">
+              Select a date and time slot first to begin.
+            </p>
           </div>
         )}
 
         {/* Success state */}
-        {isSubmitSuccessful && (
-          <div className="bg-green-50 border border-green-100 rounded-xl p-4 mb-4 text-center">
-            <p className="text-sm font-medium text-green-800 font-sans">Reservation submitted!</p>
-            <p className="text-xs text-green-600 mt-0.5 font-sans">We&apos;ll confirm your booking via email shortly.</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Name */}
-          <div>
-            <label className="font-sans text-xs text-gray-600 block mb-1.5">
-              Full Name <span className="text-pink-400">*</span>
-            </label>
-            <input
-              {...register("name", { required: true })}
-              type="text"
-              placeholder="Your full name"
-              className={[
-                "w-full bg-[#FCF9F9] border px-3.5 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:border-[#D6768B] transition-colors font-sans",
-                errors.name ? "border-red-300" : "border-[#FDE8E9]",
-              ].join(" ")}
-            />
-          </div>
-
-          {/* Email + Phone */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="font-sans text-xs text-gray-600 block mb-1.5">
-                Email <span className="text-pink-400">*</span>
-              </label>
-              <input
-                {...register("email", { required: true })}
-                type="email"
-                placeholder="Email"
-                className={[
-                  "w-full bg-[#FCF9F9] border px-3.5 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:border-[#D6768B] transition-colors font-sans",
-                  errors.email ? "border-red-300" : "border-[#FDE8E9]",
-                ].join(" ")}
-              />
+        {isSubmitSuccessful ? (
+          <div className="text-center py-8">
+            <div className="mx-auto w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center mb-4">
+              <Check size={26} />
             </div>
-            <div>
-              <label className="font-sans text-xs text-gray-600 block mb-1.5">Phone</label>
-              <input
-                {...register("phone")}
-                type="tel"
-                placeholder="Phone"
-                className="w-full bg-[#FCF9F9] border border-[#FDE8E9] px-3.5 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:border-[#D6768B] transition-colors font-sans"
-              />
-            </div>
+            <h3 className="font-serif text-2xl text-black mb-2">
+              Reservation received.
+            </h3>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              Check your inbox — a confirmation is on its way. We can&apos;t wait
+              to host you.
+            </p>
+            <p className="mt-6 text-[11px] uppercase tracking-[0.24em] text-gray-500">
+              — Casa de Flora team
+            </p>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+            <StepLabel step="" label="" />
 
-          {/* Guests */}
-          <div>
-            <label className="font-sans text-xs text-gray-600 block mb-1.5">Number of Guests</label>
-            <div className="relative">
-              <select
-                {...register("guests")}
-                className="w-full bg-[#FCF9F9] border border-[#FDE8E9] px-3.5 py-3 rounded-xl text-sm text-gray-800 focus:outline-none focus:border-[#D6768B] transition-colors appearance-none cursor-pointer font-sans"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-                  <option key={n} value={String(n)}>
-                    {n} {n === 1 ? "Guest" : "Guests"}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+            {/* Name */}
+            <Field label="Full name" error={errors.name?.message}>
+              <input
+                {...register("name", { required: "Name is required" })}
+                type="text"
+                placeholder="Your full name"
+                className={inputBase}
+              />
+            </Field>
+
+            {/* Email + Phone */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field label="Email" error={errors.email?.message}>
+                <input
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Enter a valid email",
+                    },
+                  })}
+                  type="email"
+                  placeholder="you@email.com"
+                  className={inputBase}
+                />
+              </Field>
+              <Field label="Phone" error={errors.phone?.message}>
+                <input
+                  {...register("phone", { required: "Phone is required" })}
+                  type="tel"
+                  placeholder="+1 (000) 000-0000"
+                  className={inputBase}
+                />
+              </Field>
+            </div>
+
+            {/* Guests */}
+            <Field label="Number of guests">
+              <div className="relative">
+                <select
+                  {...register("guests")}
+                  className={`${inputBase} appearance-none cursor-pointer pr-10`}
+                >
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                    <option key={n} value={String(n)}>
+                      {n} {n === 1 ? "Guest" : "Guests"}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="M2 4l4 4 4-4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
               </div>
-            </div>
-          </div>
+            </Field>
 
-          {/* Message */}
-          <div>
-            <label className="font-sans text-xs text-gray-600 block mb-1.5">
-              Special Requests <span className="text-gray-400">(optional)</span>
+            {/* Message */}
+            <Field
+              label="Special requests"
+              hint="Allergies, celebrations, seating preferences"
+            >
+              <textarea
+                {...register("message")}
+                rows={3}
+                placeholder="Optional"
+                className={`${inputBase} resize-none`}
+              />
+            </Field>
+
+            {/* Terms */}
+            <label className="flex items-start gap-2.5 cursor-pointer pt-1">
+              <input
+                {...register("terms", {
+                  required: "Please accept the terms to continue",
+                })}
+                type="checkbox"
+                className="mt-0.5 accent-primary"
+              />
+              <span className="text-[11px] text-gray-600 leading-relaxed">
+                By checking, you agree to our{" "}
+                <span className="underline text-gray-800">Terms of Service</span>{" "}
+                &amp;{" "}
+                <span className="underline text-gray-800">Privacy Policy</span>
+              </span>
             </label>
-            <textarea
-              {...register("message")}
-              rows={3}
-              placeholder="Allergies, celebrations, seating preferences..."
-              className="w-full bg-[#FCF9F9] border border-[#FDE8E9] px-3.5 py-3 rounded-xl text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:border-[#D6768B] transition-colors resize-none font-sans"
-            />
-          </div>
+            {errors.terms && (
+              <p className="text-[11px] text-red-600 -mt-2">
+                {errors.terms.message}
+              </p>
+            )}
 
-          {/* Terms */}
-          <label className="flex items-start gap-2.5 cursor-pointer">
-            <input
-              {...register("terms", { required: true })}
-              type="checkbox"
-              className="mt-0.5 accent-black"
-            />
-            <span className="font-sans text-[11px] text-gray-500 leading-relaxed">
-              By checking, you agree to our{" "}
-              <span className="underline text-gray-700">Terms of Service</span>{" "}
-              &amp;{" "}
-              <span className="underline text-gray-700">Privacy Policy</span>
-            </span>
-          </label>
+            {submitError && (
+              <div
+                role="alert"
+                className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl p-3"
+              >
+                <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                <span>{submitError}</span>
+              </div>
+            )}
 
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-4 rounded-xl font-sans text-[11px] uppercase tracking-[0.18em] font-medium hover:bg-gray-800 active:scale-[0.98] transition-all mt-2"
-          >
-            Confirm Reservation
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={isSubmitting || !selectedSlot}
+              className="w-full bg-black text-white py-4 rounded-xl text-[11px] uppercase tracking-[0.18em] font-medium hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span>Confirming…</span>
+                </>
+              ) : !selectedSlot ? (
+                "Pick a time first"
+              ) : (
+                "Confirm Reservation"
+              )}
+            </button>
+          </form>
+        )}
       </div>
     </aside>
+  );
+}
+
+function Field({
+  label,
+  hint,
+  error,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="block text-[10px] uppercase tracking-[0.22em] text-gray-600 mb-1.5">
+        {label}{" "}
+        {hint && (
+          <span className="normal-case tracking-normal text-gray-400 text-[10px] ml-1">
+            ({hint})
+          </span>
+        )}
+      </label>
+      {children}
+      {error && <p className="mt-1 text-[11px] text-red-600">{error}</p>}
+    </div>
   );
 }

@@ -9,21 +9,16 @@ export const NAVBAR_CONFIG: NavbarConfig = {
   navItems: [
     { label: "Home", href: "/" },
 
-    {
-      label: "Services ▼",
-      children: [
-        { label: "Wedding Florals", href: "/wedding-florals" },
-        { label: "Catering", href: "/catering" },
-      ],
-    },
-
+    { label: "Wedding Florals", href: "/florals" },
+    { label: "Venue Rental", href: "/venue" },
+    { label: "Catering", href: "/catering" },
     { label: "Menu", href: "/menu" },
-    { label: "About", href: "/about" },
-    { label: "Experiences", href: "/experience" },
+    { label: "Summer Events", href: "/summer-events" },
+    { label: "About Us", href: "/about" },
   ],
 
   cta: {
     label: "Reserve",
-    href: "/reserve",
+    href: "/reservations",
   },
 };

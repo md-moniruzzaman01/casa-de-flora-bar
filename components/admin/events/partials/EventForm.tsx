@@ -13,6 +13,7 @@ import {
   LINK_OPTIONS,
 } from '../config/constant';
 import EventPreview from './EventPreview';
+import { api } from '@/lib/api';
 
 interface EventFormProps {
   defaultValues?: EventFormData;
@@ -22,6 +23,7 @@ interface EventFormProps {
 export default function EventForm({ defaultValues = DEFAULT_FORM_VALUES, eventId }: EventFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [error,  setError]  = useState<string | null>(null);
   const isEditing = !!eventId;
 
   const { register, handleSubmit, watch, setValue } = useForm<EventFormData>({ defaultValues });
@@ -33,18 +35,18 @@ export default function EventForm({ defaultValues = DEFAULT_FORM_VALUES, eventId
 
   const onSubmit = async (data: EventFormData) => {
     setSaving(true);
+    setError(null);
     try {
-      const url    = isEditing ? `/api/events/${eventId}` : '/api/events';
-      const method = isEditing ? 'PUT' : 'POST';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        router.push('/events');
-        router.refresh();
+      if (isEditing) {
+        await api.put(`/api/events/${eventId}`, data);
+      } else {
+        await api.post('/api/events', data);
       }
+      router.push('/admin/events');
+      router.refresh();
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to save promotion');
     } finally {
       setSaving(false);
     }
@@ -325,6 +327,12 @@ export default function EventForm({ defaultValues = DEFAULT_FORM_VALUES, eventId
             </div>
           </div>
         </div>
+
+        {error && (
+          <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         {/* Active + Save */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center justify-between">

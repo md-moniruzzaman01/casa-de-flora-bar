@@ -11,26 +11,51 @@ export default function TimeSlotCard({
   onSelect: () => void;
 }) {
   return (
-    <div
+    <button
+      type="button"
       onClick={onSelect}
+      aria-pressed={selected}
       className={[
-        "p-3 rounded-xl border cursor-pointer transition-all",
+        "text-left p-3 sm:p-3.5 rounded-2xl border transition-all",
         selected
-          ? "bg-pink-500 border-pink-500 shadow-sm"
-          : "bg-white border-gray-200 hover:border-pink-300 hover:shadow-sm",
+          ? "bg-primary border-primary shadow-sm"
+          : "bg-white border-primary-100 hover:border-primary/50 hover:shadow-sm",
       ].join(" ")}
     >
-      <p className={`text-[12px] font-medium leading-snug ${selected ? "text-white" : "text-gray-800"}`}>
-        {slot.from}<br />– {slot.to}
+      <p
+        className={[
+          "font-serif text-base sm:text-lg leading-none tabular-nums",
+          selected ? "text-white" : "text-black",
+        ].join(" ")}
+      >
+        {slot.from}
       </p>
-      <p className={`text-[11px] mt-1 ${selected ? "text-pink-100" : "text-gray-400"}`}>
-        {slot.seats} seats left
+      <p
+        className={[
+          "text-[10px] uppercase tracking-[0.18em] mt-1",
+          selected ? "text-white/85" : "text-gray-500",
+        ].join(" ")}
+      >
+        — {slot.to}
       </p>
-      {!selected && (
-        <span className={`mt-1.5 inline-block text-[9px] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full ${badgeStyles[slot.level]}`}>
-          {badgeLabels[slot.level]}
+
+      <div className="flex items-center justify-between mt-3">
+        <span
+          className={[
+            "text-[10px]",
+            selected ? "text-white/85" : "text-gray-500",
+          ].join(" ")}
+        >
+          {slot.seats} seats
         </span>
-      )}
-    </div>
+        {!selected && (
+          <span
+            className={`text-[9px] font-semibold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full ${badgeStyles[slot.level]}`}
+          >
+            {badgeLabels[slot.level]}
+          </span>
+        )}
+      </div>
+    </button>
   );
 }
