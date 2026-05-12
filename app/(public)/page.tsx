@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import EventRentalForm from "@/components/home/partials/EventRentalForm";
+import InquiryForm from "@/components/shared/Form/partials/InquiryForm";
 import Hero from "@/components/home/partials/Hero";
 import MakeBouquet from "@/components/home/partials/MakeBouquet";
 import ReservationSection from "@/components/home/partials/ReservationSection";
@@ -25,7 +25,7 @@ export default function Home() {
       <ServicesSection />
       <MakeBouquet />
       <ReservationSection />
-      <EventRentalForm/>
+      <InquiryForm/>
     </>
   );
 }

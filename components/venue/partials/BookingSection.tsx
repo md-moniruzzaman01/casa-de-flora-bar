@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ChevronDown, Mail, MapPin, Phone } from "lucide-react";
+import { ChevronDown, Loader2, AlertCircle, Mail, MapPin, Phone } from "lucide-react";
 import { VANUE_CONTENT } from "../config/constant";
+import { api, type ApiError } from "@/lib/api";
 
 type FormValues = {
   name: string;
@@ -13,13 +14,27 @@ type FormValues = {
   phone: string;
   event_type: string;
   event_date: string;
+  start_time: string;
   guests: string;
   message: string;
 };
 
+function addHours(hhmm: string, hours: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const totalMin = h * 60 + m + Math.round(hours * 60);
+  const newH = Math.floor(totalMin / 60) % 24;
+  const newM = totalMin % 60;
+  return `${String(newH).padStart(2, "0")}:${String(newM).padStart(2, "0")}`;
+}
+
+function isApiError(e: unknown): e is ApiError {
+  return typeof e === "object" && e !== null && "status" in e && "message" in e;
+}
+
 const BookingSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const { label, headline_line_1, headline_line_2, description, contact, event_types } =
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const { headline_line_1, headline_line_2, description, contact, event_types } =
     VANUE_CONTENT.booking_section;
 
   const {
@@ -30,9 +45,30 @@ const BookingSection: React.FC = () => {
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
-    await new Promise((r) => setTimeout(r, 900));
-    console.log("Booking enquiry:", data);
-    reset();
+    setSubmitError(null);
+    try {
+      await api.post("/api/event-bookings", {
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone?.trim() ?? "",
+        eventType: data.event_type,
+        guests: parseInt(data.guests, 10) || 0,
+        date: data.event_date,
+        startTime: data.start_time,
+        endTime: addHours(data.start_time, 4),
+        cateringRequired: false,
+        ...(data.message?.trim() ? { specialRequests: data.message.trim() } : {}),
+      });
+      reset();
+    } catch (err) {
+      if (isApiError(err)) {
+        setSubmitError(err.errors?.[0]?.message ?? err.message);
+      } else if (err instanceof Error) {
+        setSubmitError(err.message);
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
+      }
+    }
   };
 
   useEffect(() => {
@@ -88,8 +124,7 @@ const BookingSection: React.FC = () => {
       className="relative bg-white py-16 md:py-24 lg:py-32 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-
-        {/* Section header — centred, matching home page style */}
+        {/* Section header */}
         <div className="bk-fade text-center mb-12 md:mb-16">
           <h2 className="font-serif text-[clamp(28px,6vw,56px)] tracking-widest uppercase mb-3">
             <span className="block overflow-hidden">
@@ -107,7 +142,6 @@ const BookingSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
-
           {/* LEFT — Info + contact */}
           <div className="lg:col-span-4 space-y-8">
             <p className="bk-fade text-lg leading-relaxed text-gray-700 font-serif">
@@ -142,7 +176,10 @@ const BookingSection: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500 mb-0.5">{small}</p>
                     {href ? (
-                      <a href={href} className="font-serif text-base text-black hover:text-primary transition-colors break-all">
+                      <a
+                        href={href}
+                        className="font-serif text-base text-black hover:text-primary transition-colors break-all"
+                      >
                         {value}
                       </a>
                     ) : (
@@ -165,13 +202,15 @@ const BookingSection: React.FC = () => {
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="bk-form lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6"
+            noValidate
           >
             {isSubmitSuccessful ? (
               <div className="md:col-span-2 flex flex-col items-center justify-center py-20 text-center border border-pink-100 bg-pink-50/20 px-6">
                 <span className="block w-12 h-px bg-primary mx-auto mb-7" />
                 <p className="font-serif italic text-[32px] text-black mb-3">Merci.</p>
                 <p className="text-sm text-gray-600 max-w-xs leading-relaxed">
-                  Your enquiry has reached us. We&apos;ll respond personally within twenty-four hours.
+                  Your enquiry has reached us. We&apos;ll respond personally within
+                  twenty-four hours.
                 </p>
               </div>
             ) : (
@@ -213,29 +252,52 @@ const BookingSection: React.FC = () => {
                 <div className="bk-form-row relative space-y-2">
                   <label className={labelBase}>Event Type (required)</label>
                   <select
-                    {...register("event_type", { required: "Please select an event type" })}
+                    {...register("event_type", {
+                      required: "Please select an event type",
+                    })}
                     className={selectBase}
                     defaultValue=""
                   >
-                    <option value="" disabled>Select type…</option>
+                    <option value="" disabled>
+                      Select type…
+                    </option>
                     {event_types.map((t) => (
-                      <option key={t} value={t}>{t}</option>
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown
                     className="pointer-events-none absolute right-4 bottom-4 w-4 h-4 text-gray-400"
                     strokeWidth={1.6}
                   />
-                  {errors.event_type && <p className={errorBase}>{errors.event_type.message}</p>}
+                  {errors.event_type && (
+                    <p className={errorBase}>{errors.event_type.message}</p>
+                  )}
                 </div>
 
                 <div className="bk-form-row space-y-2">
                   <label className={labelBase}>Event Date</label>
                   <input
-                    {...register("event_date")}
+                    {...register("event_date", { required: "Date is required" })}
                     type="date"
                     className={inputBase}
                   />
+                  {errors.event_date && (
+                    <p className={errorBase}>{errors.event_date.message}</p>
+                  )}
+                </div>
+
+                <div className="bk-form-row space-y-2">
+                  <label className={labelBase}>Start Time (required)</label>
+                  <input
+                    {...register("start_time", { required: "Start time is required" })}
+                    type="time"
+                    className={inputBase}
+                  />
+                  {errors.start_time && (
+                    <p className={errorBase}>{errors.start_time.message}</p>
+                  )}
                 </div>
 
                 <div className="bk-form-row space-y-2">
@@ -253,26 +315,45 @@ const BookingSection: React.FC = () => {
                 <div className="bk-form-row md:col-span-2 space-y-2">
                   <label className={labelBase}>Message (required)</label>
                   <textarea
-                    {...register("message")}
+                    {...register("message", { required: "Message is required" })}
                     rows={5}
                     placeholder="Tell us what kind of event you're planning…"
                     className={textareaBase}
                   />
+                  {errors.message && (
+                    <p className={errorBase}>{errors.message.message}</p>
+                  )}
                 </div>
+
+                {submitError && (
+                  <div
+                    className="md:col-span-2 flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-100 p-3"
+                    role="alert"
+                  >
+                    <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
+                )}
 
                 <div className="bk-form-row md:col-span-2 flex justify-center mt-2">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-black text-white w-full md:w-1/2 py-4 uppercase tracking-widest hover:scale-105 transition-transform font-serif disabled:opacity-60 cursor-pointer"
+                    className="bg-black text-white w-full md:w-1/2 py-4 uppercase tracking-widest hover:scale-105 transition-transform font-serif disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    {isSubmitting ? "Sending…" : "Submit"}
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        <span>Sending…</span>
+                      </>
+                    ) : (
+                      "Submit"
+                    )}
                   </button>
                 </div>
               </>
             )}
           </form>
-
         </div>
       </div>
     </section>

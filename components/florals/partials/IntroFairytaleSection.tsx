@@ -21,7 +21,7 @@ const IntroFairytaleSection: React.FC = () => {
                  *   mobile  → single column (stacked)
                  *   desktop → two columns: text (38%) | image block (62%)
                  */}
-                <div className="flex flex-col lg:grid lg:grid-cols-2">
+                <div className="flex flex-col-reverse lg:grid lg:grid-cols-2">
 
                  
                     <div className="flex items-center order-1 lg:order-none py-14 md:py-20 lg:py-0 px-6 md:px-12 lg:pl-[72px] lg:pr-10">
@@ -55,7 +55,7 @@ const IntroFairytaleSection: React.FC = () => {
                         {tallImage && (
                             <div className="relative w-full">
                                
-                                <div className="relative aspect-[3/5] w-full">
+                                <div className="relative aspect-3/4  md:aspect-3/5 w-full">
                                     <Image
                                         src={tallImage.src}
                                         alt={tallImage.alt}
