@@ -18,6 +18,8 @@ import {
   ChevronRight,
   ExternalLink,
   LogOut,
+  Mail,
+  BarChart,
 } from "lucide-react";
 
 import { navSections } from "../config/constant";
@@ -34,6 +36,8 @@ const IconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   user: User,
   "plus-circle": PlusCircle,
   settings: Settings,
+  mail: Mail,
+  chart: BarChart,
 };
 
 export default function Sidebar({}: SidebarProps) {

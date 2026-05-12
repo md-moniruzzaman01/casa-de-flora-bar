@@ -1,13 +1,34 @@
 "use client"
-import { useState } from "react";
-import { DAYS_OF_WEEK, HIGHLIGHTED_DATES, RANGE_DATES } from "../config/constant";
+import { useState, useMemo, useEffect } from "react";
+import { DAYS_OF_WEEK } from "../config/constant";
 
+interface MiniCalendarProps {
+  selectedDate?: Date;
+  onSelectDate?: (date: Date) => void;
+  bookingDates?: string[]; // Array of 'YYYY-MM-DD' strings
+}
 
+export default function MiniCalendar({
+  selectedDate,
+  onSelectDate,
+  bookingDates = [],
+}: MiniCalendarProps) {
+    const today = new Date();
+    // Use the selected date's year/month if provided, otherwise today
+    const initialYear = selectedDate ? selectedDate.getFullYear() : today.getFullYear();
+    const initialMonth = selectedDate ? selectedDate.getMonth() : today.getMonth();
+    
+    const [current, setCurrent] = useState({ year: initialYear, month: initialMonth });
 
-
-
-export default function MiniCalendar() {
-    const [current, setCurrent] = useState({ year: 2026, month: 4 }); // May = 4
+    // Sync month view if selectedDate changes from outside
+    useEffect(() => {
+      if (selectedDate) {
+        setCurrent({
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth()
+        });
+      }
+    }, [selectedDate]);
 
     const monthName = new Date(current.year, current.month).toLocaleString("default", {
         month: "long",
@@ -34,6 +55,20 @@ export default function MiniCalendar() {
             return { year: d.getFullYear(), month: d.getMonth() };
         });
 
+    // Compute highlighted dates based on API booking dates
+    const highlightedDates = useMemo(() => {
+      const dates = new Set<number>();
+      bookingDates.forEach(dateStr => {
+        const d = new Date(dateStr);
+        // Adjust for timezone to get the correct local date
+        const localD = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+        
+        if (localD.getFullYear() === current.year && localD.getMonth() === current.month) {
+            dates.add(localD.getDate());
+        }
+      });
+      return dates;
+    }, [bookingDates, current.year, current.month]);
 
     return (
         <div className="bg-[#fdf0f3] rounded-2xl p-5 select-none">
@@ -69,26 +104,32 @@ export default function MiniCalendar() {
             <div className="grid grid-cols-7">
                 {cells.map((day, i) => {
                     if (!day) return <div key={i} />;
-                    const isHighlighted = HIGHLIGHTED_DATES.has(day);
-                    const isRange = RANGE_DATES.has(day);
-                    const isEdge = day === 14 || day === 20;
+                    const isHighlighted = highlightedDates.has(day);
+                    const isSelected = selectedDate && 
+                      selectedDate.getFullYear() === current.year &&
+                      selectedDate.getMonth() === current.month &&
+                      selectedDate.getDate() === day;
+                      
+                    const isToday = today.getFullYear() === current.year && 
+                      today.getMonth() === current.month && 
+                      today.getDate() === day;
 
                     return (
                         <div key={i} className="relative flex items-center justify-center h-9">
-                            {/* range background strip */}
-                            {isRange && !isEdge && (
-                                <div className="absolute inset-y-1 inset-x-0 bg-pink-100" />
-                            )}
-                            {isEdge && (
-                                <div
-                                    className={`absolute inset-y-1 ${day === 14 ? "left-1/2 right-0" : "left-0 right-1/2"} bg-pink-100`}
-                                />
-                            )}
                             <button
+                                onClick={() => {
+                                  if (onSelectDate) {
+                                    onSelectDate(new Date(current.year, current.month, day));
+                                  }
+                                }}
                                 className={`relative z-10 w-8 h-8 rounded-full text-[13px] font-medium transition-colors
-                  ${isHighlighted
-                                        ? "bg-[#e8336d] text-white"
-                                        : "text-gray-700 hover:bg-pink-100"
+                                    ${isSelected 
+                                        ? "bg-gray-900 text-white" 
+                                        : isHighlighted
+                                            ? "bg-[#e8336d] text-white"
+                                            : isToday
+                                              ? "text-[#e8336d] border border-[#e8336d]"
+                                              : "text-gray-700 hover:bg-pink-100"
                                     }`}
                             >
                                 {day}

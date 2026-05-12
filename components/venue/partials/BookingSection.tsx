@@ -84,20 +84,25 @@ const BookingSection: React.FC = () => {
     // Parse time slots (e.g., "11am - 3pm")
     const [start, end] = data.time_slot.split(" - ");
 
+    // Map user-provided event type to backend enum
+    const rawType = (data.event_type || "").toUpperCase();
+    const validTypes = ["WEDDING", "BIRTHDAY", "CORPORATE", "SEMINAR", "ANNIVERSARY"];
+    const eventType = validTypes.includes(rawType) ? rawType : "OTHER";
+
     try {
       await api.post("/api/event-bookings", {
         name: data.name,
         email: data.email,
         phone: data.phone,
         selectedSpace: data.selected_space,
-        eventType: data.event_type,
+        eventType,
         // Strip non-numeric chars from guest string (e.g., "8 Person" -> 8)
         guests: parseInt(data.guests.toString().replace(/\D/g, ""), 10) || 0,
         date: new Date(data.event_date).toISOString(),
         startTime: start || "",
         endTime: end || "",
         cateringRequired: cateringNeeded,
-        specialRequests: data.message,
+        specialRequests: (data.message || "") + (eventType === "OTHER" ? ` (Event Type: ${data.event_type})` : ""),
         bookingType: "VENUE", // As per your model default
       });
       reset();

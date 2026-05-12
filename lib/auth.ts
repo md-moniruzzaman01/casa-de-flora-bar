@@ -8,7 +8,7 @@ const USER_KEY  = 'adminUser';
 const EVENT     = 'casa-flora:auth-changed';
 
 export interface AdminUser {
-  id:    string;
+  id:    number;
   name:  string;
   email: string;
   role:  'SUPER_ADMIN' | 'ADMIN';

@@ -57,6 +57,26 @@ const EMPTY_HOURS: Record<DayLabel, DayHours> = DAYS.reduce(
   {} as Record<DayLabel, DayHours>,
 );
 
+// Helper to ensure "10:00 AM" or "3:00 PM" becomes "10:00" or "15:00" for <input type="time">
+function normalizeTo24h(timeStr: string): string {
+  if (!timeStr) return "10:00";
+  // If already in HH:mm or HH:mm:ss without AM/PM, just return first 5 chars
+  if (!timeStr.toLowerCase().includes("am") && !timeStr.toLowerCase().includes("pm")) {
+    return timeStr.slice(0, 5);
+  }
+
+  const [time, modifier] = timeStr.split(" ");
+  let [hours, minutes] = time.split(":");
+  if (hours === "12") {
+    hours = "00";
+  }
+  let h = parseInt(hours, 10);
+  if (modifier === "PM") {
+    h += 12;
+  }
+  return `${String(h).padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+}
+
 // ── Toggle ────────────────────────────────────────────────────────────────────
 
 function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
@@ -199,7 +219,9 @@ export default function SettingPage() {
         const next = { ...EMPTY_HOURS };
         for (const row of h.data) {
           next[BACKEND_TO_DAY[row.day]] = {
-            open: row.open, close: row.close, closed: row.closed,
+            open: normalizeTo24h(row.open),
+            close: normalizeTo24h(row.close),
+            closed: row.closed,
           };
         }
         setHours(next);

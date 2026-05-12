@@ -124,19 +124,25 @@ const WeddingGallerySection: React.FC = () => {
       });
     }, sectionRef);
 
-    // Refresh ScrollTrigger AFTER all images have loaded so page height is
-    // stable before scroll positions are calculated. Without this, tiles whose
-    // positions shift as images load stay permanently hidden (opacity:0).
-    const refreshTriggers = () => ScrollTrigger.refresh();
-    if (document.readyState === "complete") {
-      requestAnimationFrame(refreshTriggers);
-    } else {
-      window.addEventListener("load", refreshTriggers, { once: true });
+    // Refresh ScrollTrigger when the section height changes (e.g. as lazy images load)
+    // Use debounce to prevent massive jank from continuous layout reflows
+    let resizeObserver: ResizeObserver | null = null;
+    let timeoutId: NodeJS.Timeout;
+    
+    if (sectionRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 150);
+      });
+      resizeObserver.observe(sectionRef.current);
     }
 
     return () => {
       ctx.revert();
-      window.removeEventListener("load", refreshTriggers);
+      if (resizeObserver) resizeObserver.disconnect();
+      clearTimeout(timeoutId);
     };
   }, []);
 

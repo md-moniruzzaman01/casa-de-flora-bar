@@ -47,6 +47,7 @@ const isThisWeek = (iso: string) => {
 // ── Main Page ──────────────────────────────────────────────────────────────
 export default function DashboardContent() {
   const [filter, setFilter] = useState<ReservationFilter>("All");
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const pageRef = useRef<HTMLDivElement>(null);
 
   const [tables, setTables] = useState<BackendTableBooking[]>([]);
@@ -136,13 +137,20 @@ export default function DashboardContent() {
   ];
 
   const filters: ReservationFilter[] = ["All", "Table", "Bouquet", "Large Group", "Event"];
-  const todayRows = rows.filter((r) => {
+  const selectedDateRows = rows.filter((r) => {
     const d = new Date(r.dateValue);
-    return isToday(d.toISOString());
+    // Adjust for timezone differences so we compare the right local date
+    // r.dateValue is YYYY-MM-DD
+    const localD = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+    return (
+      localD.getFullYear() === selectedDate.getFullYear() &&
+      localD.getMonth() === selectedDate.getMonth() &&
+      localD.getDate() === selectedDate.getDate()
+    );
   });
   const filtered = filter === "All"
-    ? todayRows
-    : todayRows.filter((r) => r.bookingFor.startsWith(filter));
+    ? selectedDateRows
+    : selectedDateRows.filter((r) => r.bookingFor.startsWith(filter));
 
   if (loading) {
     return (
@@ -184,22 +192,42 @@ export default function DashboardContent() {
               <button className="text-sm font-medium text-[#e8336d] hover:underline">Full Calendar</button>
             </div>
             <div className="space-y-3">
-              {overviewItems.map((item) => (
-                <div key={item.label} className="overview-row">
-                  <OverviewRow item={item} />
-                </div>
-              ))}
+              {overviewItems.map((item) => {
+                const filterMap: Record<string, ReservationFilter> = {
+                  'Table Reservations': 'Table',
+                  'Bouquet Reservations': 'Bouquet',
+                  'Large Group Reservations': 'Large Group',
+                  'Event Reservations': 'Event',
+                };
+                const mappedFilter = filterMap[item.label] || 'All';
+
+                return (
+                  <div 
+                    key={item.label} 
+                    className="overview-row cursor-pointer"
+                    onClick={() => setFilter(mappedFilter)}
+                  >
+                    <OverviewRow item={item} />
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           <div className="fade-up mt-9">
-            <MiniCalendar />
+            <MiniCalendar 
+              selectedDate={selectedDate} 
+              onSelectDate={setSelectedDate} 
+              bookingDates={rows.map(r => r.dateValue)} 
+            />
           </div>
         </div>
 
         {/* All Reservations Table */}
         <div className="fade-up">
-          <h2 className="text-base font-bold text-gray-900 mb-4">All reservations — today</h2>
+          <h2 className="text-base font-bold text-gray-900 mb-4">
+            All reservations — {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </h2>
 
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -263,7 +291,7 @@ export default function DashboardContent() {
                 {filtered.length === 0 && (
                   <tr>
                     <td colSpan={6} className="px-5 py-10 text-center text-sm text-gray-400">
-                      No reservations today.
+                      No reservations for this date.
                     </td>
                   </tr>
                 )}
