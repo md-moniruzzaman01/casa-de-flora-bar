@@ -1,6 +1,4 @@
-"use client";
 
-import Image from "next/image";
 
 const services = [
   {
@@ -96,10 +94,10 @@ export default function ArtFromScratchSection() {
                   src={service.image}
                   alt={service.alt}
                   className="w-full h-full object-contain p-1 md:p-3"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='165' viewBox='0 0 220 165'%3E%3Crect width='220' height='165' fill='%23f5f0eb'/%3E%3C/svg%3E";
-                  }}
+                  // onError={(e) => {
+                  //   (e.target as HTMLImageElement).src =
+                  //     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='165' viewBox='0 0 220 165'%3E%3Crect width='220' height='165' fill='%23f5f0eb'/%3E%3C/svg%3E";
+                  // }}
                 />
               </div>
 

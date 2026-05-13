@@ -135,6 +135,7 @@ export default function BouquetReservationForm() {
       });
       reset({ guests: "1", quantity: "1" });
     } catch (err) {
+      console.log("bouquit", err)
       if (isApiError(err)) {
         setSubmitError(err.errors?.[0]?.message ?? err.message);
       } else if (err instanceof Error) {

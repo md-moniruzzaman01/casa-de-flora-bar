@@ -32,8 +32,8 @@ export default function HowItWorks() {
   }, { scope: container });
 
   return (
-    <section ref={container} className="px-6 py-12 md:px-12 lg:px-24">
-      <div className="max-w-7xl mx-auto bg-primary-100/80 rounded-[40px] p-12 md:p-20 text-center">
+    <section ref={container} className="px-2 py-12 md:px-12 lg:px-24">
+      <div className="max-w-7xl mx-auto bg-primary-100/80 rounded-[40px] p-2 md:p-20 text-center">
 
         {/* Section Header */}
         <div className="section-header mb-16 space-y-4">
@@ -46,20 +46,15 @@ export default function HowItWorks() {
         </div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-3 gap-2 md:gap-8">
           {howItWorks.steps.map((step, index) => (
             <div
               key={index}
-              className="step-card bg-white rounded-3xl p-10 flex flex-col items-center shadow-sm"
+              className="step-card bg-white rounded-3xl p-2 md:p-10 flex flex-col items-center shadow-sm"
             >
-              <span className="text-4xl font-serif text-[#1a1a1a] mb-6">
+              <span className="text-2xl md:text-4xl font-serif text-[#1a1a1a] mb-2.5 md:mb-6">
                 {step.number}
               </span>
-
-              {/* Optional: Add an icon component here if you have SVG/Image assets */}
-              {/* <div className="w-24 h-24 bg-[#FFF5F6] rounded-full mb-8 flex items-center justify-center">
-                <span className="text-2xl">🌸</span>
-              </div> */}
 
 
               <div className="relative w-20 md:w-34 h-16 md:h-34 mb-2 md:mb-10 transition-transform duration-500 group-hover:scale-110">
@@ -71,10 +66,10 @@ export default function HowItWorks() {
                 />
               </div>
 
-              <h3 className="text-xl font-serif  mb-4">
+              <h3 className="text-base md:text-xl font-serif mb-2.5 md:mb-4">
                 {step.title}
               </h3>
-              <p className="text-[#666666] text-sm leading-relaxed">
+              <p className="text-gray text-xs  md:text-sm leading-relaxed">
                 {step.description}
               </p>
             </div>

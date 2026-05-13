@@ -15,7 +15,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <LocalBusinessJsonLd />
       <Navbar />
       <main className="flex-1">
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </main>
       <Footer />
       <WhatsAppButton />
