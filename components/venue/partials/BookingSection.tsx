@@ -116,7 +116,7 @@ const BookingSection: React.FC = () => {
   const labelBase = "block text-sm text-gray-700 mb-1 font-serif";
 
   return (
-    <section ref={sectionRef} className=" py-16 px-4">
+    <section id="booking-form" ref={sectionRef} className=" py-16 px-4">
       <div className="max-w-5xl mx-auto bg-white p-8 md:p-12 ">
         <h2 className="font-serif text-3xl md:text-4xl text-center mb-10 text-gray-800">
           Please fill-up for Rental
@@ -159,8 +159,8 @@ const BookingSection: React.FC = () => {
                     type="button"
                     onClick={() => toggleService(service)}
                     className={`px-4 py-2 text-sm font-serif transition-colors border ${selectedServices.includes(service)
-                        ? "bg-[#D23669] text-white border-[#D23669]"
-                        : "bg-pink-100/40 text-gray-700 border-transparent hover:bg-pink-100"
+                      ? "bg-[#D23669] text-white border-[#D23669]"
+                      : "bg-pink-100/40 text-gray-700 border-transparent hover:bg-pink-100"
                       }`}
                   >
                     {service}

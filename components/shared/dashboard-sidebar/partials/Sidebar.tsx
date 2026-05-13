@@ -40,10 +40,10 @@ const IconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   chart: BarChart,
 };
 
-export default function Sidebar({}: SidebarProps) {
+export default function Sidebar({ }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname(); // ✅ current URL
-  const router   = useRouter();
+  const router = useRouter();
   const { user } = useAuth();
 
   const handleLogout = () => {
@@ -117,23 +117,16 @@ export default function Sidebar({}: SidebarProps) {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                      isActive
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${isActive
                         ? "bg-primary text-white shadow-md"
                         : "text-gray hover:bg-primary-100"
-                    }`}
+                      }`}
                   >
                     <IconComponent size={20} />
 
                     {!collapsed && (
                       <span className="text-[13px] font-medium flex-1 truncate">
                         {item.label}
-                      </span>
-                    )}
-
-                    {item.badge && !collapsed && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-800 text-white">
-                        {item.badge}
                       </span>
                     )}
                   </Link>
@@ -144,7 +137,7 @@ export default function Sidebar({}: SidebarProps) {
         ))}
       </nav>
 
-       <div className="border-t p-3 space-y-2" style={{ borderColor: "#f0dede" }}>
+      <div className="border-t p-3 space-y-2" style={{ borderColor: "#f0dede" }}>
         {!collapsed && (
           <Link
             href="/"
@@ -156,9 +149,8 @@ export default function Sidebar({}: SidebarProps) {
         )}
 
         <div
-          className={`flex items-center gap-3 p-2 rounded-xl transition-all ${
-            collapsed ? "justify-center" : "bg-white/40 border border-[#f0dede]"
-          }`}
+          className={`flex items-center gap-3 p-2 rounded-xl transition-all ${collapsed ? "justify-center" : "bg-white/40 border border-[#f0dede]"
+            }`}
         >
           <div
             className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow-sm"

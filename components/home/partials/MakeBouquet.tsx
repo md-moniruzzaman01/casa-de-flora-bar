@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { HOME_CONTENT } from "../config/constant";
 import WaveDividerUp from "@/components/shared/WaveDivider";
+import Link from "next/link";
 
 if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
@@ -109,12 +110,16 @@ export default function MakeBouquet() {
                                 {HOME_CONTENT.bouquetSection.description}
                             </p>
                             <div className="flex flex-wrap gap-4">
-                                <button className="bg-black text-white px-10 py-4 text-[12px] font-medium tracking-[0.1em] hover:bg-gray-900 transition-all">
-                                    {HOME_CONTENT.bouquetSection.ctaPrimary}
-                                </button>
-                                <button className="border border-black/40 text-black px-10 py-4 text-[12px] font-medium tracking-[0.1em] hover:bg-white/30 transition-all">
-                                    {HOME_CONTENT.bouquetSection.ctaSecondary}
-                                </button>
+                                <Link href={HOME_CONTENT.bouquetSection.ctaPrimaryLink}>
+                                    <button className="bg-black text-white px-10 py-4 text-[12px] font-medium tracking-[0.1em] hover:bg-gray-900 transition-all">
+                                        {HOME_CONTENT.bouquetSection.ctaPrimary}
+                                    </button>
+                                </Link>
+                                <Link href={HOME_CONTENT.bouquetSection.ctaSecondaryLink}>
+                                    <button className="border border-black/40 text-black px-10 py-4 text-[12px] font-medium tracking-[0.1em] hover:bg-white/30 transition-all">
+                                        {HOME_CONTENT.bouquetSection.ctaSecondary}
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

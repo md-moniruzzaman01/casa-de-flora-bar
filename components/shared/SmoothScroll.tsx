@@ -74,7 +74,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     });
     window.addEventListener("load", refresh);
     if (document.fonts?.ready) {
-      document.fonts.ready.then(refresh).catch(() => {});
+      document.fonts.ready.then(refresh).catch(() => { });
     }
 
     return () => {

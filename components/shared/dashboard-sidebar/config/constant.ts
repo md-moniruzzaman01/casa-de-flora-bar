@@ -14,9 +14,9 @@ export const navSections: NavSection[] = [
     {
         label: "Reservations",
         items: [
-            { icon: "table", label: "Table Reservations", href: "/admin/reservations/table", badge: 6 },
-            { icon: "flower", label: "Make Your Bouquet", href: "/admin/reservations/bouquet", badge: 5 },
-            { icon: "users", label: "Large Group", href: "/admin/reservations/large-group", badge: 2 },
+            { icon: "table", label: "Table Reservations", href: "/admin/reservations/table" },
+            { icon: "flower", label: "Make Your Bouquet", href: "/admin/reservations/bouquet" },
+            { icon: "users", label: "Large Group", href: "/admin/reservations/large-group" },
             { icon: "star", label: "Events", href: "/admin/events" },
         ],
     },

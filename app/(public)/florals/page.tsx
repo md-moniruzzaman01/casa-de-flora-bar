@@ -28,17 +28,16 @@ export const metadata: Metadata = {
 };
 
 export default function FloralsPage() {
-    return (
-        <div className="">
-           <HeroSection/>
-           <BrandLogosSection/>
-           <IntroFairytaleSection/>
-           <WeddingVideoSection/>
-           <ArtFromScratchSection/>
-           <WeddingGallery/>
-           {/* <WeddingGallerySection/> */}
-           <TestimonialsSection/>
-           <EventRentalSection/>
-        </div>
-    );
+  return (
+    <div className="">
+      <HeroSection />
+      <BrandLogosSection />
+      <IntroFairytaleSection />
+      <WeddingVideoSection />
+      <ArtFromScratchSection />
+      <WeddingGallery />
+      <TestimonialsSection />
+      <EventRentalSection />
+    </div>
+  );
 }

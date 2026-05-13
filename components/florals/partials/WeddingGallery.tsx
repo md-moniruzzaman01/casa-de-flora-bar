@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { WEDDING_FLORALS_CONTENT } from "../config/constant";
 import WeddingGalleryChapter from "./WeddingGalleryChapter";
 
@@ -20,7 +18,7 @@ type FlatImage = {
   alt: string;
 };
 
-const WeddingGallerySection: React.FC = () => {
+const WeddingGallery: React.FC = () => {
   const { label, headline_part_1, headline_part_2, subheadline, collections } =
     WEDDING_FLORALS_CONTENT.wedding_gallery;
 
@@ -78,54 +76,8 @@ const WeddingGallerySection: React.FC = () => {
     };
   }, [lightboxIndex, close, next, prev]);
 
-  // GSAP scroll-triggered reveals
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const ctx = gsap.context(() => {
-      // Section + chapter heading reveals
-      gsap.utils.toArray<HTMLElement>(".gallery-reveal").forEach((el) => {
-        gsap.from(el, {
-          y: 40,
-          opacity: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 88%", once: true },
-        });
-      });
-
-      // Image tile batched reveal
-      gsap.set(".gallery-tile", { y: 50, opacity: 0 });
-      ScrollTrigger.batch(".gallery-tile", {
-        onEnter: (elements) =>
-          gsap.to(elements, {
-            y: 0,
-            opacity: 1,
-            duration: 0.9,
-            stagger: { each: 0.06, from: "start" },
-            ease: "power2.out",
-            overwrite: true,
-          }),
-        start: "top 92%",
-      });
-
-      // Subtle parallax drift on decorative blooms
-      gsap.utils.toArray<HTMLElement>(".bloom-decor").forEach((el, i) => {
-        gsap.to(el, {
-          yPercent: i % 2 === 0 ? 14 : -10,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.6,
-          },
-        });
-      });
-    }, sectionRef);
-
-    // Refresh ScrollTrigger when the section height changes (e.g. as lazy images load)
-    // Use debounce to prevent massive jank from continuous layout reflows
+    // Notify ScrollTrigger/Lenis when the gallery height changes (e.g. as lazy images load)
     let resizeObserver: ResizeObserver | null = null;
     let timeoutId: NodeJS.Timeout;
     
@@ -133,14 +85,15 @@ const WeddingGallerySection: React.FC = () => {
       resizeObserver = new ResizeObserver(() => {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
-          ScrollTrigger.refresh();
+          import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+            ScrollTrigger.refresh();
+          });
         }, 150);
       });
       resizeObserver.observe(sectionRef.current);
     }
 
     return () => {
-      ctx.revert();
       if (resizeObserver) resizeObserver.disconnect();
       clearTimeout(timeoutId);
     };
@@ -284,4 +237,4 @@ const WeddingGallerySection: React.FC = () => {
   );
 };
 
-export default WeddingGallerySection;
+export default WeddingGallery;
