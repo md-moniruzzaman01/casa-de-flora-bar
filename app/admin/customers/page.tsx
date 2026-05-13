@@ -65,6 +65,7 @@ function backendToRow(c: BackendCustomer): Customer {
     lastVisit:   formatJoinedDate(c.createdAt),
     lastVisitTs: new Date(c.createdAt).getTime(),
     tag:         tagFor(bookings),
+    isBlocked:   c.isBlocked,
   };
 }
 
