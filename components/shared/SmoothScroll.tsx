@@ -20,12 +20,16 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       typeof window !== "undefined" &&
       window.matchMedia(REDUCED_MOTION_QUERY).matches;
 
-    // Respect user motion preference — fall back to native scroll.
-    if (prefersReducedMotion) {
+    // 1. Disable smooth scroll on the florals page OR if user prefers reduced motion
+    const isFloralsPage = pathname === "/florals";
+
+    if (prefersReducedMotion || isFloralsPage) {
+      // Just refresh ScrollTrigger for native scrolling and exit
       ScrollTrigger.refresh();
       return;
     }
 
+    // 2. Initialize Lenis (only runs if NOT on florals page)
     const lenis = new Lenis({
       lerp: 0.08,
       duration: 1.1,
@@ -43,12 +47,8 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     lenis.on("scroll", onLenisScroll);
 
     gsap.ticker.add(tickerFn);
-    // Default lag smoothing keeps animations stable when the tab is
-    // backgrounded or the main thread blocks. Disabling it (`lagSmoothing(0)`)
-    // is what previously caused the "page sticks while scrolling" symptom.
 
-    // Smooth-scroll hash anchors through Lenis so they don't fight the
-    // native scroll. e.g. <Link href="#booking">.
+    // Smooth-scroll hash anchors
     const onAnchorClick = (event: MouseEvent) => {
       const link = (event.target as HTMLElement | null)?.closest?.(
         'a[href^="#"]',
@@ -63,9 +63,6 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     };
     document.addEventListener("click", onAnchorClick);
 
-    // Refresh ScrollTrigger after images/fonts load so trigger positions
-    // are accurate. Without this, late-loading images shift content and
-    // animations fire at the wrong scroll position.
     const refresh = () => ScrollTrigger.refresh();
     let raf1 = 0;
     let raf2 = 0;
@@ -73,6 +70,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       raf2 = requestAnimationFrame(refresh);
     });
     window.addEventListener("load", refresh);
+    
     if (document.fonts?.ready) {
       document.fonts.ready.then(refresh).catch(() => { });
     }
@@ -87,13 +85,13 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       ScrollTrigger.getAll().forEach((t) => t.kill());
       lenis.destroy();
     };
-  }, []);
+  }, [pathname]); // Added pathname as a dependency to re-run logic when navigating
 
-  // On client-side route changes Next.js keeps the layout (and Lenis)
-  // mounted, but ScrollTrigger needs to recompute trigger positions for
-  // the freshly rendered page.
+  // Refresh ScrollTrigger on route changes
   useEffect(() => {
-    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
+    const id = requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
     return () => cancelAnimationFrame(id);
   }, [pathname]);
 

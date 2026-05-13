@@ -237,7 +237,7 @@ export default function LuxuryReservation() {
 
             <div className="flex justify-center">
               <Link href={HOME_CONTENT.groupReservation.ctaLink}>
-                <button className="bg-black text-white py-4 w-full max-w-[320px] text-[clamp(12px,3.5vw,13px)] tracking-[0.1em] transition-colors hover:bg-[#ED80A8] active:scale-95 min-h-[52px] uppercase font-sans">
+                <button className="bg-black text-white px-4 md:px-7 py-4 w-full max-w-[320px] text-[clamp(12px,3.5vw,13px)] tracking-[0.1em] transition-colors hover:bg-[#ED80A8] active:scale-95 min-h-[52px] uppercase font-sans">
                   Reserve your table
                 </button>
               </Link>

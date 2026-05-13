@@ -1,4 +1,4 @@
-"use client";
+
 
 import ScallopBorder from "@/components/shared/ScallopBorder";
 import Image from "next/image";

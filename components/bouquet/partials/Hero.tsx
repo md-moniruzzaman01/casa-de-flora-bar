@@ -29,12 +29,25 @@ export default function Hero() {
     return (
         <section
             ref={container}
-            className="relative w-full min-h-[80vh] bg-primary-100/80 flex items-center"
+            className="relative w-full min-h-[80vh] bg-primary-100/80 flex items-start md:items-center"
         >
-            <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 items-center ">
+
+
+                {/* Right Image */}
+                <div className="hero-image relative w-full aspect-[4/3] lg:rounded-2xl overflow-hidden lg:shadow-xl lg:order-2">
+                    <Image
+                        src={`/${hero.image}`}
+                        alt="Make your own bouquet workshop"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                </div>
+
 
                 {/* Left Content */}
-                <div className="hero-text-content space-y-6">
+                <div className="hero-text-content space-y-6 px-4 lg:order-1">
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif leading-tight">
                         <span className="block text-black">MAKE YOUR</span>
                         <span className="block text-primary">OWN BOUQUET</span>
@@ -50,18 +63,6 @@ export default function Hero() {
                         </button>
                     </Link>
                 </div>
-
-                {/* Right Image */}
-                <div className="hero-image relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
-                    <Image
-                        src={`/${hero.image}`}
-                        alt="Make your own bouquet workshop"
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                </div>
-
             </div>
         </section>
     );
