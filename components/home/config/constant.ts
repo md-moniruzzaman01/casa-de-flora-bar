@@ -60,7 +60,7 @@ export const HOME_CONTENT = {
     stats: "500",
     statsSubtext: "Bouquets created, each blooming with a unique story.",
     ctaPrimary: "BOOK A BOUQUET",
-    ctaPrimaryLink: "/reservations",
+    ctaPrimaryLink: "/bouquet#reservation",
     ctaSecondary: "BooK A Table",
     ctaSecondaryLink: "/reservations",
     footerNote: "Enjoy a calm, creative floral experience where you can design your own bouquet while we take care of every detail.",
