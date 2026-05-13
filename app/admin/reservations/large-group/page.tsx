@@ -23,6 +23,7 @@ type SortDir   = "asc" | "desc";
 
 interface GroupEvent {
   id:            string;
+  bookingType:   'VENUE' | 'FLORALS';
   host:          string;
   email:         string;
   phone:         string;
@@ -73,10 +74,38 @@ const STATUS_TO_BACKEND_LG: Record<Status, BackendEventBooking['status']> = {
   Confirm: 'CONFIRMED',
 };
 
+const VALID_TYPES_BE = ['WEDDING', 'BIRTHDAY', 'CORPORATE', 'SEMINAR', 'ANNIVERSARY', 'OTHER'];
+
+function mapOccasionToBackend(occ: string): string {
+  const u = occ.toUpperCase();
+  if (VALID_TYPES_BE.includes(u)) return u;
+  if (u.includes('BIRTHDAY')) return 'BIRTHDAY';
+  if (u.includes('WEDDING')) return 'WEDDING';
+  return 'OTHER';
+}
+
+function parseTimeRange(range: string): { start: string; end: string } {
+  // "10:00 AM – 12:00 PM" -> { start: "10:00", end: "12:00" }
+  const [s, e] = range.split('–').map(t => t.trim());
+  return {
+    start: to24h(s),
+    end: to24h(e),
+  };
+}
+
+function to24h(time12h: string): string {
+  const [time, modifier] = time12h.split(' ');
+  let [hours, minutes] = time.split(':').map(Number);
+  if (modifier === 'PM' && hours < 12) hours += 12;
+  if (modifier === 'AM' && hours === 12) hours = 0;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
 const eventBookingToGroupEvent = (b: BackendEventBooking): GroupEvent => {
   const dv = isoDateOnly(b.date);
   return {
     id:            b.id,
+    bookingType:   b.bookingType,
     host:          b.name,
     email:         b.email,
     phone:         b.phone,
@@ -110,6 +139,11 @@ const STATUS_BTN: Record<Status, { active: string; inactive: string }> = {
 const PKG_STYLES: Record<Package, string> = {
   "All Inclusive":     "bg-purple-50 text-purple-700 border border-purple-200",
   "Brunch Sip & Clip": "bg-blue-50   text-blue-700   border border-blue-200",
+};
+
+const TYPE_STYLES: Record<'VENUE' | 'FLORALS', string> = {
+  VENUE:   "bg-pink-50 text-pink-700 border border-pink-200",
+  FLORALS: "bg-emerald-50 text-emerald-700 border border-emerald-200",
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -298,7 +332,7 @@ function EditDrawer({ event, onClose, onSave }: {
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-base font-semibold text-gray-900">Edit Large Group Event</h2>
-            <p className="text-[11px] text-gray-400 mt-0.5">#{event.id} · {event.host}</p>
+            <p className="text-[11px] text-gray-400 mt-0.5">#{event.id} · {event.host} · <span className="font-bold">{event.bookingType}</span></p>
           </div>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors">
             <X size={16} />
@@ -440,6 +474,7 @@ export default function LargeGroupPage() {
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
+  const [activeType, setActiveType] = useState<"All" | "VENUE" | "FLORALS">("All");
   const [search,    setSearch]    = useState("");
   const [sortKey,   setSortKey]   = useState<SortKey>("date");
   const [sortDir,   setSortDir]   = useState<SortDir>("asc");
@@ -487,16 +522,26 @@ export default function LargeGroupPage() {
     const previous = data.find((e) => e.id === updated.id);
     setData(d => d.map(e => e.id === updated.id ? updated : e));
     setEditing(null);
-    if (previous && previous.status !== updated.status) {
-      try {
-        await api.patch(`/api/event-bookings/${updated.id}/status`, {
-          status: STATUS_TO_BACKEND_LG[updated.status],
-        });
-      } catch (e) {
-        const err = e as { message?: string };
-        setError(err.message ?? 'Failed to update status');
-        if (previous) setData(d => d.map(e => e.id === updated.id ? previous : e));
-      }
+
+    try {
+      const { start, end } = parseTimeRange(updated.time);
+      await api.patch(`/api/event-bookings/${updated.id}`, {
+        name: updated.host,
+        email: updated.email,
+        phone: updated.phone,
+        date: updated.dateValue,
+        startTime: start,
+        endTime: end,
+        guests: updated.guests,
+        eventType: mapOccasionToBackend(updated.occasion),
+        specialRequests: updated.internalNotes,
+        status: STATUS_TO_BACKEND_LG[updated.status],
+        cateringRequired: updated.package === 'All Inclusive',
+      });
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to update event');
+      if (previous) setData(d => d.map(e => e.id === updated.id ? previous : e));
     }
   }
 
@@ -531,6 +576,7 @@ export default function LargeGroupPage() {
     let rows = [...data];
 
     if (activeTab !== "All") rows = rows.filter(r => r.status === activeTab);
+    if (activeType !== "All") rows = rows.filter(r => r.bookingType === activeType);
 
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -621,6 +667,20 @@ export default function LargeGroupPage() {
                 ))}
               </div>
 
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {(["All", "VENUE", "FLORALS"] as const).map(type => (
+                  <button
+                    key={type}
+                    onClick={() => { setActiveType(type); resetPage(); }}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      activeType === type ? "bg-pink-600 text-white" : "text-gray-500 hover:bg-pink-50"
+                    }`}
+                  >
+                    {type === "All" ? "All Types" : type}
+                  </button>
+                ))}
+              </div>
+
               <div className="relative">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 <input
@@ -647,6 +707,7 @@ export default function LargeGroupPage() {
                 <thead>
                   <tr className="bg-pink-50 border-b border-gray-100">
                     <ColHeader label="Host"    sortKey="host"    currentKey={sortKey} dir={sortDir} onSort={handleSort} />
+                    <th className="text-left px-5 py-3.5 font-medium text-gray-500 text-xs whitespace-nowrap">Type</th>
                     <ColHeader label="Date"    sortKey="date"    currentKey={sortKey} dir={sortDir} onSort={handleSort} />
                     <th className="text-left px-5 py-3.5 font-medium text-gray-500 text-xs whitespace-nowrap">Time</th>
                     <ColHeader label="Guests"  sortKey="guests"  currentKey={sortKey} dir={sortDir} onSort={handleSort} />
@@ -673,6 +734,11 @@ export default function LargeGroupPage() {
                             <span className="text-gray-400 text-[11px] block truncate">{r.email}</span>
                           </div>
                         </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${TYPE_STYLES[r.bookingType]}`}>
+                          {r.bookingType}
+                        </span>
                       </td>
                       <td className="px-5 py-3.5 text-gray-600 text-sm whitespace-nowrap">{r.date}</td>
                       <td className="px-5 py-3.5 text-gray-600 text-sm whitespace-nowrap">{r.time}</td>

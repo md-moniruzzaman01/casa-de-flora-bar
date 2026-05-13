@@ -1,4 +1,22 @@
 export const VANUE_CONTENT = {
+  hero_section: {
+    tag: "Venue Rental · Bloomfield, NJ",
+    headline_part_1: "Host Your Next",
+    headline_part_2: "Unforgettable",
+    headline_part_3: "Event With Us",
+    sub_headline:
+      "A floral-inspired venue in the heart of Bloomfield — where weddings, celebrations, and gatherings bloom into lasting memories.",
+    buttons: [
+      { label: "Book Your Event", link: "/venue#query" },
+    ],
+    stats: {
+      capacity: "150",
+      floor_space: "2,400",
+      event_types: "6+",
+    },
+    event_types_list: "Weddings · Corporate · Celebrations · Pop-ups · Galas · Intimate Dinners",
+    location: "Casa de Flora Bar · Bloomfield, New Jersey",
+  },
   booking_section: {
     label: "Book the Venue",
     headline_line_1: "Let's plan",
@@ -9,6 +27,10 @@ export const VANUE_CONTENT = {
       phone: "+1 (973) 000-0000",
       email: "events@casadeflorabar.com",
       address: "Bloomfield, New Jersey",
+    },
+    buttons: {
+      label: "Book a Tour",
+      link: "/venue#booking-form"
     },
     event_types: [
       "Wedding",
@@ -59,45 +81,68 @@ export const VANUE_CONTENT = {
       },
     ],
   },
-  intro_section: {
-    label: "The Space",
-    headline_line_1: "A venue that",
-    headline_line_2: "speaks for itself",
-    body: [
-      "Nestled in the heart of Bloomfield, New Jersey, Casa de Flora Bar is a fully floral-inspired event space designed to transform any gathering into a breathtaking experience.",
-      "From intimate dinners to grand celebrations, every corner of the venue is crafted with intention — lush arrangements, warm lighting, and a layout that adapts beautifully to your vision.",
-    ],
+  garden_room_section: {
+    label: "The Garden Room",
+    capacity_tag: "Up to 40 Guests",
+    description:
+      "Our signature intimate space — beautifully adorned with floral accents and an elegant, celebratory atmosphere. Perfect for bridal showers, baby showers, birthday celebrations, tea parties, and private gatherings.",
     features: [
-      "Floral ceiling installations",
-      "Private full-service bar",
-      "Bridal suite & dressing room",
-      "On-site catering partners",
-      "Indoor & outdoor access",
-      "AV & lighting system",
+      "Floral styling",
+      "Private bar service",
+      "Coordinator on site",
+      "Custom menu",
+      "Bridal suite access",
+      "AV & lighting",
     ],
-    cta: { label: "Request a Tour", link: "/contact" },
     images: {
-      main: "/venue/img-01.jpg",
-      secondary_1: "/venue/dinner.jpg",
-      secondary_2: "/venue/table-img-01.jpg",
+      tall_left: "/venue/table-img-01.jpg",
+      top_right: "/venue/table-img-02.jpg",
+      bottom_right: "/venue/table-img-03.jpg",
     },
   },
-  hero_section: {
-    tag: "Venue Rental · Bloomfield, NJ",
-    headline_part_1: "Host Your Next",
-    headline_part_2: "Unforgettable",
-    headline_part_3: "Event With Us",
-    sub_headline:
-      "A floral-inspired venue in the heart of Bloomfield — where weddings, celebrations, and gatherings bloom into lasting memories.",
-    buttons: [
-      { label: "Book Your Event", link: "/venue#query" },
+  grand_bloom_section: {
+    label: "The Grand Bloom",
+    capacity_tag: "Up to 100 Guests",
+    description_paragraphs: [
+      "Our newest and most spectacular space — modern, upscale, and absolutely stunning. Designed for grand celebrations, wedding receptions, milestone events, and corporate gatherings.",
+      "The Grand Bloom also offers full wedding packages including use of our Garden Room for ceremony space or cocktail hour for up to 80 guests, a bridal suite, and a groom suite.",
     ],
-    stats: {
-      capacity: "150",
-      floor_space: "2,400",
-      event_types: "6+",
+    features: [
+      "Floral ceiling",
+      "Stage & lighting",
+      "Bridal suite",
+      "Groom suite",
+      "Full bar service",
+      "Coordinator on site",
+    ],
+    images: {
+      tall_left: "/venue/grand stage-01.jpg",
+      top_right: "/venue/grand stage-02.jpg",
+      bottom_right: "/venue/grand stage-03.jpg",
     },
-    event_types_list: "Weddings · Corporate · Celebrations · Pop-ups · Galas · Intimate Dinners",
-    location: "Casa de Flora Bar · Bloomfield, New Jersey",
+    links: {
+      book: "/venue#query",
+      packages: "/venue#packages",
+    },
+  },
+  underground_section: {
+    label: "The Underground",
+    capacity_tag: "Up to 100 Guests",
+    description:
+      "An intimate, moody space with a speakeasy-inspired vibe — sophisticated, chic, and full of character. Ideal for evening birthday celebrations, cocktail receptions, girls' nights out, and intimate private gatherings.",
+    features: [
+      "Speakeasy ambience",
+      "Cocktail bar",
+      "Mood lighting",
+      "Live DJ ready",
+      "Private entrance",
+      "Full bar service",
+    ],
+    images: {
+      tall_left: "/venue/grand stage-04.jpg",
+      top_right: "/venue/grand stage-05.jpg",
+      bottom_right: "/venue/grand stage-06.jpg",
+    },
+
   },
 };

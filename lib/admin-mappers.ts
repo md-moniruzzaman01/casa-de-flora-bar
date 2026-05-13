@@ -104,6 +104,7 @@ export interface BackendTableBooking {
 
 export interface BackendEventBooking {
   id: string;
+  bookingType: 'VENUE' | 'FLORALS';
   name: string;
   email: string;
   phone: string;
@@ -173,7 +174,7 @@ export const eventBookingToRow = (b: BackendEventBooking): ReservationRow => {
     guest: b.name,
     email: b.email,
     phone: b.phone,
-    bookingFor: eventTypeLabel,
+    bookingFor: `${b.bookingType}: ${eventTypeLabel}`,
     date: formatDisplayDate(b.date),
     dateValue,
     dateTs: new Date(dateValue).getTime(),

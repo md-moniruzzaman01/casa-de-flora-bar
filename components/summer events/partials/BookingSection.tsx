@@ -18,6 +18,29 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { SUMMER_EVENTS_CONTENT } from "../config/constant";
+import { api, type ApiError } from "@/lib/api";
+
+function to24h(time12: string): string {
+  const [time, period] = time12.trim().split(/\s+/);
+  const [hStr, mStr] = time.split(":");
+  let hour = parseInt(hStr, 10);
+  const minute = parseInt(mStr, 10);
+  if (period?.toUpperCase() === "PM" && hour !== 12) hour += 12;
+  if (period?.toUpperCase() === "AM" && hour === 12) hour = 0;
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+function addHours(hhmm: string, hours: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const totalMin = h * 60 + m + Math.round(hours * 60);
+  const newH = Math.floor(totalMin / 60) % 24;
+  const newM = totalMin % 60;
+  return `${String(newH).padStart(2, "0")}:${String(newM).padStart(2, "0")}`;
+}
+
+function isApiError(e: unknown): e is ApiError {
+  return typeof e === "object" && e !== null && "status" in e && "message" in e;
+}
 
 const includedIcons = [Flower2, Sparkles, Utensils, Camera, Music];
 
@@ -62,23 +85,28 @@ export default function BookingSection() {
   const onSubmit = async (data: FormValues) => {
     setSubmitError(null);
     try {
-      // Replace with real backend call when the event-bookings endpoint is wired.
-      // For now, simulate latency + success — same pattern as BouquetBookingForm.
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      console.log("Summer enrichment booking:", {
-        ...data,
-        sessionDate: session?.isoDate,
-        time: activeTime,
+      const startTime = to24h(activeTime);
+      await api.post("/api/event-bookings", {
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone.trim(),
+        eventType: "ENRICHMENT",
         guests,
-        total,
+        date: session?.isoDate ?? "",
+        startTime,
+        endTime: addHours(startTime, 3.5),
+        cateringRequired: true,
+        ...(data.notes?.trim() ? { specialRequests: data.notes.trim() } : {}),
       });
       reset();
     } catch (err) {
-      setSubmitError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again.",
-      );
+      if (isApiError(err)) {
+        setSubmitError(err.errors?.[0]?.message ?? err.message);
+      } else if (err instanceof Error) {
+        setSubmitError(err.message);
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
+      }
     }
   };
 

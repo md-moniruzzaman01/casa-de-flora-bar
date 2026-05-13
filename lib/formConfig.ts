@@ -42,7 +42,7 @@ export function useFormConfig() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (_cache) { setConfig(_cache); setLoading(false); return; }
+    if (_cache) return;
     load()
       .then((c) => { setConfig(c); setLoading(false); })
       .catch((e: { message?: string }) => {

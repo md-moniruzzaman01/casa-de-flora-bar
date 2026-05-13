@@ -73,6 +73,8 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+import AnalyticsTracker from "@/components/shared/AnalyticsTracker";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -80,6 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${playfair.variable} ${tenor.variable} ${garamond.variable} h-full antialiased`}
     >
       <body className="min-h-screen bg-white text-black font-sans">
+        <AnalyticsTracker />
         {children}
       </body>
     </html>

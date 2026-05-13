@@ -1,11 +1,11 @@
 import ArtFromScratchSection from "@/components/florals/partials/ArtFromScratchSection";
 import BrandLogosSection from "@/components/florals/partials/BrandLogosSection";
-import ConsultationSection from "@/components/florals/partials/ConsultationSection";
+import EventRentalSection from "@/components/florals/partials/EventRentalForm";
+
 import HeroSection from "@/components/florals/partials/Hero";
 import IntroFairytaleSection from "@/components/florals/partials/IntroFairytaleSection";
 import TestimonialsSection from "@/components/florals/partials/TestimonialsSection";
 import WeddingGallery from "@/components/florals/partials/WeddingGallery";
-import WeddingGallerySection from "@/components/florals/partials/WeddingGallerySection";
 import WeddingVideoSection from "@/components/florals/partials/WeddingVideoSection";
 import type { Metadata } from "next";
 
@@ -28,17 +28,16 @@ export const metadata: Metadata = {
 };
 
 export default function FloralsPage() {
-    return (
-        <div className="">
-           <HeroSection/>
-           <BrandLogosSection/>
-           <IntroFairytaleSection/>
-           <WeddingVideoSection/>
-           <ArtFromScratchSection/>
-           <WeddingGallery/>
-           {/* <WeddingGallerySection/> */}
-           <TestimonialsSection/>
-           <ConsultationSection/>
-        </div>
-    );
+  return (
+    <div className="">
+      <HeroSection />
+      <BrandLogosSection />
+      <IntroFairytaleSection />
+      <WeddingVideoSection />
+      <ArtFromScratchSection />
+      <WeddingGallery />
+      <TestimonialsSection />
+      <EventRentalSection />
+    </div>
+  );
 }

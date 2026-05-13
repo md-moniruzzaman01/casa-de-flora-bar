@@ -16,7 +16,7 @@ export const HOME_CONTENT = {
 
     primaryCTA: {
       label: "Book Table",
-      href: "/reserve",
+      href: "/reservations",
     },
 
     secondaryCTA: {
@@ -59,8 +59,10 @@ export const HOME_CONTENT = {
     description: "Celebrate brunch dates, birthdays, and unforgettable gatherings in a chic floral setting with curated food, warm hospitality, and perfect vibes.",
     stats: "500",
     statsSubtext: "Bouquets created, each blooming with a unique story.",
-    ctaPrimary: "Reserve your table",
-    ctaSecondary: "Purchase Ticket",
+    ctaPrimary: "BOOK A BOUQUET",
+    ctaPrimaryLink: "/reservations",
+    ctaSecondary: "BooK A Table",
+    ctaSecondaryLink: "/reservations",
     footerNote: "Enjoy a calm, creative floral experience where you can design your own bouquet while we take care of every detail.",
     polaroids: [
       "/bouquet/flora 1.jpg", // Replace with your actual image paths
@@ -93,6 +95,7 @@ export const HOME_CONTENT = {
     ],
     note:
       "MAKE SURE TO RESERVE YOUR TABLE FIRST. TICKETS FOR FLOWERS MUST BE PURCHASED 24 HOURS IN ADVANCE. THIS DOES NOT INCLUDE FLOWERS.",
-    cta: "Reserve your table",
+    cta: "Reserve your vanue",
+    ctaLink: "/venue#booking-form"
   },
 };

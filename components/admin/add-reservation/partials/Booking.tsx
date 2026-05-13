@@ -6,16 +6,18 @@ import { Slot } from "../config/types";
 import TimeSlotCard from "./Timeslot";
 import { buildAvailMap, DAY_NAMES, getDateKey, MONTHS, QUICK_OPTIONS, WEEKDAYS } from "../config/constant";
 
+interface BookingProps {
+  selectedDate: { year: number; month: number; day: number } | null;
+  selectedSlot: Slot | null;
+  onDateChange: (d: { year: number; month: number; day: number } | null) => void;
+  onSlotChange: (s: Slot | null) => void;
+}
 
-
-
-export default function Booking() {
+export default function Booking({ selectedDate, selectedSlot, onDateChange, onSlotChange }: BookingProps) {
   const today = useMemo(() => new Date(), []);
 
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selectedDate, setSelectedDate] = useState<{ year: number; month: number; day: number } | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [activeQuick, setActiveQuick] = useState<string | null>(null);
 
   const availMap = useMemo(() => buildAvailMap(viewYear, viewMonth), [viewYear, viewMonth]);
@@ -38,8 +40,8 @@ export default function Booking() {
   }
 
   function selectDay(year: number, month: number, day: number) {
-    setSelectedDate({ year, month, day });
-    setSelectedSlot(null);
+    onDateChange({ year, month, day });
+    onSlotChange(null);
     setActiveQuick(null);
   }
 
@@ -65,8 +67,8 @@ export default function Booking() {
   }
 
   function clearSelection() {
-    setSelectedDate(null);
-    setSelectedSlot(null);
+    onDateChange(null);
+    onSlotChange(null);
     setActiveQuick(null);
   }
 
@@ -143,11 +145,9 @@ export default function Booking() {
                 ].join(" ")}
               >
                 {day}
-                {/* availability dot */}
                 {hasAvail && !isSelected && (
                   <span className="absolute top-[5px] right-[6px] w-[4px] h-[4px] rounded-full bg-green-500" />
                 )}
-                {/* today indicator */}
                 {isToday && !isSelected && (
                   <span className="absolute bottom-[5px] left-1/2 -translate-x-1/2 w-[4px] h-[4px] rounded-full bg-pink-400" />
                 )}
@@ -216,7 +216,7 @@ export default function Booking() {
                       key={slot.from}
                       slot={slot}
                       selected={selectedSlot?.from === slot.from}
-                      onSelect={() => setSelectedSlot(slot)}
+                      onSelect={() => onSlotChange(slot)}
                     />
                   ))}
                 </div>
@@ -234,7 +234,7 @@ export default function Booking() {
                       key={slot.from}
                       slot={slot}
                       selected={selectedSlot?.from === slot.from}
-                      onSelect={() => setSelectedSlot(slot)}
+                      onSelect={() => onSlotChange(slot)}
                     />
                   ))}
                 </div>
@@ -269,4 +269,3 @@ export default function Booking() {
     </section>
   );
 }
-

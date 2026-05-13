@@ -913,16 +913,22 @@ export default function MakeYourBouquet() {
     const previous = data.find((r) => r.id === updated.id);
     setData(d => d.map(r => r.id === updated.id ? updated : r));
     setEditing(null);
-    if (previous && previous.status !== updated.status) {
-      try {
-        await api.patch(`/api/table-bookings/${updated.id}/status`, {
-          status: STATUS_TO_BACKEND[updated.status],
-        });
-      } catch (e) {
-        const err = e as { message?: string };
-        setError(err.message ?? 'Failed to update status');
-        if (previous) setData(d => d.map(r => r.id === updated.id ? previous : r));
-      }
+
+    try {
+      await api.patch(`/api/table-bookings/${updated.id}`, {
+        name: updated.guest,
+        email: updated.email,
+        phone: updated.phone,
+        guests: updated.guests,
+        date: updated.dateValue,
+        timeSlot: SESSION_TO_BACKEND[updated.time] ?? updated.time,
+        specialRequests: updated.notes,
+        status: STATUS_TO_BACKEND[updated.status],
+      });
+    } catch (e) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Failed to update reservation');
+      if (previous) setData(d => d.map(r => r.id === updated.id ? previous : r));
     }
   }
 

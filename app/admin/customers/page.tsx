@@ -23,6 +23,7 @@ interface Customer {
   lastVisit:   string;
   lastVisitTs: number;
   tag:         CustomerTag;
+  isBlocked:   boolean;
 }
 
 interface BackendCustomer {
@@ -30,6 +31,7 @@ interface BackendCustomer {
   name:      string;
   email:     string;
   phone:     string;
+  isBlocked: boolean;
   createdAt: string;
   _count?: {
     tableBookings: number;
@@ -63,6 +65,7 @@ function backendToRow(c: BackendCustomer): Customer {
     lastVisit:   formatJoinedDate(c.createdAt),
     lastVisitTs: new Date(c.createdAt).getTime(),
     tag:         tagFor(bookings),
+    isBlocked:   c.isBlocked,
   };
 }
 
@@ -137,7 +140,10 @@ function ColHeader({ label, sortKey, currentKey, dir, onSort }: {
   );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
+// ... (existing imports)
+import Link from "next/link";
+
+// ... (types)
 
 export default function CustomerList() {
   const [data,      setData]      = useState<Customer[]>([]);
@@ -154,7 +160,7 @@ export default function CustomerList() {
     setLoading(true);
     setError(null);
     api
-      .get<{ customers: BackendCustomer[] }>("/api/customers?limit=200")
+      .get<{ customers: BackendCustomer[] }>("/api/customers?limit=500")
       .then((res) => setData((res.customers ?? []).map(backendToRow)))
       .catch((e: { message?: string }) =>
         setError(e.message ?? "Failed to load customers"),
@@ -163,18 +169,8 @@ export default function CustomerList() {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    api
-      .get<{ customers: BackendCustomer[] }>("/api/customers?limit=200")
-      .then((res) => {
-        if (!cancelled) setData((res.customers ?? []).map(backendToRow));
-      })
-      .catch((e: { message?: string }) => {
-        if (!cancelled) setError(e.message ?? "Failed to load customers");
-      })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) setSortDir(d => d === "asc" ? "desc" : "asc");
@@ -239,7 +235,7 @@ export default function CustomerList() {
   return (
     <div className="flex-1 flex flex-col bg-white min-h-screen">
       <main className="flex-1 px-8 py-7 flex flex-col gap-7">
-
+        
         {error && (
           <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center justify-between">
             <span>{error}</span>
@@ -320,14 +316,24 @@ export default function CustomerList() {
                 {paginated.map((c, idx) => (
                   <tr
                     key={c.id}
-                    className={`group transition-colors hover:bg-pink-50/40 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/20"}`}
+                    onClick={() => window.location.href = `/admin/customers/${c.id}`}
+                    className={`group transition-colors cursor-pointer ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/20"} ${c.isBlocked ? "opacity-70 grayscale-[0.5] hover:bg-red-50/30" : "hover:bg-pink-50/60"}`}
                   >
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold flex-shrink-0 ${avatarColor(c.name)}`}>
                           {initials(c.name)}
                         </div>
-                        <span className="text-gray-800 font-medium">{c.name}</span>
+                        <div className="flex flex-col">
+                          <span className="text-gray-800 font-medium flex items-center gap-2">
+                            {c.name}
+                            {c.isBlocked && (
+                              <span className="bg-red-100 text-red-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">
+                                Blocked
+                              </span>
+                            )}
+                          </span>
+                        </div>
                       </div>
                     </td>
                     <td className="px-5 py-3.5 text-gray-500">{c.email}</td>
@@ -339,9 +345,9 @@ export default function CustomerList() {
                         {c.tag}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-gray-100 text-gray-400">
-                        <MoreHorizontal size={16} />
+                    <td className="px-5 py-3.5 text-right">
+                      <button className="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition-all opacity-0 group-hover:opacity-100">
+                        <ArrowUpRight size={16} />
                       </button>
                     </td>
                   </tr>

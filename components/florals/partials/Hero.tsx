@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { WEDDING_FLORALS_CONTENT } from '../config/constant';
+import Link from 'next/link';
 
 const HeroSection: React.FC = () => {
   return (
@@ -27,14 +28,7 @@ const HeroSection: React.FC = () => {
             background: 'linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.55) 40%, rgba(255,255,255,0.93) 72%, #ffffff 100%)',
           }}
         />
-
-
-
-
-        <div className="absolute inset-0 z-20 flex flex-col justify-end px-10 pb-10 md:px-14 md:pb-12 lg:px-[52px] lg:pb-10">
-
-
-
+        <div className="absolute inset-0 z-20 flex flex-col justify-end px-4 pb-0 md:px-14 md:pb-12 lg:px-[52px] lg:pb-10">
           {/* Two-column bottom row */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-7 lg:gap-10 xl:gap-16">
 
@@ -42,7 +36,7 @@ const HeroSection: React.FC = () => {
             <div>
               <div className='flex'>
                 <p
-                  className="mb-2.5 text-xs bg-primary/40 py-1 px-4 rounded-2xl "
+                  className="mb-1 md:mb-2.5 text-xs bg-primary/40 py-1 px-4 rounded-2xl "
                 >
                   {WEDDING_FLORALS_CONTENT.hero_section.tag}
                 </p>
@@ -64,31 +58,27 @@ const HeroSection: React.FC = () => {
             </div>
 
             {/* Right: description + buttons */}
-            <div className="flex flex-col items-start  gap-6 ">
-              <p
-                className=" leading-[1.55] max-w-100 font-sans "
-
-              >
+            <div className="flex flex-col items-start gap-6">
+              <p className="leading-[1.55] max-w-100 font-sans text-[#1A1A1A]">
                 {WEDDING_FLORALS_CONTENT.hero_section.sub_headline}
-
               </p>
 
               <div className="flex flex-row gap-3 items-center">
-                <button
-                  className="bg-[#111] text-white hover:bg-[#333] transition-colors duration-200 
-               font-display text-[13px] font-medium tracking-[0.04em] px-[28px] py-[13px] 
-               whitespace-nowrap cursor-pointer border-none"
+                {/* Book An Event - Next.js Link */}
+                <Link
+                  href={WEDDING_FLORALS_CONTENT.hero_section.buttons[0].link}
+                  className="bg-[#111] text-white hover:bg-[#333] transition-colors duration-200  font-display text-base font-medium tracking-[0.04em] px-7 md:px-11 py-3.25  whitespace-nowrap cursor-pointer uppercase inline-block text-center"
                 >
                   {WEDDING_FLORALS_CONTENT.hero_section.buttons[0].label}
-                </button>
+                </Link>
 
-                <button
-                  className="bg-[#f0dcd8] text-[#1a1008] hover:bg-[#e8cac4] transition-colors duration-200 
-               font-display text-[13px] font-medium tracking-[0.04em] px-[28px] py-[13px] 
-               whitespace-nowrap cursor-pointer border-none"
+                {/* Inquire Now - Next.js Link */}
+                <Link
+                  href={WEDDING_FLORALS_CONTENT.hero_section.buttons[1].link}
+                  className="bg-[#f0dcd8] text-[#1a1008] hover:bg-[#e8cac4] transition-colors duration-200  font-display text-base font-medium tracking-[0.04em] px-7 md:px-11 py-3.25  whitespace-nowrap cursor-pointer uppercase inline-block text-center"
                 >
                   {WEDDING_FLORALS_CONTENT.hero_section.buttons[1].label}
-                </button>
+                </Link>
               </div>
             </div>
 

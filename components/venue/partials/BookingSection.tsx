@@ -1,279 +1,246 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ChevronDown, Mail, MapPin, Phone } from "lucide-react";
-import { VANUE_CONTENT } from "../config/constant";
+import { ChevronDown, Loader2, AlertCircle } from "lucide-react";
+import { api } from "@/lib/api";
+import { FormValues } from "../config/types";
 
-type FormValues = {
-  name: string;
-  email: string;
-  phone: string;
-  event_type: string;
-  event_date: string;
-  guests: string;
-  message: string;
-};
+const SERVICE_OPTIONS = [
+  "Venue Rental Only",
+  "All-Inclusive Brunch or Dinner",
+  "Private Brunch Sip & Clip",
+  "Grand Bloom Wedding Packages",
+];
+
+const SPACE_OPTIONS = [
+  "Garden Room - Up to 40 Guests",
+  "Main Hall - Up to 100 Guests",
+  "Full Venue - Up to 150 Guests",
+];
+
+const TIME_SLOTS = [
+  "11am - 3pm",
+  "12pm - 4pm",
+  "6pm - 10pm",
+  "7pm - 11pm"
+];
 
 const BookingSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const { label, headline_line_1, headline_line_2, description, contact, event_types } =
-    VANUE_CONTENT.booking_section;
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [selectedServices, setSelectedServices] = useState<string[]>(["Venue Rental Only"]);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues: {
+      services: ["Venue Rental Only"],
+      selected_space: "Garden Room - Up to 40 Guests"
+    }
+  });
 
-  const onSubmit = async (data: FormValues) => {
-    await new Promise((r) => setTimeout(r, 900));
-    console.log("Booking enquiry:", data);
-    reset();
-  };
-
+  // GSAP Animations
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-
     const ctx = gsap.context(() => {
-      gsap.set(".bk-rise", { yPercent: 110 });
-      gsap.set(".bk-fade", { y: 32, opacity: 0 });
-      gsap.set(".bk-form-row", { y: 24, opacity: 0 });
-
-      gsap.to(".bk-rise", {
-        yPercent: 0,
-        duration: 1.1,
-        stagger: 0.08,
+      gsap.from(".bk-form-row", {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.05,
         ease: "power3.out",
-        scrollTrigger: { trigger: sectionRef.current, start: "top 75%", once: true },
-      });
-
-      gsap.to(".bk-fade", {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: { trigger: sectionRef.current, start: "top 75%", once: true },
-      });
-
-      gsap.to(".bk-form-row", {
-        y: 0,
-        opacity: 1,
-        duration: 0.85,
-        stagger: 0.07,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".bk-form", start: "top 78%", once: true },
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        },
       });
     }, sectionRef);
-
     return () => ctx.revert();
   }, []);
 
-  const inputBase =
-    "w-full border border-pink-100 bg-pink-50/20 p-4 outline-none text-black placeholder:text-gray-400 font-serif text-[15px] focus:border-primary transition-colors duration-300";
-  const selectBase =
-    "w-full border border-pink-100 bg-pink-50/20 p-4 outline-none text-black font-serif text-[15px] focus:border-primary transition-colors duration-300 appearance-none cursor-pointer pr-10";
-  const textareaBase =
-    "w-full border border-pink-100 bg-pink-50/20 p-4 outline-none text-black placeholder:text-gray-400 font-serif text-[15px] leading-[1.7] focus:border-primary transition-colors resize-none";
-  const labelBase = "block text-sm text-gray-700 mb-2";
-  const errorBase = "mt-1.5 text-sm text-primary";
+  const toggleService = (service: string) => {
+    const updated = selectedServices.includes(service)
+      ? selectedServices.filter((s) => s !== service)
+      : [...selectedServices, service];
+    setSelectedServices(updated);
+    setValue("services", updated);
+  };
+
+  const onSubmit = async (data: FormValues) => {
+    setSubmitError(null);
+
+    // Sync cateringRequired based on service selection
+    const cateringNeeded = selectedServices.some(s =>
+      s.includes("Brunch") || s.includes("Dinner") || s.includes("Packages")
+    );
+
+    // Parse time slots (e.g., "11am - 3pm")
+    const [start, end] = data.time_slot.split(" - ");
+
+    // Map user-provided event type to backend enum
+    const rawType = (data.event_type || "").toUpperCase();
+    const validTypes = ["WEDDING", "BIRTHDAY", "CORPORATE", "SEMINAR", "ANNIVERSARY"];
+    const eventType = validTypes.includes(rawType) ? rawType : "OTHER";
+
+    try {
+      await api.post("/api/event-bookings", {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        selectedSpace: data.selected_space,
+        eventType,
+        // Strip non-numeric chars from guest string (e.g., "8 Person" -> 8)
+        guests: parseInt(data.guests.toString().replace(/\D/g, ""), 10) || 0,
+        date: new Date(data.event_date).toISOString(),
+        startTime: start || "",
+        endTime: end || "",
+        cateringRequired: cateringNeeded,
+        specialRequests: (data.message || "") + (eventType === "OTHER" ? ` (Event Type: ${data.event_type})` : ""),
+        bookingType: "VENUE", // As per your model default
+      });
+      reset();
+      setSelectedServices(["Venue Rental Only"]);
+    } catch (err) {
+      setSubmitError("Something went wrong. Please check your inputs and try again.");
+    }
+  };
+
+  const inputBase = "w-full border border-pink-100 bg-pink-50/20 p-4 outline-none text-black placeholder:text-gray-400 font-serif text-[15px] focus:border-pink-400 transition-colors";
+  const labelBase = "block text-sm text-gray-700 mb-1 font-serif";
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative bg-white py-16 md:py-24 lg:py-32 overflow-hidden"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+    <section id="booking-form" ref={sectionRef} className=" py-16 px-4">
+      <div className="max-w-5xl mx-auto bg-white p-8 md:p-12 ">
+        <h2 className="font-serif text-3xl md:text-4xl text-center mb-10 text-gray-800">
+          Please fill-up for Rental
+        </h2>
 
-        {/* Section header — centred, matching home page style */}
-        <div className="bk-fade text-center mb-12 md:mb-16">
-          <h2 className="font-serif text-[clamp(28px,6vw,56px)] tracking-widest uppercase mb-3">
-            <span className="block overflow-hidden">
-              <span className="bk-rise block">{headline_line_1}</span>
-            </span>
-            <span className="block overflow-hidden">
-              <span className="bk-rise block italic text-primary normal-case tracking-normal">
-                {headline_line_2}.
-              </span>
-            </span>
-          </h2>
-          <p className="text-lg md:text-xl tracking-wide uppercase italic text-gray-600 font-serif">
-            Host your next memorable event at Casa De Flora Bar
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
-
-          {/* LEFT — Info + contact */}
-          <div className="lg:col-span-4 space-y-8">
-            <p className="bk-fade text-lg leading-relaxed text-gray-700 font-serif">
-              {description}
-            </p>
-
-            <ul className="bk-fade flex flex-col gap-5">
-              {[
-                {
-                  Icon: Phone,
-                  small: "By Telephone",
-                  value: contact.phone,
-                  href: `tel:${contact.phone.replace(/\D/g, "")}`,
-                },
-                {
-                  Icon: Mail,
-                  small: "By Email",
-                  value: contact.email,
-                  href: `mailto:${contact.email}`,
-                },
-                {
-                  Icon: MapPin,
-                  small: "In Person",
-                  value: contact.address,
-                  href: null as string | null,
-                },
-              ].map(({ Icon, small, value, href }) => (
-                <li key={small} className="group flex items-start gap-4">
-                  <span className="mt-0.5 flex items-center justify-center w-9 h-9 rounded-full border border-pink-100 bg-pink-50/30 group-hover:border-primary group-hover:bg-primary/10 transition-colors shrink-0">
-                    <Icon className="w-3.5 h-3.5 text-primary" strokeWidth={1.6} />
-                  </span>
-                  <div>
-                    <p className="text-sm text-gray-500 mb-0.5">{small}</p>
-                    {href ? (
-                      <a href={href} className="font-serif text-base text-black hover:text-primary transition-colors break-all">
-                        {value}
-                      </a>
-                    ) : (
-                      <p className="font-serif text-base text-black">{value}</p>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              type="button"
-              className="bk-fade bg-black text-white px-10 py-4 uppercase tracking-tighter hover:bg-gray-900 transition-colors font-serif"
-            >
-              Reserve your Seat
-            </button>
+        {isSubmitSuccessful ? (
+          <div className="text-center py-12">
+            <h3 className="font-serif text-2xl text-pink-600 mb-2">Thank You!</h3>
+            <p className="text-gray-600">Your rental request has been submitted successfully.</p>
+            <button onClick={() => window.location.reload()} className="mt-6 text-sm underline uppercase tracking-widest">Send another</button>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Name */}
+            <div className="bk-form-row">
+              <label className={labelBase}>Name</label>
+              <input {...register("name", { required: "Name is required" })} placeholder="Name" className={inputBase} />
+              {errors.name && <span className="text-xs text-red-400">{errors.name.message}</span>}
+            </div>
 
-          {/* RIGHT — Form */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="bk-form lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {isSubmitSuccessful ? (
-              <div className="md:col-span-2 flex flex-col items-center justify-center py-20 text-center border border-pink-100 bg-pink-50/20 px-6">
-                <span className="block w-12 h-px bg-primary mx-auto mb-7" />
-                <p className="font-serif italic text-[32px] text-black mb-3">Merci.</p>
-                <p className="text-sm text-gray-600 max-w-xs leading-relaxed">
-                  Your enquiry has reached us. We&apos;ll respond personally within twenty-four hours.
-                </p>
+            {/* Email & Phone Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bk-form-row">
+                <label className={labelBase}>Email</label>
+                <input {...register("email", { required: "Email is required" })} placeholder="Email" className={inputBase} />
               </div>
-            ) : (
-              <>
-                <div className="bk-form-row md:col-span-2 space-y-2">
-                  <label className={labelBase}>Name (required)</label>
-                  <input
-                    {...register("name", { required: "Name is required" })}
-                    placeholder="Your full name"
-                    className={inputBase}
-                  />
-                  {errors.name && <p className={errorBase}>{errors.name.message}</p>}
-                </div>
+              <div className="bk-form-row">
+                <label className={labelBase}>Phone</label>
+                <input {...register("phone")} placeholder="Phone" className={inputBase} />
+              </div>
+            </div>
 
-                <div className="bk-form-row space-y-2">
-                  <label className={labelBase}>Email (required)</label>
-                  <input
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email" },
-                    })}
-                    type="email"
-                    placeholder="jane@example.com"
-                    className={inputBase}
-                  />
-                  {errors.email && <p className={errorBase}>{errors.email.message}</p>}
-                </div>
-
-                <div className="bk-form-row space-y-2">
-                  <label className={labelBase}>Phone</label>
-                  <input
-                    {...register("phone")}
-                    type="tel"
-                    placeholder="+1 (000) 000-0000"
-                    className={inputBase}
-                  />
-                </div>
-
-                <div className="bk-form-row relative space-y-2">
-                  <label className={labelBase}>Event Type (required)</label>
-                  <select
-                    {...register("event_type", { required: "Please select an event type" })}
-                    className={selectBase}
-                    defaultValue=""
-                  >
-                    <option value="" disabled>Select type…</option>
-                    {event_types.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="pointer-events-none absolute right-4 bottom-4 w-4 h-4 text-gray-400"
-                    strokeWidth={1.6}
-                  />
-                  {errors.event_type && <p className={errorBase}>{errors.event_type.message}</p>}
-                </div>
-
-                <div className="bk-form-row space-y-2">
-                  <label className={labelBase}>Event Date</label>
-                  <input
-                    {...register("event_date")}
-                    type="date"
-                    className={inputBase}
-                  />
-                </div>
-
-                <div className="bk-form-row space-y-2">
-                  <label className={labelBase}>Expected Guests</label>
-                  <input
-                    {...register("guests")}
-                    type="number"
-                    placeholder="e.g. 80"
-                    min={1}
-                    max={150}
-                    className={inputBase}
-                  />
-                </div>
-
-                <div className="bk-form-row md:col-span-2 space-y-2">
-                  <label className={labelBase}>Message (required)</label>
-                  <textarea
-                    {...register("message")}
-                    rows={5}
-                    placeholder="Tell us what kind of event you're planning…"
-                    className={textareaBase}
-                  />
-                </div>
-
-                <div className="bk-form-row md:col-span-2 flex justify-center mt-2">
+            {/* Services Chips */}
+            <div className="bk-form-row">
+              <label className={labelBase}>What services are you interested in? (required)</label>
+              <div className="flex flex-wrap gap-3 mt-2">
+                {SERVICE_OPTIONS.map((service) => (
                   <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-black text-white w-full md:w-1/2 py-4 uppercase tracking-widest hover:scale-105 transition-transform font-serif disabled:opacity-60 cursor-pointer"
+                    key={service}
+                    type="button"
+                    onClick={() => toggleService(service)}
+                    className={`px-4 py-2 text-sm font-serif transition-colors border ${selectedServices.includes(service)
+                      ? "bg-[#D23669] text-white border-[#D23669]"
+                      : "bg-pink-100/40 text-gray-700 border-transparent hover:bg-pink-100"
+                      }`}
                   >
-                    {isSubmitting ? "Sending…" : "Submit"}
+                    {service}
                   </button>
-                </div>
-              </>
-            )}
-          </form>
+                ))}
+              </div>
+            </div>
 
-        </div>
+            {/* Select Space */}
+            <div className="bk-form-row relative">
+              <label className={labelBase}>Select Your Space</label>
+              <select {...register("selected_space")} className={`${inputBase} appearance-none`}>
+                {SPACE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+              </select>
+              <ChevronDown className="absolute right-4 bottom-4 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+
+            {/* Date & Time Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bk-form-row">
+                <label className={labelBase}>Preferred Date (required)</label>
+                <input type="date" {...register("event_date", { required: true })} className={inputBase} />
+              </div>
+              <div className="bk-form-row relative">
+                <label className={labelBase}>Time</label>
+                <select {...register("time_slot")} className={`${inputBase} appearance-none`}>
+                  <option value="">Select a slot...</option>
+                  {TIME_SLOTS.map(slot => <option key={slot} value={slot}>{slot}</option>)}
+                </select>
+                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">In Eastern Time</p>
+                <ChevronDown className="absolute right-4 bottom-7 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Guests & Event Type */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bk-form-row">
+                <label className={labelBase}>Number of Guest</label>
+                <input type="text" {...register("guests")} placeholder="e.g. 8 Person" className={inputBase} />
+              </div>
+              <div className="bk-form-row">
+                <label className={labelBase}>Type of event</label>
+                <input {...register("event_type")} placeholder="e.g. Birthday, Bridal Shower..." className={inputBase} />
+              </div>
+            </div>
+
+            {/* Message */}
+            <div className="bk-form-row">
+              <label className={labelBase}>Message (required)</label>
+              <textarea
+                {...register("message", { required: "Please provide some details" })}
+                rows={5}
+                placeholder="Special requests, dietary needs, vision for your event..."
+                className={inputBase}
+              />
+            </div>
+
+            {submitError && (
+              <div className="flex items-center gap-2 text-red-500 text-sm bg-red-50 p-3 border border-red-100">
+                <AlertCircle size={16} />
+                {submitError}
+              </div>
+            )}
+
+            <div className="flex justify-center pt-4">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-black text-white px-20 py-4 uppercase tracking-[0.2em] font-serif hover:bg-gray-800 transition-all disabled:opacity-50 flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Submitting...
+                  </>
+                ) : "Submit"}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </section>
   );

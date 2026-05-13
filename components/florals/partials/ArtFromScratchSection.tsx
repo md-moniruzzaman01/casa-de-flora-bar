@@ -9,7 +9,7 @@ const services = [
     description:
       "Arches, altars, aisle arrangements and ceremony backdrops — all custom built",
     // Replace with your actual image paths
-    image: "/images/ceremony-design.png",
+    image: "/florals/ceremony-design.png",
     alt: "Ceremony Design illustration",
   },
   {
@@ -17,7 +17,7 @@ const services = [
     title: "Reception Florals",
     description:
       "Estate tables, sweetheart tables, centrepieces and full venue transformations",
-    image: "/images/reception-florals.png",
+    image: "/florals/recception florals.png",
     alt: "Reception Florals illustration",
   },
   {
@@ -25,14 +25,14 @@ const services = [
     title: "Bridal Bouquets",
     description:
       "Bespoke bridal and bridesmaid bouquets crafted to complement your wedding palette",
-    image: "/images/bridal-bouquets.png",
+    image: "/florals/bridal bouquet.png",
     alt: "Bridal Bouquets illustration",
   },
 ];
 
 export default function ArtFromScratchSection() {
   return (
-    <section className="relative w-full min-h-screen overflow-hidden">
+    <section className="relative w-full min-h-[60vh] md:min-h-screen overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         {/* Replace src with your actual background image */}
@@ -67,11 +67,12 @@ export default function ArtFromScratchSection() {
         </p>
 
         {/* Cards */}
-        <div className="flex flex-col md:flex-row gap-5 w-full max-w-6xl justify-center items-stretch">
+        <div className="grid grid-cols-3 md:flex gap-2 md:gap-5 w-full max-w-6xl justify-center items-stretch">
           {services.map((service) => (
             <div
               key={service.id}
-              className="flex-1 flex flex-col items-center rounded-2xl px-6 pt-8 pb-10 text-center"
+              // Reduced padding on mobile (px-2 py-4) so 3 columns can actually fit
+              className="flex-1 flex flex-col items-center rounded-xl md:rounded-2xl px-2 py-4 md:px-6 md:pt-8 md:pb-10 text-center"
               style={{
                 background: "rgba(255,255,255,0.28)",
                 backdropFilter: "blur(18px)",
@@ -81,42 +82,38 @@ export default function ArtFromScratchSection() {
                 minWidth: 0,
               }}
             >
-              {/* Number */}
+              {/* Number - Smaller on mobile */}
               <span
-                className="text-4xl md:text-5xl text-gray-800 mb-5 leading-none select-none"
+                className="text-2xl md:text-5xl text-gray-800 mb-2 md:mb-5 leading-none select-none"
                 style={{ fontFamily: "'Cormorant Garamond', 'Georgia', serif", fontWeight: 300 }}
               >
                 {service.id}
               </span>
 
-              {/* Illustration */}
-              <div className="w-full max-w-[220px] aspect-[4/3] bg-white rounded-xl overflow-hidden flex items-center justify-center mb-6 mx-auto">
-                {/* Using next/image — swap src for your real illustration */}
+              {/* Illustration - Scaled down for mobile 3-col */}
+              <div className="w-full aspect-4/3 bg-white rounded-lg overflow-hidden flex items-center justify-center mb-3 md:mb-6 mx-auto">
                 <img
                   src={service.image}
                   alt={service.alt}
-                  className="w-full h-full object-contain p-3"
+                  className="w-full h-full object-contain p-1 md:p-3"
                   onError={(e) => {
-                    // Fallback placeholder if image missing
                     (e.target as HTMLImageElement).src =
-                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='165' viewBox='0 0 220 165'%3E%3Crect width='220' height='165' fill='%23f5f0eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='13' fill='%23c9b99a' font-family='Georgia,serif'%3E" +
-                      encodeURIComponent(service.alt) +
-                      "%3C/text%3E%3C/svg%3E";
+                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='165' viewBox='0 0 220 165'%3E%3Crect width='220' height='165' fill='%23f5f0eb'/%3E%3C/svg%3E";
                   }}
                 />
               </div>
 
-              {/* Title */}
+              {/* Title - Shrink text so it doesn't break layout */}
               <h3
-                className="text-gray-900 text-xl md:text-2xl mb-3"
-                style={{ fontFamily: "'Cormorant Garamond', 'Georgia', serif", fontWeight: 400 }}
+                className="text-gray-900 text-xs md:text-2xl mb-1 md:mb-3 font-semibold md:font-normal"
+                style={{ fontFamily: "'Cormorant Garamond', 'Georgia', serif" }}
               >
                 {service.title}
               </h3>
 
-              {/* Description */}
+              {/* Description - Hidden or very small on mobile to save space */}
               <p
-                className="text-gray-700 text-sm leading-relaxed max-w-[240px]"
+                className="hidden md:block text-gray-700 text-sm leading-relaxed max-w-[240px]"
                 style={{ fontFamily: "'Cormorant Garamond', 'Georgia', serif" }}
               >
                 {service.description}
