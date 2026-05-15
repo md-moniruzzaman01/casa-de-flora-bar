@@ -6,7 +6,7 @@ export const WEDDING_FLORALS_CONTENT = {
     "sub_headline": "New Jersey's leading floral design company — specialising in luxury weddings and events. Your vision, executed flawlessly.",
     "buttons": [
       {
-        "label": "Book An Event",
+        "label": "book a consultation",
         "link": "/florals#eventbook"
       },
       {
@@ -33,7 +33,7 @@ export const WEDDING_FLORALS_CONTENT = {
     ],
     "cta": {
       "label": "Let's talk wedding flowers →",
-      "link": "/contact"
+      "link": "/#inquiry"
     },
     "gallery": [
       { id: 1, src: '/florals/image-03.jpg', alt: 'Couple in Pink suit', gridSpan: 'tallImage' },

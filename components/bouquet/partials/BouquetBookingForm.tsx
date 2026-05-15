@@ -285,9 +285,9 @@ function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
       onMouseLeave={() => gsap.to(btnRef.current, { backgroundColor: "#0e0b0b", duration: 0.3 })}
       className="w-full sm:w-auto bg-[#0e0b0b] text-[#fdf8f5] px-12 py-5 text-[10px] tracking-[0.3em] uppercase font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-4">
       {isSubmitting ? (
-        <><Loader2 size={14} className="animate-spin" /> Submitting…</>
+        <><Loader2 size={14} className="animate-spin" /> Booking…</>
       ) : (
-        <>Submit Reservation <span className="text-base leading-none">→</span></>
+        <>Book <span className="text-base leading-none">→</span></>
       )}
     </button>
   );

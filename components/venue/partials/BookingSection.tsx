@@ -16,9 +16,9 @@ const SERVICE_OPTIONS = [
 ];
 
 const SPACE_OPTIONS = [
-  "Garden Room - Up to 40 Guests",
-  "Main Hall - Up to 100 Guests",
-  "Full Venue - Up to 150 Guests",
+  "Garden Room - Up to 25 Guests",
+  "Grand Room - Up to 100 Guests",
+  "Undergraound - Up to 150 Guests",
 ];
 
 const TIME_SLOTS = [

@@ -17,10 +17,10 @@ const HOSTED_EVENTS = [
 
 const AMENITIES = [
   { Icon: Flower2, label: "Floral installations" },
-  { Icon: Wine, label: "Private bar service" },
-  { Icon: ChefHat, label: "In-house catering" },
-  { Icon: Sparkles, label: "Bridal & dressing suite" },
-  { Icon: Music, label: "AV & lighting" },
+  // { Icon: Wine, label: "Private bar service" },
+  // { Icon: ChefHat, label: "In-house catering" },
+  // { Icon: Sparkles, label: "Bridal & dressing suite" },
+  // { Icon: Music, label: "AV & lighting" },
   { Icon: Users, label: "Dedicated coordinator" },
 ];
 
@@ -32,8 +32,7 @@ const HeroSection: React.FC = () => {
     headline_part_2,
     headline_part_3,
     sub_headline,
-    buttons,
-    stats,
+
   } = VANUE_CONTENT.hero_section;
 
   useEffect(() => {
@@ -138,10 +137,11 @@ const HeroSection: React.FC = () => {
               >
                 {VANUE_CONTENT.booking_section.buttons.label}
               </Link>
+              
             </div>
 
             {/* Stats - 3 columns */}
-            <div className="grid grid-cols-3 gap-4 md:gap-10 w-full max-w-md">
+            {/* <div className="grid grid-cols-3 gap-4 md:gap-10 w-full max-w-md">
               {[
                 { num: stats.capacity, label: "Guests" },
                 { num: stats.floor_space, label: "Sq Ft" },
@@ -159,14 +159,14 @@ const HeroSection: React.FC = () => {
                   </p>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
 
         </div>
       </div>
 
       {/* Amenities strip */}
-      <div className="relative z-30 border-t border-white/5 bg-[#1a1014] backdrop-blur-sm px-8 md:px-16 py-6">
+      {/* <div className="relative z-30 border-t border-white/5 bg-[#1a1014] backdrop-blur-sm px-8 md:px-16 py-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-5">
             <span className="block w-7 h-px bg-white/70" />
@@ -188,7 +188,7 @@ const HeroSection: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Scroll indicator */}
       <div className="absolute right-10 z-30 hidden md:flex flex-col items-center gap-4" style={{ bottom: "calc(6rem + 1px)" }}>

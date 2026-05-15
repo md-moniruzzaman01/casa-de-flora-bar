@@ -6,14 +6,6 @@ export const VANUE_CONTENT = {
     headline_part_3: "Event With Us",
     sub_headline:
       "A floral-inspired venue in the heart of Bloomfield — where weddings, celebrations, and gatherings bloom into lasting memories.",
-    buttons: [
-      { label: "Book Your Event", link: "/venue#query" },
-    ],
-    stats: {
-      capacity: "150",
-      floor_space: "2,400",
-      event_types: "6+",
-    },
     event_types_list: "Weddings · Corporate · Celebrations · Pop-ups · Galas · Intimate Dinners",
     location: "Casa de Flora Bar · Bloomfield, New Jersey",
   },
@@ -29,7 +21,7 @@ export const VANUE_CONTENT = {
       address: "Bloomfield, New Jersey",
     },
     buttons: {
-      label: "Book a Tour",
+      label: "Book a Tour →",
       link: "/venue#booking-form"
     },
     event_types: [
@@ -83,7 +75,7 @@ export const VANUE_CONTENT = {
   },
   garden_room_section: {
     label: "The Garden Room",
-    capacity_tag: "Up to 40 Guests",
+    capacity_tag: "Up to 25 Guests",
     description:
       "Our signature intimate space — beautifully adorned with floral accents and an elegant, celebratory atmosphere. Perfect for bridal showers, baby showers, birthday celebrations, tea parties, and private gatherings.",
     features: [
@@ -127,7 +119,7 @@ export const VANUE_CONTENT = {
   },
   underground_section: {
     label: "The Underground",
-    capacity_tag: "Up to 100 Guests",
+    capacity_tag: "Up to 40 Guests",
     description:
       "An intimate, moody space with a speakeasy-inspired vibe — sophisticated, chic, and full of character. Ideal for evening birthday celebrations, cocktail receptions, girls' nights out, and intimate private gatherings.",
     features: [

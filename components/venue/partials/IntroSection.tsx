@@ -98,7 +98,7 @@ const GardenRoomSection = () => {
                 {content.description}
               </p>
 
-              <ul className="gr-fade grid grid-cols-2 gap-x-4 gap-y-2 max-w-md">
+              {/* <ul className="gr-fade grid grid-cols-2 gap-x-4 gap-y-2 max-w-md">
                 {content.features.map((item) => (
                   <li
                     key={item}
@@ -108,7 +108,7 @@ const GardenRoomSection = () => {
                     {item}
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
 
           </div>

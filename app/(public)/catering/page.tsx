@@ -35,7 +35,7 @@ export default function CateringPage() {
       <CateringSection/>
       <CocktailSection />
       <DinnerSection />
-      <PricingTable />
+      {/* <PricingTable /> */}
   
     </>
   );
