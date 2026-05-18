@@ -20,6 +20,7 @@ import {
   LogOut,
   Mail,
   BarChart,
+  FileText,
 } from "lucide-react";
 
 import { navSections } from "../config/constant";
@@ -38,6 +39,7 @@ const IconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   settings: Settings,
   mail: Mail,
   chart: BarChart,
+  "file-text": FileText,
 };
 
 export default function Sidebar({ }: SidebarProps) {

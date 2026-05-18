@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ChefHat, Flower2, Music, Sparkles, Users, Wine } from "lucide-react";
-import { VANUE_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import Link from "next/link";
 
 const HOSTED_EVENTS = [
@@ -25,6 +25,7 @@ const AMENITIES = [
 ];
 
 const HeroSection: React.FC = () => {
+  const VANUE_CONTENT = useContent().venue;
   const sectionRef = useRef<HTMLElement>(null);
 
   const {

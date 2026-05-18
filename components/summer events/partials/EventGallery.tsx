@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { InfiniteColumnProps } from "../config/types";
-import { SUMMER_EVENTS_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 
 // const col1Images: ImageItem[] = [
@@ -107,6 +107,7 @@ function InfiniteColumn({
 }
 
 function ResponsiveGallery() {
+  const SUMMER_EVENTS_CONTENT = useContent().summerEvents;
   const [height,   setHeight]   = useState(280);
   const [isMobile, setIsMobile] = useState(false);
 

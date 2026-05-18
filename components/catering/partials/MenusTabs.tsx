@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CATERING_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import WaveDividerUp from "@/components/shared/WaveDivider";
 
 if (typeof window !== "undefined") {
@@ -20,7 +20,7 @@ const TAB_PHOTOS: Record<string, string> = {
 };
 
 export default function MenusTabs() {
-  const { menus } = CATERING_CONTENT;
+  const { menus } = useContent().catering;
   const [activeId, setActiveId] = useState<string>(menus.tabs[0].id);
   const sectionRef = useRef<HTMLElement | null>(null);
   const itemsRef = useRef<HTMLUListElement | null>(null);

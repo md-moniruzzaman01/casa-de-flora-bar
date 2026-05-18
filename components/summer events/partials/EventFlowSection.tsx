@@ -5,7 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Wine, Flower2, UtensilsCrossed, Camera, Clock } from "lucide-react";
-import { SUMMER_EVENTS_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import WaveDividerUp from "@/components/shared/WaveDivider";
 
 if (typeof window !== "undefined") {
@@ -20,7 +20,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number; className?: str
 };
 
 export default function EventFlowSection() {
-  const { flow } = SUMMER_EVENTS_CONTENT;
+  const { flow } = useContent().summerEvents;
   const sectionRef = useRef<HTMLElement | null>(null);
   const railRef = useRef<HTMLDivElement | null>(null);
 

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { WEDDING_FLORALS_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import WeddingGalleryChapter from "./WeddingGalleryChapter";
 
 const BEHIND_THE_SCENES_ID = "art-from-scratch";
@@ -19,6 +19,7 @@ type FlatImage = {
 };
 
 const WeddingGallery: React.FC = () => {
+  const WEDDING_FLORALS_CONTENT = useContent().florals;
   const { label, headline_part_1, headline_part_2, subheadline, collections } =
     WEDDING_FLORALS_CONTENT.wedding_gallery;
 

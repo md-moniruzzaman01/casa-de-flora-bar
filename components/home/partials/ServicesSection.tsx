@@ -3,33 +3,12 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
+import { useContent } from '@/lib/ContentProvider';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const services = [
-  {
-    title: 'Floral Café',
-    description: 'Enjoy handcrafted coffee, signature drinks, desserts, and a cozy floral atmosphere.',
-    iconName: 'coffee.png',
-  },
-  {
-    title: 'Weekend Brunch',
-    description: 'Gather with friends for indulgent weekend brunch, curated dishes, and beautiful conversations.',
-    iconName: 'brunch.png',
-  },
-  {
-    title: 'Bouquet Bar',
-    description: 'Choose fresh blooms and design a bouquet while sipping your favorite drink.',
-    iconName: 'bouquet.png',
-  },
-  {
-    title: 'Private Events',
-    description: 'Celebrate birthdays, bridal showers, reunions, and intimate gatherings.',
-    iconName: 'events.png',
-  },
-];
-
 const ServiceSection = () => {
+  const services = useContent().home.services;
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);

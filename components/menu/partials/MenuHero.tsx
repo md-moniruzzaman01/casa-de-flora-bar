@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { menuItems } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -23,6 +23,7 @@ const ACCENT_TOP = "/menu/Pink waffles.jpg";
 const ACCENT_BOTTOM = "/menu/SMORES.jpg";
 
 export default function MenuHero() {
+  const { menuItems } = useContent().menu;
   const ref = useRef<HTMLElement | null>(null);
   const featureRef = useRef<HTMLDivElement | null>(null);
   const topRef = useRef<HTMLDivElement | null>(null);

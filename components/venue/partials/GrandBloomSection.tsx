@@ -4,12 +4,12 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { VANUE_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 
 const GrandBloomSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const { grand_bloom_section: content } = VANUE_CONTENT;
+  const { grand_bloom_section: content } = useContent().venue;
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);

@@ -5,13 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { VANUE_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import WaveDividerUp from "@/components/shared/WaveDivider";
 
 const PackagesSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const { headline_line_1, headline_line_2, packages } =
-    VANUE_CONTENT.packages_section;
+    useContent().venue.packages_section;
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);

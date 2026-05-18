@@ -4,14 +4,14 @@ import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { BOUQUET_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function HowItWorks() {
   const container = useRef<HTMLDivElement>(null);
-  const { howItWorks } = BOUQUET_CONTENT;
+  const { howItWorks } = useContent().bouquet;
 
   useGSAP(() => {
     const tl = gsap.timeline({

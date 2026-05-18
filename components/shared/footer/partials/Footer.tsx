@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import WaveDivider from "../../WaveDivider";
-import { footerContent, navLinks } from "../config/constants";
+import { getContent } from "@/lib/content";
 import { whatsappLink } from "@/lib/site";
 
 export default function Footer() {
+  const { footer } = getContent();
+  const { brand, contact, address, copyright, navLinks } = footer;
   return (
     <footer className="w-full bg-white">
       {/* Wave divider at the top of the footer */}
@@ -20,29 +22,29 @@ export default function Footer() {
             {/* Column 1: Messaging */}
             <div className="flex flex-col gap-5 ">
               <p className="text-gray text-base leading-snug max-w-50">
-                {footerContent.brand.title}
+                {brand.title}
               </p>
               <p className=" text-gray text-2xl font-bold leading-tight max-w-74">
-                {footerContent.brand.subtitle}
+                {brand.subtitle}
               </p>
             </div>
 
             {/* Column 2: Contact Info */}
             <div className="flex flex-col">
               <span className="text-gray text-xs tracking-[0.2em] uppercase font-bold mb-2">
-                {footerContent.contact.heading}
+                {contact.heading}
               </span>
               <a
                 href="tel:9736958381"
                 className="text-gray text-xl font-bold mb-5 hover:opacity-70 transition-opacity"
               >
-                {footerContent.contact.phone}
+                {contact.phone}
               </a>
               <a
                 href="mailto:events@casadeflorabar.com"
                 className="text-gray text-3xl  font-semibold border-b border-primary-300 pb-1 hover:text-primary transition-colors"
               >
-                {footerContent.contact.email}
+                {contact.email}
               </a>
               <a
                 href={whatsappLink("Hi Casa de Flora Bar! I'd like to know more about your events and reservations.")}
@@ -88,7 +90,7 @@ export default function Footer() {
             {/* Large Address — right-aligned, large serif */}
             <div className="text-center md:text-right mt-8 md:mt-0">
               <h2 className="text-gray font-serif text-3xl md:text-6xl  font-semibold tracking-tight leading-[1.05] max-w-3xl">
-                {footerContent.address}
+                {address}
               </h2>
             </div>
           </div>
@@ -99,7 +101,7 @@ export default function Footer() {
       {/* Copyright Bar */}
       <div className="bg-[#f5e3e1] py-8 border-t border-black/10">
         <p className="text-center text-gray text-sm">
-          {footerContent.copyright}
+          {copyright}
         </p>
       </div>
     </footer>

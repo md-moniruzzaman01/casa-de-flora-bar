@@ -1,11 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { WEDDING_FLORALS_CONTENT } from '../config/constant';
+import { getContent } from '@/lib/content';
 
 
 
 const IntroFairytaleSection: React.FC = () => {
+    const WEDDING_FLORALS_CONTENT = getContent().florals;
     const { headline, body, cta, gallery } = WEDDING_FLORALS_CONTENT.intro_section;
 
     // Index-based slots — order in data is the contract, not gridSpan string

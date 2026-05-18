@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { CATERING_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 
 export default function CateringSection() {
-  const brunch = CATERING_CONTENT.brunch;
+  const brunch = useContent().catering.brunch;
 
   return (
     <section className="relative bg-[#FDFAF8] py-28 px-8 md:px-16 overflow-hidden">

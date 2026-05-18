@@ -1,9 +1,9 @@
 "use client";
 
-import { CATERING_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 export default function StatsBand() {
-  const stats = CATERING_CONTENT.brunch.stats;
+  const stats = useContent().catering.brunch.stats;
 
   return (
     <section className="bg-[#1a1014] text-white py-24 px-[6vw] border-t border-white/5">

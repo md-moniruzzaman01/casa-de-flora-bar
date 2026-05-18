@@ -6,7 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Users, Star, MapPin, Calendar } from "lucide-react";
-import { SUMMER_EVENTS_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -26,6 +26,7 @@ const SCENES = [
 ];
 
 export default function Hero() {
+  const SUMMER_EVENTS_CONTENT = useContent().summerEvents;
   const { hero } = SUMMER_EVENTS_CONTENT;
 
   const ref = useRef<HTMLElement | null>(null);

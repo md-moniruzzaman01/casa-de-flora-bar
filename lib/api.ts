@@ -54,7 +54,7 @@ async function doRefreshToken(): Promise<string> {
 
   const res = await fetch(`${API_URL}/api/users/refresh-token`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
     body: JSON.stringify({ refreshToken: rt }),
     cache: 'no-store',
   });
@@ -89,6 +89,8 @@ export async function apiFetch<T>(
   if (token && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${token}`);
   }
+  // Bypass ngrok's browser interstitial page (which lacks CORS headers).
+  headers.set('ngrok-skip-browser-warning', 'true');
 
   const res = await fetch(`${API_URL}${path}`, {
     cache: 'no-store',

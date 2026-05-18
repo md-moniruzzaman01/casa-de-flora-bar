@@ -1,325 +1,270 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Loader2, Check, AlertCircle } from "lucide-react";
-import { api, type ApiError } from "@/lib/api";
-import { WEDDING_FLORALS_CONTENT } from '../config/constant';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Video, Check } from 'lucide-react';
+import InquiryForm from '@/components/shared/Form/partials/InquiryForm';
+import VirtualConsultationScheduler from './VirtualConsultationScheduler';
 
-interface EventRentalFormData {
-  name: string;
-  email: string;
-  phone: string;
-  selectedSpace: string;
-  eventType: string;
-  guests: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  cateringRequired: boolean;
-  specialRequests: string;
-  message: string;
-}
+type ConsultType = 'in-person' | 'virtual' | '';
 
-const VALID_EVENT_TYPES = [
-  'WEDDING',
-  'BIRTHDAY',
-  'CORPORATE',
-  'SEMINAR',
-  'ANNIVERSARY',
-  'OTHER',
-];
+const TYPE_OPTIONS = [
+  {
+    id:   'in-person' as const,
+    Icon: MapPin,
+    title: 'In-Person Meeting',
+    sub:   'Our Bloomfield, NJ studio',
+    body:  'Meet Maritza face-to-face. See live floral samples and walk through your vision in our studio.',
+    tags:  ['Studio visit', '30–60 min', 'Free'],
+  },
+  {
+    id:   'virtual' as const,
+    Icon: Video,
+    title: 'Virtual Consultation',
+    sub:   'Via Zoom — anywhere, anytime',
+    body:  "Pick a date and time that works for you. We'll send a Zoom link directly to your inbox.",
+    tags:  ['Via Zoom', '30 min', 'Free'],
+  },
+] as const;
 
-function isApiError(e: unknown): e is ApiError {
-  return typeof e === "object" && e !== null && "status" in e && "message" in e;
+function PickTypePrompt({ onSelect }: { onSelect: (t: ConsultType) => void }) {
+  return (
+    <section className="bg-white">
+
+      {/* ── Header — warm cream, matches confirmation strips ────────────── */}
+      <div className="bg-[#FFFBFA] border-b border-[#EDD8DC] text-center px-6 pt-20 pb-16 md:pt-28 md:pb-20">
+        <span className="inline-block text-[10px] tracking-[0.24em] uppercase text-primary font-sans mb-5">
+          Book a Consultation
+        </span>
+        <h2 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] leading-[1.04] mb-7">
+          How would you<br />like to meet?
+        </h2>
+        <div className="flex items-center justify-center gap-4 mb-7">
+          <div className="w-16 h-px bg-[#EDD8DC]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#EDD8DC]" />
+          <div className="w-1 h-1 rounded-full bg-[#EDD8DC]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#EDD8DC]" />
+          <div className="w-16 h-px bg-[#EDD8DC]" />
+        </div>
+        <p className="text-[13px] text-gray-400 font-sans leading-relaxed max-w-xs mx-auto tracking-wide">
+          Both options are free and personal —<br className="hidden sm:block" /> choose whatever feels right for you.
+        </p>
+      </div>
+
+      {/* ── Full-width split panels — cream bg, hover to white ──────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-[#EDD8DC]">
+        {TYPE_OPTIONS.map(({ id, Icon, title, sub, body, tags }, idx) => (
+          <button
+            key={id}
+            onClick={() => onSelect(id)}
+            className={[
+              'group relative text-left px-10 py-16 md:px-14 md:py-20',
+              'bg-[#FFFBFA] hover:bg-white transition-colors duration-300',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#EDD8DC]',
+              idx === 0 ? 'border-b md:border-b-0 md:border-r border-[#EDD8DC]' : '',
+            ].join(' ')}
+          >
+            {/* Decorative number — matches border token */}
+            <span
+              aria-hidden="true"
+              className="absolute top-8 right-8 md:top-10 md:right-10 font-serif leading-none text-[#EDD8DC] select-none pointer-events-none"
+              style={{ fontSize: 'clamp(80px, 9vw, 120px)' }}
+            >
+              0{idx + 1}
+            </span>
+
+            {/* Icon ring — shadow-sm matches header strip */}
+            <div className="relative z-10 w-14 h-14 rounded-full border border-[#EDD8DC] bg-white shadow-sm flex items-center justify-center mb-8 group-hover:border-[#1a1a1a]/20 transition-colors duration-300">
+              <Icon size={20} strokeWidth={1.4} className="text-primary" />
+            </div>
+
+            {/* Title */}
+            <p className="relative z-10 font-serif text-4xl md:text-[2.6rem] text-[#1a1a1a] leading-[1.08] mb-2">
+              {title}
+            </p>
+
+            {/* Sub */}
+            <p className="relative z-10 text-[10px] tracking-[0.24em] uppercase text-primary font-sans mb-5">
+              {sub}
+            </p>
+
+            {/* Description */}
+            <p className="relative z-10 text-sm text-gray-400 font-sans leading-relaxed max-w-xs mb-6">
+              {body}
+            </p>
+
+            {/* Info tags — same pill style as header strips & slot card */}
+            <div className="relative z-10 flex flex-wrap gap-2 mb-10">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-[9px] tracking-[0.16em] uppercase font-sans text-gray-500 border border-[#EDD8DC] bg-white px-3 py-1.5 group-hover:border-[#1a1a1a]/15 transition-colors duration-300"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* CTA row */}
+            <div className="relative z-10 flex items-center gap-2">
+              <span className="text-[11px] uppercase tracking-[0.2em] font-sans text-[#1a1a1a] group-hover:text-primary transition-colors duration-300">
+                Select
+              </span>
+              <span className="text-[#1a1a1a] group-hover:text-primary group-hover:translate-x-1.5 transition-all duration-300 inline-block text-sm">
+                →
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+    </section>
+  );
 }
 
 const EventRentalSection = () => {
-  const { event_rental_section: content } = WEDDING_FLORALS_CONTENT;
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [consultType, setConsultType] = useState<ConsultType>('');
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
-    reset,
-  } = useForm<EventRentalFormData>({
-    defaultValues: {
-      cateringRequired: false,
-      eventType: 'OTHER',
-    }
-  });
-
-  const onSubmit = async (data: EventRentalFormData) => {
-    setSubmitError(null);
-    try {
-      await api.post("/api/event-bookings", {
-        name: data.name.trim(),
-        email: data.email.trim(),
-        phone: data.phone.trim(),
-        selectedSpace: data.selectedSpace,
-        eventType: data.eventType,
-        guests: parseInt(data.guests, 10),
-        date: data.date,
-        startTime: data.startTime.trim(),
-        endTime: data.endTime.trim(),
-        cateringRequired: data.cateringRequired,
-        specialRequests: `${data.specialRequests.trim()}\n\nAdditional Message: ${data.message.trim()}`.trim(),
-      });
-      reset();
-    } catch (err) {
-      if (isApiError(err)) {
-        setSubmitError(err.errors?.[0]?.message ?? err.message);
-      } else if (err instanceof Error) {
-        setSubmitError(err.message);
-      } else {
-        setSubmitError("Something went wrong. Please try again.");
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const type = (e as CustomEvent<string>).detail;
+      if (type === 'in-person' || type === 'virtual') {
+        setConsultType(type);
       }
-    }
-  };
-
-  const inputCls = "w-full bg-[#FFFBFA] border border-[#FDE2E4] px-4 py-4 focus:outline-none focus:border-pink-200 transition-colors placeholder:text-gray-400 text-base";
-  const labelCls = "font-serif text-sm text-gray-700";
-  const errorCls = "mt-1 text-xs text-red-500 font-serif";
+    };
+    window.addEventListener('setConsultType', handler);
+    return () => window.removeEventListener('setConsultType', handler);
+  }, []);
 
   return (
-    <section id="eventbook" className="bg-white py-12 px-6 md:py-24 md:px-12 lg:px-24">
-      <div className="max-w-5xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-12 md:mb-20">
-          <h1 className="font-serif text-[#1A1A1A] text-5xl md:text-8xl tracking-tight mb-4 uppercase">
-            {content.title}
-          </h1>
-          <p className="font-serif text-[#1A1A1A] text-lg md:text-2xl tracking-[0.1em] uppercase">
-            {content.subtitle}
-          </p>
-        </div>
+    <div id="eventbook">
+      {consultType === '' && (
+        <PickTypePrompt onSelect={setConsultType} />
+      )}
 
+      {consultType === 'in-person' && (
         <div>
-          {isSubmitSuccessful ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center bg-[#FFFBFA] border border-[#FDE2E4] px-6">
-              <div className="w-16 h-16 rounded-full bg-black text-white flex items-center justify-center mb-6">
-                <Check size={32} />
-              </div>
-              <h3 className="font-serif text-3xl text-black mb-4 uppercase tracking-wide">Request Received</h3>
-              <p className="text-gray-600 max-w-md leading-relaxed font-serif">
-                Thank you for your interest in hosting an event at Casa De Flora Bar. 
-                Our team will review your request and get back to you within 24-48 hours.
-              </p>
-              <button 
-                onClick={() => reset()}
-                className="mt-8 text-sm uppercase tracking-widest border-b border-black pb-1 hover:text-pink-400 hover:border-pink-400 transition-colors"
-              >
-                Send another request
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-              
-              {/* Name */}
-              <div className="md:col-span-2 space-y-2">
-                <label className={labelCls}>{content.form_labels.name}</label>
-                <input 
-                  {...register("name", { required: "Name is required" })}
-                  type="text" 
-                  placeholder="Full Name"
-                  className={inputCls}
-                />
-                {errors.name && <p className={errorCls}>{errors.name.message}</p>}
-              </div>
+          {/* ── Selection confirmation header ─────────────────────────── */}
+          <div className="bg-[#FFFBFA] border-b border-[#EDD8DC]">
+            <div className="px-6 py-8 md:py-10 md:px-12 lg:px-24 max-w-7xl mx-auto">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
 
-              {/* Email */}
-              <div className="space-y-2">
-                <label className={labelCls}>{content.form_labels.email}</label>
-                <input 
-                  {...register("email", { 
-                    required: "Email is required",
-                    pattern: {
-                      value: /^\S+@\S+\.\S+$/,
-                      message: "Invalid email address"
-                    }
-                  })}
-                  type="email" 
-                  placeholder="Email"
-                  className={inputCls}
-                />
-                {errors.email && <p className={errorCls}>{errors.email.message}</p>}
-              </div>
+                {/* Left: icon + details */}
+                <div className="flex items-start gap-5">
+                  {/* Icon with check badge */}
+                  <div className="relative flex-shrink-0 mt-0.5">
+                    <div className="w-14 h-14 rounded-full border border-[#EDD8DC] bg-white flex items-center justify-center shadow-sm">
+                      <MapPin size={20} strokeWidth={1.4} className="text-primary" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#1a1a1a] rounded-full flex items-center justify-center border-2 border-[#FFFBFA]">
+                      <Check size={10} strokeWidth={3} className="text-white" />
+                    </div>
+                  </div>
 
-              {/* Phone */}
-              <div className="space-y-2">
-                <label className={labelCls}>{content.form_labels.phone} (required)</label>
-                <input 
-                  {...register("phone", { required: "Phone number is required" })}
-                  type="tel" 
-                  placeholder="Phone"
-                  className={inputCls}
-                />
-                {errors.phone && <p className={errorCls}>{errors.phone.message}</p>}
-              </div>
-
-              {/* Event Type */}
-              <div className="space-y-2 relative">
-                <label className={labelCls}>Event Type (required)</label>
-                <div className="relative">
-                  <select 
-                    {...register("eventType", { required: "Please select an event type" })}
-                    defaultValue="OTHER"
-                    className={`${inputCls} appearance-none cursor-pointer`}
-                  >
-                    {VALID_EVENT_TYPES.map((type) => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
+                  <div>
+                    <p className="font-serif text-2xl md:text-3xl text-[#1a1a1a] leading-none mb-2">
+                      In-Person Meeting
+                    </p>
+                    <p className="text-[10px] tracking-[0.24em] uppercase text-primary font-sans mb-4">
+                      Bloomfield, NJ &nbsp;·&nbsp; Our Studio
+                    </p>
+                    {/* Info tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {['Free consultation', 'Studio visit', '30–60 min'].map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-[9px] tracking-[0.16em] uppercase font-sans text-gray-500 border border-[#EDD8DC] bg-white px-3 py-1.5"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                {errors.eventType && <p className={errorCls}>{errors.eventType.message}</p>}
-              </div>
 
-              {/* Selected Space */}
-              <div className="space-y-2 relative">
-                <label className={labelCls}>{content.form_labels.event_type} (required)</label>
-                <div className="relative">
-                  <select 
-                    {...register("selectedSpace", { required: "Please select a space" })}
-                    defaultValue="" 
-                    className={`${inputCls} appearance-none cursor-pointer`}
-                  >
-                    <option value="" disabled>Select Your Space</option>
-                    {content.event_options.map((option, index) => (
-                      <option key={index} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-                {errors.selectedSpace && <p className={errorCls}>{errors.selectedSpace.message}</p>}
-              </div>
-
-              {/* Guest Count */}
-              <div className="space-y-2">
-                <label className={labelCls}>{content.form_labels.guests}</label>
-                <input 
-                  {...register("guests", { 
-                    required: "Guest count is required",
-                    min: { value: 2, message: "Minimum 2 guests" }
-                  })}
-                  type="number" 
-                  placeholder="e.g. 40"
-                  className={inputCls}
-                />
-                {errors.guests && <p className={errorCls}>{errors.guests.message}</p>}
-              </div>
-
-              {/* Date */}
-              <div className="space-y-2">
-                <label className={labelCls}>{content.form_labels.date}</label>
-                <input 
-                  {...register("date", { required: "Date is required" })}
-                  type="date"
-                  className={`${inputCls} text-gray-600`}
-                />
-                {errors.date && <p className={errorCls}>{errors.date.message}</p>}
-              </div>
-
-              {/* Start Time */}
-              <div className="space-y-2">
-                <label className={labelCls}>Start Time (required)</label>
-                <input 
-                  {...register("startTime", { required: "Start time is required" })}
-                  type="text" 
-                  placeholder="e.g. 7:00 PM"
-                  className={inputCls}
-                />
-                {errors.startTime && <p className={errorCls}>{errors.startTime.message}</p>}
-              </div>
-
-              {/* End Time */}
-              <div className="space-y-2">
-                <label className={labelCls}>End Time (required)</label>
-                <input 
-                  {...register("endTime", { required: "End time is required" })}
-                  type="text" 
-                  placeholder="e.g. 11:00 PM"
-                  className={inputCls}
-                />
-                {errors.endTime && <p className={errorCls}>{errors.endTime.message}</p>}
-              </div>
-
-              {/* Catering Toggle */}
-              <div className="md:col-span-2 flex items-center space-x-3 py-2">
-                <input 
-                  {...register("cateringRequired")}
-                  type="checkbox" 
-                  id="catering"
-                  className="w-5 h-5 accent-black border-[#FDE2E4] rounded focus:ring-0 cursor-pointer"
-                />
-                <label htmlFor="catering" className="font-serif text-sm text-gray-700 cursor-pointer select-none">
-                  {content.form_labels.catering}
-                </label>
-              </div>
-
-              {/* Special Requests */}
-              <div className="md:col-span-2 space-y-2">
-                <label className={labelCls}>{content.form_labels.special_requests}</label>
-                <textarea 
-                  {...register("specialRequests")}
-                  rows={4}
-                  placeholder="Any specific vision..."
-                  className={`${inputCls} resize-none`}
-                ></textarea>
-              </div>
-
-              {/* Message */}
-              <div className="md:col-span-2 space-y-2">
-                <label className={labelCls}>{content.form_labels.message}</label>
-                <textarea 
-                  {...register("message", { required: "Please include a message" })}
-                  rows={4}
-                  placeholder="Tell us more about your event..."
-                  className={`${inputCls} resize-none`}
-                ></textarea>
-                {errors.message && <p className={errorCls}>{errors.message.message}</p>}
-              </div>
-
-              {/* Error banner */}
-              {submitError && (
-                <div className="md:col-span-2 flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-100 p-4" role="alert">
-                  <AlertCircle size={18} className="mt-0.5 shrink-0" />
-                  <span>{submitError}</span>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <div className="md:col-span-2 pt-4">
-                <button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full md:w-1/2 lg:w-1/3 mx-auto flex items-center justify-center gap-3 bg-black text-white py-4 font-serif text-lg tracking-wider hover:bg-neutral-800 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                {/* Right: change button */}
+                <button
+                  onClick={() => setConsultType('')}
+                  className="group flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-sans text-gray-400 hover:text-[#1a1a1a] transition-colors duration-200 flex-shrink-0 sm:mt-1 self-start"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 size={20} className="animate-spin" />
-                      <span>Sending...</span>
-                    </>
-                  ) : (
-                    content.form_labels.submit
-                  )}
+                  <span className="group-hover:-translate-x-0.5 transition-transform duration-200 inline-block">
+                    ←
+                  </span>
+                  Change format
                 </button>
+
               </div>
-            </form>
-          )}
+            </div>
+          </div>
+
+          <InquiryForm />
         </div>
-      </div>
-    </section>
+      )}
+
+      {consultType === 'virtual' && (
+        <div>
+          {/* ── Selection confirmation header ─────────────────────────── */}
+          <div className="bg-[#FFFBFA] border-b border-[#EDD8DC]">
+            <div className="px-6 py-8 md:py-10 md:px-12 lg:px-24 max-w-7xl mx-auto">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+
+                {/* Left: icon + details */}
+                <div className="flex items-start gap-5">
+                  {/* Icon with check badge */}
+                  <div className="relative flex-shrink-0 mt-0.5">
+                    <div className="w-14 h-14 rounded-full border border-[#EDD8DC] bg-white flex items-center justify-center shadow-sm">
+                      <Video size={20} strokeWidth={1.4} className="text-primary" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#1a1a1a] rounded-full flex items-center justify-center border-2 border-[#FFFBFA]">
+                      <Check size={10} strokeWidth={3} className="text-white" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="font-serif text-2xl md:text-3xl text-[#1a1a1a] leading-none mb-2">
+                      Virtual Consultation
+                    </p>
+                    <p className="text-[10px] tracking-[0.24em] uppercase text-primary font-sans mb-4">
+                      Via Zoom &nbsp;·&nbsp; Anywhere, anytime
+                    </p>
+                    {/* Info tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {['Free consultation', 'Via Zoom', '30 min'].map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-[9px] tracking-[0.16em] uppercase font-sans text-gray-500 border border-[#EDD8DC] bg-white px-3 py-1.5"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: change button */}
+                <button
+                  onClick={() => setConsultType('')}
+                  className="group flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-sans text-gray-400 hover:text-[#1a1a1a] transition-colors duration-200 flex-shrink-0 sm:mt-1 self-start"
+                >
+                  <span className="group-hover:-translate-x-0.5 transition-transform duration-200 inline-block">
+                    ←
+                  </span>
+                  Change format
+                </button>
+
+              </div>
+            </div>
+          </div>
+
+          {/* ── Scheduler ─────────────────────────────────────────────── */}
+          <section className="bg-white py-12 px-6 md:py-20 md:px-12 lg:px-24">
+            <div className="max-w-5xl mx-auto">
+              <VirtualConsultationScheduler />
+            </div>
+          </section>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default EventRentalSection;
+export default EventRentalSection;

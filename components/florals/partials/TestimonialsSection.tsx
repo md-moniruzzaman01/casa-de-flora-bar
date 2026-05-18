@@ -1,10 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import { WEDDING_FLORALS_CONTENT } from "../config/constant";
+import { getContent } from "@/lib/content";
 import ScallopBorder from "@/components/shared/ScallopBorder";
 
 
 const TestimonialsSection: React.FC = () => {
+  const WEDDING_FLORALS_CONTENT = getContent().florals;
   const { testimonials } = WEDDING_FLORALS_CONTENT;
   const testimonial = testimonials[0];
 

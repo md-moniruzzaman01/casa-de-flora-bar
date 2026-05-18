@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { menuItems } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import MenuHero from "./MenuHero";
 import MenuFilters from "./MenuFilters";
 import MenuSection from "./MenuSection";
@@ -15,6 +15,7 @@ const slugify = (value: string) =>
     .replace(/^-+|-+$/g, "");
 
 export default function MenuPage() {
+  const { menuItems } = useContent().menu;
   const sections = useMemo(
     () =>
       menuItems.map((cat) => ({

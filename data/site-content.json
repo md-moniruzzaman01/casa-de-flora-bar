@@ -1,0 +1,1410 @@
+{
+  "home": {
+    "hero": {
+      "tag": "Floral Café & Event Space",
+      "title": [
+        "Blooms,",
+        "Brunch &",
+        "Beautiful",
+        "Moments"
+      ],
+      "description": "A floral café where every detail is curated with love — from your morning coffee to your wedding day florals. Come as you are. Stay for the flowers.",
+      "primaryCTA": {
+        "label": "Book Table",
+        "href": "/reservations"
+      },
+      "secondaryCTA": {
+        "label": "Make Your Own Bouquet",
+        "href": "/bouquet"
+      },
+      "badge": {
+        "top": "Since",
+        "middle": "2024",
+        "bottom": "Est."
+      }
+    },
+    "services": [
+      {
+        "title": "Floral Café",
+        "description": "Enjoy handcrafted coffee, signature drinks, desserts, and a cozy floral atmosphere.",
+        "iconName": "coffee.png"
+      },
+      {
+        "title": "Weekend Brunch",
+        "description": "Gather with friends for indulgent weekend brunch, curated dishes, and beautiful conversations.",
+        "iconName": "brunch.png"
+      },
+      {
+        "title": "Bouquet Bar",
+        "description": "Choose fresh blooms and design a bouquet while sipping your favorite drink.",
+        "iconName": "bouquet.png"
+      },
+      {
+        "title": "Private Events",
+        "description": "Celebrate birthdays, bridal showers, reunions, and intimate gatherings.",
+        "iconName": "events.png"
+      }
+    ],
+    "bouquetSection": {
+      "title": "MAKE YOUR OWN BOUQUET",
+      "description": "Celebrate brunch dates, birthdays, and unforgettable gatherings in a chic floral setting with curated food, warm hospitality, and perfect vibes.",
+      "stats": "500",
+      "statsSubtext": "Bouquets created, each blooming with a unique story.",
+      "ctaPrimary": "BOOK A BOUQUET",
+      "ctaPrimaryLink": "/bouquet#reservation",
+      "ctaSecondary": "BooK A Table",
+      "ctaSecondaryLink": "/reservations",
+      "footerNote": "Enjoy a calm, creative floral experience where you can design your own bouquet while we take care of every detail.",
+      "polaroids": [
+        "/bouquet/flora 1.jpg",
+        "/bouquet/flora 2.jpg",
+        "/bouquet/flora 3.jpg",
+        "/bouquet/flora 4.jpg",
+        "/bouquet/flora 5.jpg"
+      ],
+      "gridImages": [
+        "/bouquet/flora 6.jpg",
+        "/bouquet/flora 7.jpg",
+        "/bouquet/flora 8.jpg",
+        "/bouquet/flora 9.jpg",
+        "/bouquet/flora 10.jpg",
+        "/bouquet/flora 11.jpg",
+        "/bouquet/flora 12.jpg",
+        "/bouquet/flora 13.jpg"
+      ]
+    },
+    "largeGroup": {
+      "title": "LARGE GROUP RESERVATIONS",
+      "description": "At Casa de Flora Bar, the vibes are always on point—think cozy yet chic, lively yet relaxing. It's the perfect spot to celebrate life's moments, big or small.",
+      "details": "Planning a celebration or a gathering for a large group? Casa de Flora Bar is the perfect setting for your next brunch event!"
+    },
+    "groupReservation": {
+      "title": "Group Reservation Details",
+      "items": [
+        "Fixed Menu: $50 per person, including a delicious family-style brunch - Chicken & Waffles, Shrimp & Grits, Rasta Pasta, Breakfast Potatoes, Eggs, Turkey Bacon, Sausage, Croissants and Mocktails.",
+        "Seating Time: 2 hours maximum.",
+        "Deposit Required: A non-refundable deposit of $150 is required to secure your reservation. The deposit amount will be applied toward your final bill.",
+        "Punctuality: Please arrive on time to enjoy the full experience—seating times cannot be extended for late arrivals."
+      ],
+      "note": "MAKE SURE TO RESERVE YOUR TABLE FIRST. TICKETS FOR FLOWERS MUST BE PURCHASED 24 HOURS IN ADVANCE. THIS DOES NOT INCLUDE FLOWERS.",
+      "cta": "Reserve your vanue",
+      "ctaLink": "/venue#booking-form"
+    }
+  },
+  "navbar": {
+    "logo": "/logo.png",
+    "navItems": [
+      {
+        "label": "Home",
+        "href": "/"
+      },
+      {
+        "label": "Wedding Florals",
+        "href": "/florals"
+      },
+      {
+        "label": "Venue Rental",
+        "href": "/venue"
+      },
+      {
+        "label": "Catering",
+        "href": "/catering"
+      },
+      {
+        "label": "Menu",
+        "href": "/menu"
+      },
+      {
+        "label": "Summer Events",
+        "href": "/summer-events"
+      },
+      {
+        "label": "About Us",
+        "href": "/about"
+      }
+    ],
+    "cta": {
+      "label": "Reserve",
+      "href": "/reservations"
+    }
+  },
+  "footer": {
+    "brand": {
+      "title": "Turn your special moments into unforgettable memories.",
+      "subtitle": "Let's bring your celebration to life at Casa de Flora Bar.",
+      "tagline": "HOME OF THE SIP & CLIP"
+    },
+    "contact": {
+      "heading": "LETS TALK",
+      "phone": "973-695-8381",
+      "email": "hello@casadeflorabar.com"
+    },
+    "address": "75 WASHINGTON STREET BLOOMFIELD, NJ 07003",
+    "copyright": "© Casa de Flora Bar. All rights reserved. Creating beautiful, unforgettable celebrations.",
+    "navLinks": [
+      {
+        "label": "HOME",
+        "href": "/"
+      },
+      {
+        "label": "SERVICES",
+        "href": "/services"
+      },
+      {
+        "label": "ABOUT",
+        "href": "/about"
+      },
+      {
+        "label": "EVENTS",
+        "href": "/events"
+      },
+      {
+        "label": "CONTACT",
+        "href": "/contact"
+      }
+    ]
+  },
+  "menu": {
+    "menuItems": [
+      {
+        "category": "Breakfast Sandwiches",
+        "items": [
+          {
+            "src": "/menu/turkey bacon egg.jpg",
+            "name": "Turkey Bacon, Egg & Cheese Croissant / Wheat / English Muffin",
+            "price": "$7.50"
+          },
+          {
+            "src": "/menu/breakfast pizza croissant.jpg",
+            "name": "Chicken Sausage, Egg & Cheese Croissant / Wheat / English Muffin",
+            "price": "$7.50"
+          },
+          {
+            "src": "/menu/turkey sausage & cheese on a biscuit.jpg",
+            "name": "Turkey Sausage, Egg & Cheese Croissant",
+            "price": "$7.50"
+          }
+        ]
+      },
+      {
+        "category": "Breakfast",
+        "items": [
+          {
+            "src": "/menu/Pink waffles.jpg",
+            "name": "Fruit Plate",
+            "price": "$10"
+          },
+          {
+            "src": "/menu/Side of Eggs.jpg",
+            "name": "Deviled Eggs",
+            "price": "$5"
+          },
+          {
+            "src": "/menu/Turkey Bacon.jpg",
+            "name": "Turkey Bacon",
+            "price": "$3"
+          },
+          {
+            "src": "/menu/Chicken & waffles.jpg",
+            "name": "Honey Barbecue Chicken",
+            "price": "$22.99"
+          },
+          {
+            "src": "/menu/Chicken & waffles 3.jpg",
+            "name": "Turkey Sausage",
+            "price": "$3"
+          }
+        ]
+      },
+      {
+        "category": "Brunch (Saturday & Sunday)",
+        "items": [
+          {
+            "src": "/menu/Chicken & waffles.jpg",
+            "name": "Chicken & Waffles",
+            "price": "$22.99"
+          },
+          {
+            "src": "/menu/shrimp & Grits.jpg",
+            "name": "Shrimp & Grits",
+            "price": "$24.99"
+          },
+          {
+            "src": "/menu/Macaroni & Cheese.jpg",
+            "name": "Macaroni & Cheese",
+            "price": "$12"
+          },
+          {
+            "src": "/menu/Rasta Pasta.jpg",
+            "name": "Rasta Pasta (Salmon/Chicken)",
+            "price": "$18.99"
+          },
+          {
+            "src": "/menu/Lemon Pepper Chicken.jpg",
+            "name": "Lemon Pepper Chicken",
+            "price": "6 PIECE $12"
+          },
+          {
+            "src": "/menu/Collard Greens.jpg",
+            "name": "Collard Greens",
+            "price": "$10"
+          },
+          {
+            "src": "/menu/10 piece.jpg",
+            "name": "10 pcs",
+            "price": "$19"
+          },
+          {
+            "src": "/menu/Corn Bread.jpg",
+            "name": "Corn Bread",
+            "price": "$3"
+          }
+        ]
+      },
+      {
+        "category": "CRAFFLES",
+        "items": [
+          {
+            "src": "/menu/BANNANA CREAM CRAFFLE.jpg",
+            "name": "Banana Cream Craffle",
+            "price": "$12.00"
+          },
+          {
+            "src": "/menu/COOKIES & CREAM craffles.jpg",
+            "name": "Cookies & Cream",
+            "price": "$12.00"
+          },
+          {
+            "src": "/menu/SMORES.jpg",
+            "name": "Smores",
+            "price": "$12.00"
+          },
+          {
+            "src": "/menu/NUTELLA BANANA PISTACHIO.jpg",
+            "name": "Nutella, Banana, Pistachio",
+            "price": "$14.00"
+          },
+          {
+            "src": "/menu/SHORTBREAD.jpg",
+            "name": "Shortbread",
+            "price": "$12.00"
+          },
+          {
+            "src": "/menu/CLASSIC.jpg",
+            "name": "Classic",
+            "price": "$10.00"
+          }
+        ]
+      }
+    ]
+  },
+  "bouquet": {
+    "hero": {
+      "title": "MAKE YOUR OWN BOUQUET",
+      "description": "Enjoy an afternoon of creating, sipping, and socializing in our beautiful flower bar. Whether you're a beginner or have a green thumb, our flower bar is for everyone. Come join us and leave with a beautiful, custom-made bouquet and a heart full of joy.",
+      "buttonText": "Book a Bouquet",
+      "link": "/bouquet#reservation",
+      "image": "make your own bouquet.jpg"
+    },
+    "quote": {
+      "text": "Whether you're coming for a fun outing, a date, or a moment of floral therapy — you'll leave with a beautiful bouquet and a heart full of joy.",
+      "secondaryText": "The smell of sweet-smelling pink roses and stunning flowers — it's about slowing down, connecting with friends, and showing creativity in the bloom. We're providing a dedicated space where you can relax, create, and be inspired. Our goal is for you to leave with a bouquet you're proud of and a smile on your face."
+    },
+    "howItWorks": {
+      "heading": "How it works",
+      "subheading": "Three simple steps to your perfect bouquet.",
+      "steps": [
+        {
+          "number": "01",
+          "title": "Reserve your table",
+          "description": "Pick a date and time that works for you and your group. Walk-ins are welcome.",
+          "icon": "calender.png"
+        },
+        {
+          "number": "02",
+          "title": "Choose your flowers",
+          "description": "Select from a wide variety of fresh, seasonal blooms and greenery.",
+          "icon": "flowers bucket.png"
+        },
+        {
+          "number": "03",
+          "title": "Design & take home",
+          "description": "We'll provide the tools and guidance you need to create your own unique masterpiece.",
+          "icon": "bouquet.png"
+        }
+      ]
+    },
+    "details": {
+      "experienceDetails": {
+        "title": "Experience details",
+        "rows": [
+          {
+            "label": "Duration",
+            "value": "1.5 hours"
+          },
+          {
+            "label": "Price per person",
+            "value": "$30"
+          },
+          {
+            "label": "Max group size",
+            "value": "8 guests"
+          },
+          {
+            "label": "Flowers included",
+            "value": "Not included"
+          },
+          {
+            "label": "Includes",
+            "value": "Flowers, materials & guidance"
+          }
+        ]
+      },
+      "perfectFor": {
+        "title": "Perfect for",
+        "list": [
+          "Date nights",
+          "Birthday celebrations",
+          "Bridal or baby showers",
+          "Girls' night out",
+          "Solo self-care"
+        ]
+      }
+    },
+    "notice": {
+      "text": "Important to know: Please reserve your table first. Flower tickets must be purchased at least 24 hours in advance and are non-refundable due to supply purchasing. Rescheduling is available if an emergency arises.",
+      "ctaButton": "Reserve your table"
+    }
+  },
+  "florals": {
+    "hero_section": {
+      "tag": "The Ritz Walton Collection · Bloomfield, NJ",
+      "headline_part_1": "Bringing Elegance",
+      "headline_part_2": "& Beauty Through Flowers",
+      "sub_headline": "New Jersey's leading floral design company — specialising in luxury weddings and events. Your vision, executed flawlessly.",
+      "buttons": [
+        {
+          "label": "book a consultation",
+          "link": "/florals#eventbook"
+        },
+        {
+          "label": "Inquire Now",
+          "link": "/#inquiry"
+        }
+      ]
+    },
+    "brand_logos": [
+      "/florals/brand/manuluchi-bride.png",
+      "/florals/brand/bella-niaja.png",
+      "/florals/brand/ahouse-bridal.png",
+      "/florals/brand/our-wedding.png",
+      "/florals/brand/the-black-bridal.png"
+    ],
+    "intro_section": {
+      "headline": {
+        "line_1": "A fairytale like no other",
+        "line_2": "— crafted for you"
+      },
+      "body": [
+        "We are New Jersey's leading floral-design company specialising in all things wedding related. Our total being is catered to your big special day.",
+        "We've customised all of our services to create a royal layout for your wedding day. Our mission is to \"wow\" you with one of our original designs and add you to our \"Happy Customers\" team."
+      ],
+      "cta": {
+        "label": "Let's talk wedding flowers →",
+        "link": "/#inquiry"
+      },
+      "gallery": [
+        {
+          "id": 1,
+          "src": "/florals/image-03.jpg",
+          "alt": "Couple in Pink suit",
+          "gridSpan": "tallImage"
+        },
+        {
+          "id": 2,
+          "src": "/florals/image-04.jpg",
+          "alt": "Wedding reception decor",
+          "gridSpan": "short"
+        },
+        {
+          "id": 3,
+          "src": "/florals/image-05.jpg",
+          "alt": "Couple exchanging rings",
+          "gridSpan": "short"
+        }
+      ]
+    },
+    "philosophy_section": {
+      "text": "We believe every wedding is unique and should be treated as such. That's why we take the time to get to know our clients and their vision.",
+      "cta": {
+        "label": "Our Process",
+        "link": "/process"
+      }
+    },
+    "process_steps": {
+      "title": "Art from scratch",
+      "steps": [
+        {
+          "number": "01",
+          "title": "Consultation",
+          "description": "We'll meet with you to discuss your vision, budget, and style preferences."
+        },
+        {
+          "number": "02",
+          "title": "Design Concept",
+          "description": "Our team will create a custom design concept and mood board for your wedding."
+        },
+        {
+          "number": "03",
+          "title": "Execution",
+          "description": "On your wedding day, we'll handle everything from delivery to setup and breakdown."
+        }
+      ]
+    },
+    "wedding_gallery": {
+      "label": "Real Weddings",
+      "headline_part_1": "Stories",
+      "headline_part_2": "in bloom",
+      "subheadline": "A glimpse into the love stories and celebrations we've had the honour of designing — every petal, every detail, made by hand.",
+      "collections": [
+        {
+          "id": "ashley-isaac",
+          "title": "Ashley & Isaac",
+          "subtitle": "The Weilyn · Williamsburg, Brooklyn NY",
+          "folder": "/florals/gellery/Ashley & Isaac",
+          "images": [
+            "DSC00102+copy.webp",
+            "DSC00178+copy.webp",
+            "DSC00201+copy.webp",
+            "DSC00427.webp",
+            "DSC00430.webp",
+            "DSC00522.webp",
+            "DSC00526.webp",
+            "DSC00526+(1).webp",
+            "DSC00672-Edit.webp",
+            "DSC00723+copy.webp",
+            "DSC09803.webp"
+          ]
+        },
+        {
+          "id": "antinise-deryck",
+          "title": "Antinise & Deryck",
+          "subtitle": "Modern · Spring Affair",
+          "folder": "/florals/gellery/Antinise & Deryck",
+          "images": [
+            "049_20220320_AD.webp",
+            "129_20220320_AD.webp",
+            "131_20220320_AD.webp",
+            "235_20220320_AD.webp",
+            "307_20220320_AD.webp",
+            "312_20220320_AD.webp",
+            "315_20220320_AD.webp",
+            "323_20220320_AD.webp",
+            "324_20220320_AD.webp",
+            "337_20220320_AD.webp",
+            "492_20220320_AD.webp"
+          ]
+        },
+        {
+          "id": "jillian-cherrod",
+          "title": "Jillian & Cherrod",
+          "subtitle": "Classic · Summer Celebration",
+          "folder": "/florals/gellery/Jillian & Cherrod",
+          "images": [
+            "342_20210725_JC.webp",
+            "351_20210725_JC.webp",
+            "353_20210725_JC.webp",
+            "378_20210725_JC.webp",
+            "378_20210725_JC+(1).webp",
+            "383_20210725_JC.webp",
+            "418_20210725_JC.webp",
+            "420_20210725_JC.webp",
+            "422_20210725_JC.webp",
+            "424_20210725_JC.webp",
+            "509_20210725_JC.webp",
+            "523_20210725_JC.webp",
+            "525_20210725_JC.webp",
+            "611_20210725_JC.webp"
+          ]
+        },
+        {
+          "id": "art-from-scratch",
+          "title": "Behind the Scenes",
+          "subtitle": "Creating jaw-dropping art from scratch",
+          "folder": "/florals/gellery/Creating Jaw Dropping Art from Scratch",
+          "images": [
+            "Maritza+11-10-21+(12).webp",
+            "Maritza+11-10-21+(38).webp",
+            "Maritza+11-10-21+(43).webp",
+            "Maritza+11-10-21+(45).webp",
+            "0012CB59-C5C5-48C0-B0AE-D1CCC88D2E2D.webp",
+            "1C785A2E-056A-4D2F-A7B0-E0CC0925C028_1_201_a.webp",
+            "1F6300B1-A147-456F-9637-A8EB725374BD.webp",
+            "2560E4C0-7B49-43B3-8DCE-971BA8D9E037.webp",
+            "25A1CC44-5B21-4144-99E8-B006BE0AB06F.webp",
+            "2E1E18CF-51CC-489F-91E1-0EADD28C6BEF.webp",
+            "3892A262-5623-4371-A91D-DBAAE1F17D70.webp",
+            "3B9E9EBB-E16E-4AB3-BB13-20E26D384BCA.webp",
+            "4244F8C9-77C6-4C48-AD78-DB9E160249E5.webp",
+            "53C133E6-D391-429A-9588-D7AA22E6F6D4.webp",
+            "6DE14BAF-9A54-425C-AE8C-CA7D22BFF0FA.webp",
+            "729F0956-2500-49C1-9CA0-A93A38A68EE5.webp",
+            "73E7EFB0-8BAE-4401-93C0-E898220142DB.webp",
+            "Capturewewe.webp",
+            "CFC2A484-A29F-42B4-9A08-5BA27715EF69.webp",
+            "DD2BE584-09D2-4240-A201-7BE0AA20DD37.webp",
+            "E4D85413-93D4-4ECC-9FF1-00C9D5F9A000.webp",
+            "fhfhsthhrhsht.webp",
+            "IMG_1569.webp",
+            "IMG_3772.webp",
+            "IMG_3774.webp",
+            "IMG_6528_preview.webp",
+            "IMG_6609.webp"
+          ]
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "photo": "/florals/image-03.jpg",
+        "quote": "\"When I say Maritza knows how to carry out a vision.... I MEAN IT!!!! Our wedding day was IDENTICAL to the vision we shared with Maritza while planning. Her floral design took our wedding to the next level and to top it all off, her heart matches the beauty of her gift!\n\nFrom our beautifully curated estate tables to the sweetheart table, ceremony décor and minor details, every guest was in awe....we were in awe! I even cried when she delivered my bouquet because it was EXACTLY what I've imagined my entire life.\n\nWe are so blessed that we were able to experience her God given gift. She made our wedding the dream that it was and we will ALWAYS remember her and her team!\n\nIf you're looking for a floral designer to execute your vision, look no further! Maritza is THE BEST floral designer I've EVER come in contact with!\n\nMaritza, we pray that you continue to operate in your purpose! You have a gift and we are so blessed to have had you!\"",
+        "author": "Jillian Curry"
+      }
+    ],
+    "event_rental_section": {
+      "title": "Event Rental",
+      "subtitle": "Host your next memorable event at Casa De Flora Bar",
+      "description": "Fill out the form below, and our team will get in touch with you shortly to share our event packages and confirm available dates for your celebration.",
+      "event_options": [
+        "Garden Room - Up to 40 Guests",
+        "Main Ballroom - Up to 150 Guests",
+        "Full Venue Rental"
+      ],
+      "time_note": "In Eastern Time"
+    }
+  },
+  "venue": {
+    "hero_section": {
+      "tag": "Venue Rental · Bloomfield, NJ",
+      "headline_part_1": "Host Your Next",
+      "headline_part_2": "Unforgettable",
+      "headline_part_3": "Event With Us",
+      "sub_headline": "A floral-inspired venue in the heart of Bloomfield — where weddings, celebrations, and gatherings bloom into lasting memories.",
+      "event_types_list": "Weddings · Corporate · Celebrations · Pop-ups · Galas · Intimate Dinners",
+      "location": "Casa de Flora Bar · Bloomfield, New Jersey"
+    },
+    "booking_section": {
+      "label": "Book the Venue",
+      "headline_line_1": "Let's plan",
+      "headline_line_2": "your event",
+      "description": "Tell us about your vision and we'll get back to you within 24 hours to discuss availability, packages, and everything in between.",
+      "contact": {
+        "phone": "+1 (973) 000-0000",
+        "email": "events@casadeflorabar.com",
+        "address": "Bloomfield, New Jersey"
+      },
+      "buttons": {
+        "label": "Book a Tour →",
+        "link": "/venue#booking-form"
+      },
+      "event_types": [
+        "Wedding",
+        "Corporate Event",
+        "Birthday / Milestone",
+        "Baby Shower",
+        "Cocktail Party / Pop-up",
+        "Gala / Fundraiser",
+        "Other"
+      ]
+    },
+    "packages_section": {
+      "label": "Rental Packages",
+      "headline_line_1": "Choose your",
+      "headline_line_2": "perfect package",
+      "packages": [
+        {
+          "id": "intimate",
+          "tag": "Up to 40 Guests",
+          "title": "The Intimate Affair",
+          "description": "Ideal for birthdays, baby showers, and small celebrations. Enjoy the full charm of the space with an intimate guest count, soft floral styling, and a dedicated event coordinator.",
+          "image": "/venue/table-img-02.jpg"
+        },
+        {
+          "id": "grand",
+          "tag": "Up to 150 Guests",
+          "title": "The Grand Celebration",
+          "description": "Our flagship package for weddings, galas, and milestone events. Full venue access, stage setup, custom floral ceiling, lighting design, and bar service — all included.",
+          "image": "/venue/grand stage-02.jpg"
+        },
+        {
+          "id": "social",
+          "tag": "Up to 80 Guests",
+          "title": "The Social Gathering",
+          "description": "Perfect for cocktail parties, pop-up dinners, and brand events. Flexible layout options, curated floral arrangements, and bar access make every moment effortless.",
+          "image": "/venue/sip and clip.jpg"
+        },
+        {
+          "id": "corporate",
+          "tag": "Custom Capacity",
+          "title": "The Corporate Experience",
+          "description": "Elevate your next conference, product launch, or team dinner in a setting that leaves a lasting impression. AV support, catering coordination, and full-day buyout available.",
+          "image": "/venue/dinner.jpg"
+        }
+      ]
+    },
+    "garden_room_section": {
+      "label": "The Garden Room",
+      "capacity_tag": "Up to 25 Guests",
+      "description": "Our signature intimate space — beautifully adorned with floral accents and an elegant, celebratory atmosphere. Perfect for bridal showers, baby showers, birthday celebrations, tea parties, and private gatherings.",
+      "features": [
+        "Floral styling",
+        "Private bar service",
+        "Coordinator on site",
+        "Custom menu",
+        "Bridal suite access",
+        "AV & lighting"
+      ],
+      "images": {
+        "tall_left": "/venue/table-img-01.jpg",
+        "top_right": "/venue/table-img-02.jpg",
+        "bottom_right": "/venue/table-img-03.jpg"
+      }
+    },
+    "grand_bloom_section": {
+      "label": "The Grand Bloom",
+      "capacity_tag": "Up to 100 Guests",
+      "description_paragraphs": [
+        "Our newest and most spectacular space — modern, upscale, and absolutely stunning. Designed for grand celebrations, wedding receptions, milestone events, and corporate gatherings.",
+        "The Grand Bloom also offers full wedding packages including use of our Garden Room for ceremony space or cocktail hour for up to 80 guests, a bridal suite, and a groom suite."
+      ],
+      "features": [
+        "Floral ceiling",
+        "Stage & lighting",
+        "Bridal suite",
+        "Groom suite",
+        "Full bar service",
+        "Coordinator on site"
+      ],
+      "images": {
+        "tall_left": "/venue/grand stage-01.jpg",
+        "top_right": "/venue/grand stage-02.jpg",
+        "bottom_right": "/venue/grand stage-03.jpg"
+      },
+      "links": {
+        "book": "/venue#query",
+        "packages": "/venue#packages"
+      }
+    },
+    "underground_section": {
+      "label": "The Underground",
+      "capacity_tag": "Up to 40 Guests",
+      "description": "An intimate, moody space with a speakeasy-inspired vibe — sophisticated, chic, and full of character. Ideal for evening birthday celebrations, cocktail receptions, girls' nights out, and intimate private gatherings.",
+      "features": [
+        "Speakeasy ambience",
+        "Cocktail bar",
+        "Mood lighting",
+        "Live DJ ready",
+        "Private entrance",
+        "Full bar service"
+      ],
+      "images": {
+        "tall_left": "/venue/grand stage-04.jpg",
+        "top_right": "/venue/grand stage-05.jpg",
+        "bottom_right": "/venue/grand stage-06.jpg"
+      }
+    }
+  },
+  "catering": {
+    "hero": {
+      "eyebrow": "Catering & Events",
+      "title": "Food as",
+      "titleAccent": "Beautiful",
+      "titleSuffix": "as the Flowers",
+      "description": "From intimate brunches to full wedding receptions — our catering brings the same care and elegance as every bloom we arrange.",
+      "image": "/venue/grand stage-02.jpg",
+      "badge": "Serving NJ + NYC",
+      "primary": {
+        "label": "Request a Quote",
+        "href": "/#inquiry"
+      },
+      "secondary": {
+        "label": "View Menu",
+        "href": "/menu"
+      },
+      "quickQuote": {
+        "heading": "Quick Quote",
+        "subheading": "Most quotes back within 24h",
+        "ctaLabel": "Start Inquiry"
+      },
+      "stats": [
+        {
+          "value": "150+",
+          "label": "Events catered"
+        },
+        {
+          "value": "20–500",
+          "label": "Guests served"
+        },
+        {
+          "value": "48h",
+          "label": "Quote turnaround"
+        }
+      ]
+    },
+    "brunch": {
+      "id": "01",
+      "eyebrow": "Package 01 — Brunch",
+      "heading": {
+        "title": "Morning",
+        "accent": "Elegance"
+      },
+      "description": "A curated brunch experience with seasonal selections — perfect for intimate gatherings and celebratory mornings.",
+      "package": {
+        "title": "Casa Brunch Catering",
+        "minGuests": "min 15 guests",
+        "sections": [
+          {
+            "label": "CHOOSE 2 — SIGNATURE BRUNCH OPTIONS",
+            "subtitle": "Signature brunch options",
+            "items": [
+              "Chicken & Waffles",
+              "Shrimp & Grits",
+              "French Toast",
+              "Rasta Pasta"
+            ]
+          },
+          {
+            "label": "CHOOSE 1 — BREAKFAST PROTEIN",
+            "subtitle": "Breakfast Meat",
+            "items": [
+              "Turkey Sausage",
+              "Beef Sausage",
+              "Turkey Bacon",
+              "Beef Bacon"
+            ]
+          },
+          {
+            "label": "INCLUDED WITH ALL PACKAGES",
+            "subtitle": "Always Included",
+            "items": [
+              "Scrambled Eggs",
+              "Breakfast Potatoes",
+              "Biscuits"
+            ]
+          }
+        ],
+        "footerNote": "Pair the Brunch package with our Cocktail Hour tier for a full morning experience. Great for baby showers, bridal brunches, and birthday celebrations."
+      },
+      "stats": [
+        {
+          "num": "200",
+          "unit": "+",
+          "label": "EVENTS CATERED",
+          "detail": "From bridal brunches to wedding receptions, across NJ and beyond."
+        },
+        {
+          "num": "3",
+          "unit": "",
+          "label": "SIGNATURE PACKAGES",
+          "detail": "Brunch, cocktail hour, and full dinner — each fully customizable."
+        },
+        {
+          "num": "15",
+          "unit": "",
+          "label": "MINIMUM GUESTS",
+          "detail": "Brunch and cocktail packages begin at fifteen guests."
+        },
+        {
+          "num": "48",
+          "unit": "hr",
+          "label": "BOOKING RESPONSE",
+          "detail": "Most inquiries confirmed within forty-eight hours."
+        }
+      ]
+    },
+    "cocktails": {
+      "id": "02",
+      "header": {
+        "eyebrow": "Package 02 — Cocktail Hour",
+        "heading": {
+          "title": "Bites Worth",
+          "accent": "Savoring"
+        },
+        "description": "Handcrafted finger food, tiered to any guest count — served with elegance on beautiful platters."
+      },
+      "package": {
+        "title": "Casa Cocktail Hour & Finger Food",
+        "badge": "Most Popular",
+        "minGuests": "Minimum 20 guests · Choose your tier below",
+        "priceRange": "$28–$42",
+        "priceLabel": "per person",
+        "tiers": [
+          {
+            "label": "CHOOSE ANY 4 ITEMS —",
+            "price": "$28/PERSON",
+            "subtitle": "Classic",
+            "items": [
+              "Deviled Eggs Honey",
+              "Barbecue Meatballs Mini",
+              "Cup Pasta Salad Mini",
+              "Cup Rasta Pasta Lemon",
+              "Pepper Chicken Bites",
+              "Mac & Cheese Balls",
+              "Caesar Salad Cups"
+            ]
+          },
+          {
+            "label": "CHOOSE ANY 6 ITEMS —",
+            "price": "$36/PERSON",
+            "subtitle": "Signature",
+            "items": [
+              "All Classic options, plus:",
+              "Shrimp & Grits Cups",
+              "Burger Bites w/ toppings",
+              "Hawaiian Shrimp Skewers",
+              "Teriyaki Chicken Skewer"
+            ]
+          },
+          {
+            "label": "CHOOSE ANY 8 ITEMS —",
+            "price": "$42/PERSON",
+            "subtitle": "Premium",
+            "items": [
+              "All Signature options, plus:",
+              "Smoked Salmon Cucumber Bites",
+              "Custom seasonal option",
+              "Dessert bites (from Kakes by Kesh)"
+            ]
+          }
+        ],
+        "serviceInfo": "Each item: ~4–5 pieces per person · Service time: 1.5–2 hours · Beautiful platters with labels included",
+        "metaDetails": [
+          {
+            "label": "MINIMUM",
+            "value": "20 guests to book"
+          },
+          {
+            "label": "BEST FOR",
+            "value": "Cocktail hours, showers, mixers"
+          },
+          {
+            "label": "COMBINE",
+            "value": "Pair with dinner for full events"
+          },
+          {
+            "label": "DELIVERY",
+            "value": "Available +$75–$150 by distance"
+          }
+        ],
+        "footerNote": "Pair the Brunch package with our Cocktail Hour tier for a full morning experience. Great for baby showers, bridal brunches, and birthday celebrations."
+      }
+    },
+    "dinner": {
+      "id": "03",
+      "header": {
+        "eyebrow": "Package 03 — Dinner",
+        "heading": {
+          "title": "An Evening",
+          "accent": "Worth Remembering"
+        },
+        "description": "Full-service dinner buffet for celebrations that demand something truly special."
+      },
+      "package": {
+        "title": "Casa Dinner Catering",
+        "minGuests": "Minimum 20 guests · Full buffet style",
+        "sections": [
+          {
+            "label": "CHOOSE 2 — MAIN ENTREES",
+            "subtitle": "Proteins",
+            "items": [
+              "Curry Chicken Turkey",
+              "Wings (braised) Barbecue",
+              "Chicken Fried Fish",
+              "Whiting Rasta Pasta",
+              "Meatballs (beef or turkey)"
+            ]
+          },
+          {
+            "label": "CHOOSE 3 — SIDES",
+            "subtitle": "Side Dishes",
+            "items": [
+              "Mac and Cheese",
+              "Mashed Potatoes",
+              "Cabbage",
+              "Yellow Rice",
+              "Collard Greens",
+              "Candied Yams"
+            ]
+          },
+          {
+            "label": "INCLUDED WITH ALL DINNER PACKAGES",
+            "subtitle": "Always Included",
+            "items": [
+              "Caesar Salad or Spring Salad",
+              "Dinner rolls / bread",
+              "Serving ware & chafing dishes",
+              "Plates, napkins & utensils"
+            ]
+          }
+        ],
+        "addonText": "Optional add-ons: Dessert station · Linen & décor upgrades available",
+        "metaDetails": [
+          {
+            "label": "MINIMUM",
+            "value": "20 guests to book"
+          },
+          {
+            "label": "STYLE",
+            "value": "Buffet setup included"
+          },
+          {
+            "label": "PRICE",
+            "value": "$48/person + delivery"
+          },
+          {
+            "label": "DEPOSIT",
+            "value": "50% at booking"
+          }
+        ]
+      }
+    },
+    "menus": {
+      "eyebrow": "Curated Menus",
+      "title": "Sample menus, ready to remix",
+      "description": "Use these as starting points — the chef will tailor every menu to your guest count, season, and dietary needs.",
+      "tabs": [
+        {
+          "id": "brunch",
+          "label": "Brunch",
+          "accent": "Made for daytime celebrations",
+          "items": [
+            {
+              "name": "Chicken & Waffles",
+              "note": "Casa de Flora signature"
+            },
+            {
+              "name": "Shrimp & Grits",
+              "note": "Cajun cream, herbs"
+            },
+            {
+              "name": "Breakfast Potatoes",
+              "note": "Crisp, salted, herbed"
+            },
+            {
+              "name": "Eggs Any Style",
+              "note": "Made-to-order station available"
+            },
+            {
+              "name": "Turkey Bacon & Sausage",
+              "note": "Premium proteins"
+            },
+            {
+              "name": "Croissants & Pastries",
+              "note": "Daily-baked"
+            },
+            {
+              "name": "Pink Waffles",
+              "note": "Strawberry, pistachio cream"
+            },
+            {
+              "name": "Mocktail Bar",
+              "note": "Three signature builds"
+            }
+          ]
+        },
+        {
+          "id": "cocktail",
+          "label": "Cocktail Hour",
+          "accent": "Passed bites + drink stations",
+          "items": [
+            {
+              "name": "Truffle Deviled Eggs",
+              "note": ""
+            },
+            {
+              "name": "Brie + Honeycomb Crostini",
+              "note": ""
+            },
+            {
+              "name": "Mini Lobster Rolls",
+              "note": ""
+            },
+            {
+              "name": "Chicken & Waffle Bites",
+              "note": "Maple bourbon glaze"
+            },
+            {
+              "name": "Charcuterie Display",
+              "note": "Local cheese, cured meats"
+            },
+            {
+              "name": "Signature Sip & Clip Cocktail",
+              "note": ""
+            }
+          ]
+        },
+        {
+          "id": "plated",
+          "label": "Plated Dinner",
+          "accent": "Three-course, chef's selection",
+          "items": [
+            {
+              "name": "First — Heirloom Tomato Salad",
+              "note": "Burrata, basil oil"
+            },
+            {
+              "name": "Main — Lemon Pepper Chicken",
+              "note": "Or Rasta Pasta with Salmon"
+            },
+            {
+              "name": "Sides",
+              "note": "Macaroni & cheese · collard greens · cornbread"
+            },
+            {
+              "name": "Dessert — Banana Cream Craffle",
+              "note": "Whipped vanilla cream"
+            }
+          ]
+        },
+        {
+          "id": "family",
+          "label": "Family Style",
+          "accent": "Generous platters, shared at the table",
+          "items": [
+            {
+              "name": "Whole Roasted Chicken",
+              "note": "Citrus, herbs"
+            },
+            {
+              "name": "Rasta Pasta",
+              "note": "Salmon or chicken"
+            },
+            {
+              "name": "Collard Greens",
+              "note": ""
+            },
+            {
+              "name": "Macaroni & Cheese",
+              "note": ""
+            },
+            {
+              "name": "Cornbread + Honey Butter",
+              "note": ""
+            },
+            {
+              "name": "Seasonal Crudités",
+              "note": ""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "summerEvents": {
+    "hero": {
+      "badge": "BLOOM & BUILD",
+      "duration": "25 Days | 5 Weeks | July 6 – August 7, 2026",
+      "titleMain": "Girls' Edition —",
+      "titleSub": "Summer Enrichment Program",
+      "description": "A creative and empowering experience where guests explored flowers, creativity, and connection in a beautifully curated setting.",
+      "stats": [
+        {
+          "label": "20+ Guests",
+          "icon": "users"
+        },
+        {
+          "label": "Floral Workshop + Dining",
+          "icon": "star"
+        },
+        {
+          "label": "Bloomfield, NJ",
+          "icon": "map-pin"
+        }
+      ],
+      "buttons": {
+        "primary": "Reserve Your Spot",
+        "secondary": "Learn More"
+      },
+      "image": "/summer events/image-01.jpg"
+    },
+    "about": {
+      "title": "About this",
+      "titleHighlight": "experience",
+      "description": "A creative and empowering experience where guests explored flowers, creativity, and connection in a beautifully curated setting.",
+      "whatsIncluded": {
+        "title": "What's included",
+        "items": [
+          {
+            "title": "Fresh flowers & materials",
+            "desc": "Seasonal blooms, wrapping & ribbon"
+          },
+          {
+            "title": "Guided bouquet session",
+            "desc": "Step-by-step guidance from our floral team"
+          },
+          {
+            "title": "Dinner & drinks",
+            "desc": "Curated menu with signature drinks and mocktails"
+          },
+          {
+            "title": "Styled décor & photo moments",
+            "desc": "Elegant setups with Instagram-worthy corners"
+          },
+          {
+            "title": "Music & ambiance",
+            "desc": "Soft curated music and a warm, inviting atmosphere"
+          }
+        ]
+      }
+    },
+    "pricing": {
+      "price": "$150",
+      "unit": "Per Person",
+      "subtext": "Evening Enrichment",
+      "booking": {
+        "calendarLabel": "Select Date",
+        "timeLabel": "Select Time",
+        "guestLabel": "Number of Guests",
+        "times": [
+          "5:00 PM",
+          "6:00 PM",
+          "7:00 PM"
+        ],
+        "summary": {
+          "priceLabel": "$150 x 1 Guest",
+          "priceValue": "$150",
+          "serviceFeeLabel": "Service fee",
+          "serviceFeeValue": "$0",
+          "totalLabel": "Total",
+          "totalValue": "$150"
+        },
+        "buttonText": "Book this experience"
+      }
+    },
+    "flow": {
+      "title": "How the evening flows",
+      "img": "/summer events/image-02.jpg",
+      "polaroids": [
+        "/summer events/image-02.jpg",
+        "/summer events/image-03.jpg",
+        "/summer events/image-04.jpg",
+        "/summer events/image-05.jpg"
+      ],
+      "closing": "Times are a guide, not a clock — the evening flows naturally and we'll never rush you out the door.",
+      "steps": [
+        {
+          "id": 1,
+          "time": "5:30 PM",
+          "duration": "60 min",
+          "icon": "wine",
+          "title": "Arrival & Welcome",
+          "description": "Walk into a room set with fresh blooms. A welcome drink, light bites and a personal hello from the team."
+        },
+        {
+          "id": 2,
+          "time": "6:30 PM",
+          "duration": "60 min",
+          "icon": "flower",
+          "title": "Floral Workshop",
+          "description": "Design your own bouquet under the guidance of our floral team — every stem is yours to shape."
+        },
+        {
+          "id": 3,
+          "time": "7:30 PM",
+          "duration": "90 min",
+          "icon": "plate",
+          "title": "Dinner Experience",
+          "description": "Sit down to a chef-curated meal with seasonal sides, signature mocktails and good conversation."
+        },
+        {
+          "id": 4,
+          "time": "9:00 PM",
+          "duration": "Until close",
+          "icon": "camera",
+          "title": "Celebrate & Capture",
+          "description": "Take home your bouquet, the photos from the styled corners and the kind of evening you'll talk about for weeks."
+        }
+      ]
+    },
+    "sessions": [
+      {
+        "date": "Jul 06",
+        "day": "Monday",
+        "spots": 4,
+        "capacity": 20,
+        "isoDate": "2026-07-06"
+      },
+      {
+        "date": "Jul 13",
+        "day": "Monday",
+        "spots": 8,
+        "capacity": 20,
+        "isoDate": "2026-07-13"
+      },
+      {
+        "date": "Jul 20",
+        "day": "Monday",
+        "spots": 12,
+        "capacity": 20,
+        "isoDate": "2026-07-20"
+      },
+      {
+        "date": "Jul 27",
+        "day": "Monday",
+        "spots": 6,
+        "capacity": 20,
+        "isoDate": "2026-07-27"
+      },
+      {
+        "date": "Aug 03",
+        "day": "Monday",
+        "spots": 10,
+        "capacity": 20,
+        "isoDate": "2026-08-03"
+      }
+    ],
+    "faq": {
+      "title": "Everything You",
+      "titleHighlight": "Need to Know",
+      "description": "Everything you need to know about our Summer Enrichment Program. If you have any further questions, don't hesitate to reach out.",
+      "questions": [
+        {
+          "q": "What's the refund policy?",
+          "a": "We offer a full refund if canceled 48 hours before the event start time."
+        },
+        {
+          "q": "What should I wear to the workshop?",
+          "a": ""
+        },
+        {
+          "q": "Can I take my floral arrangements home?",
+          "a": ""
+        },
+        {
+          "q": "Do you accommodate dietary restrictions?",
+          "a": ""
+        },
+        {
+          "q": "What is the age limit for this event?",
+          "a": ""
+        },
+        {
+          "q": "Is parking available?",
+          "a": ""
+        }
+      ]
+    },
+    "gallery": {
+      "column1": [
+        {
+          "src": "/summer events/image-01.jpg",
+          "alt": "Guest with bouquet",
+          "aspect": "aspect-[4/3]"
+        },
+        {
+          "src": "/summer events/image-02.jpg",
+          "alt": "Floral ambiance",
+          "aspect": "aspect-[16/9]"
+        },
+        {
+          "src": "/summer events/image-03.jpg",
+          "alt": "Dinner setup",
+          "aspect": "aspect-[4/3]"
+        },
+        {
+          "src": "/summer events/image-04.jpg",
+          "alt": "Event decor",
+          "aspect": "aspect-[16/9]"
+        }
+      ],
+      "column2": [
+        {
+          "src": "/summer events/image-02.jpg",
+          "alt": "Inside the venue",
+          "aspect": "aspect-[16/9]"
+        },
+        {
+          "src": "/summer events/image-05.jpg",
+          "alt": "Guest dining",
+          "aspect": "aspect-[4/3]"
+        },
+        {
+          "src": "/summer events/image-03.jpg",
+          "alt": "Tablescape",
+          "aspect": "aspect-[4/3]"
+        },
+        {
+          "src": "/summer events/image-01.jpg",
+          "alt": "Bouquet workshop",
+          "aspect": "aspect-[4/3]"
+        },
+        {
+          "src": "/summer events/image-04.jpg",
+          "alt": "Photo moment",
+          "aspect": "aspect-[16/9]"
+        },
+        {
+          "src": "/summer events/image-05.jpg",
+          "alt": "Elegant tablescape",
+          "aspect": "aspect-[4/3]"
+        }
+      ],
+      "column3": [
+        {
+          "src": "/summer events/image-03.jpg",
+          "alt": "Overhead view",
+          "aspect": "aspect-[4/3]"
+        },
+        {
+          "src": "/summer events/image-02.jpg",
+          "alt": "Friends laughing",
+          "aspect": "aspect-[16/9]"
+        },
+        {
+          "src": "/summer events/image-01.jpg",
+          "alt": "Take-home gift",
+          "aspect": "aspect-[4/3]"
+        },
+        {
+          "src": "/summer events/image-04.jpg",
+          "alt": "Event highlights",
+          "aspect": "aspect-[16/9]"
+        }
+      ]
+    }
+  },
+  "inquiryForm": {
+    "title": "Get In Touch",
+    "subtitle": "Have a question or a vision in mind? We'd love to hear from you.",
+    "sidebar": {
+      "text": "Whether you're curious about our event packages, pricing, or just want to say hello — send us a message and a member of our team will personally respond within 24 hours.",
+      "points": [
+        "Questions about availability",
+        "Package & pricing details",
+        "Custom event requirements",
+        "Catering & dietary needs"
+      ]
+    },
+    "subjects": [
+      "Event Space Availability",
+      "Pricing & Packages",
+      "Catering Options",
+      "Private Dining",
+      "Partnership / Collaboration",
+      "General Question",
+      "Other",
+      "Special message"
+    ],
+    "successMessage": {
+      "title": "Message received.",
+      "body": "Thank you for reaching out. One of our team members will be in touch with you personally within 24 hours."
+    },
+    "placeholders": {
+      "name": "Full name",
+      "email": "you@example.com",
+      "phone": "+1 (000) 000-0000 (optional)",
+      "subject": "What is your inquiry about?",
+      "message": "Tell us what you have in mind — the more detail, the better we can help."
+    }
+  }
+}

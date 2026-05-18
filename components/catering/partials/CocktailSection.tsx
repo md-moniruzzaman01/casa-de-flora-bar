@@ -1,12 +1,10 @@
 "use client";
 
 import React from "react";
-import { CATERING_CONTENT } from "../config/constant";
-
-
-const cocktail = CATERING_CONTENT.cocktails;
+import { useContent } from "@/lib/ContentProvider";
 
 export default function CocktailSection() {
+  const cocktail = useContent().catering.cocktails;
   return (
     <section className="relative bg-white py-28 px-8 md:px-16 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_90%_100%,_rgba(237,128,168,0.07)_0%,transparent_55%)]" />

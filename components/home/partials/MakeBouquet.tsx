@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { HOME_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import WaveDividerUp from "@/components/shared/WaveDivider";
 import Link from "next/link";
 
@@ -11,6 +11,7 @@ if (typeof window !== "undefined") {
 }
 
 export default function MakeBouquet() {
+    const { bouquetSection } = useContent().home;
     const sectionRef = useRef<HTMLDivElement>(null);
     const leftContainerRef = useRef<HTMLDivElement>(null);
     const [selectedImg, setSelectedImg] = useState<string | null>(null);
@@ -103,21 +104,21 @@ export default function MakeBouquet() {
                     {/* Header Section */}
                     <div className="flex flex-col md:flex-row justify-between items-start mb-16 gap-8 content-fade">
                         <h1 className="text-5xl md:text-[84px] font-serif text-[#222] uppercase leading-[0.9] tracking-tight max-w-3xl">
-                            {HOME_CONTENT.bouquetSection.title}
+                            {bouquetSection.title}
                         </h1>
                         <div className="max-w-[420px] pt-4">
                             <p className="text-sm md:text-[15px] text-gray-800 leading-relaxed font-normal mb-8">
-                                {HOME_CONTENT.bouquetSection.description}
+                                {bouquetSection.description}
                             </p>
                             <div className="flex flex-wrap gap-4">
-                                <Link href={HOME_CONTENT.bouquetSection.ctaPrimaryLink}>
+                                <Link href={bouquetSection.ctaPrimaryLink}>
                                     <button className="bg-black text-white px-10 py-4 text-[12px] font-medium tracking-[0.1em] hover:bg-gray-900 transition-all">
-                                        {HOME_CONTENT.bouquetSection.ctaPrimary}
+                                        {bouquetSection.ctaPrimary}
                                     </button>
                                 </Link>
-                                <Link href={HOME_CONTENT.bouquetSection.ctaSecondaryLink}>
+                                <Link href={bouquetSection.ctaSecondaryLink}>
                                     <button className="border border-black/40 text-black px-10 py-4 text-[12px] font-medium tracking-[0.1em] hover:bg-white/30 transition-all">
-                                        {HOME_CONTENT.bouquetSection.ctaSecondary}
+                                        {bouquetSection.ctaSecondary}
                                     </button>
                                 </Link>
                             </div>
@@ -135,7 +136,7 @@ export default function MakeBouquet() {
                             }}
                         >
                             <div className="relative flex-1 flex justify-center items-center">
-                                {HOME_CONTENT.bouquetSection.polaroids.slice(0, 5).map((src, idx) => (
+                                {bouquetSection.polaroids.slice(0, 5).map((src, idx) => (
                                     <div
                                         key={idx}
                                         onClick={() => handleImageClick(src)}
@@ -159,11 +160,11 @@ export default function MakeBouquet() {
 
                             <div className="relative z-20 content-fade">
                                 <h2 className="text-7xl md:text-[110px] font-serif text-black leading-none tracking-tighter">
-                                    {HOME_CONTENT.bouquetSection.stats}
+                                    {bouquetSection.stats}
                                     <span className="text-4xl md:text-6xl align-top ml-1">+</span>
                                 </h2>
                                 <p className="text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-gray-600 mt-4 max-w-[220px] leading-relaxed">
-                                    {HOME_CONTENT.bouquetSection.statsSubtext}
+                                    {bouquetSection.statsSubtext}
                                 </p>
                             </div>
                         </div>
@@ -173,23 +174,23 @@ export default function MakeBouquet() {
                             <div className="grid grid-cols-4 grid-rows-4 h-full gap-[3px]">
                                 {/* Row 1 & 2 */}
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[0]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[0])} />
+                                    <img src={bouquetSection.gridImages[0]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(bouquetSection.gridImages[0])} />
                                 </div>
                                 <div className="col-span-2 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[1]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[1])} />
+                                    <img src={bouquetSection.gridImages[1]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(bouquetSection.gridImages[1])} />
                                 </div>
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[2]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[2])} />
+                                    <img src={bouquetSection.gridImages[2]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(bouquetSection.gridImages[2])} />
                                 </div>
                                 {/* Row 3 & 4 */}
                                 <div className="col-span-2 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[3]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[3])} />
+                                    <img src={bouquetSection.gridImages[3]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(bouquetSection.gridImages[3])} />
                                 </div>
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[4]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[4])} />
+                                    <img src={bouquetSection.gridImages[4]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(bouquetSection.gridImages[4])} />
                                 </div>
                                 <div className="col-span-1 row-span-2 overflow-hidden bg-gray-200">
-                                    <img src={HOME_CONTENT.bouquetSection.gridImages[5]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(HOME_CONTENT.bouquetSection.gridImages[5])} />
+                                    <img src={bouquetSection.gridImages[5]} alt="" className="object-cover w-full h-full" onClick={() => handleImageClick(bouquetSection.gridImages[5])} />
                                 </div>
                             </div>
 

@@ -27,6 +27,7 @@ export const navSections: NavSection[] = [
             { icon: "users", label: "Users", href: "/admin/users" },
             { icon: "mail", label: "Inquiries", href: "/admin/inquiries" },
             { icon: "plus-circle", label: "Create Event", href: "/admin/events/create" },
+            { icon: "file-text", label: "Content", href: "/admin/content" },
             { icon: "settings", label: "Settings", href: "/admin/settings" },
         ],
     },

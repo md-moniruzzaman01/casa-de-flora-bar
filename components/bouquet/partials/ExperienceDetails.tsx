@@ -3,11 +3,11 @@
 import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { BOUQUET_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 export default function ExperienceDetails() {
   const container = useRef<HTMLDivElement>(null);
-  const { details } = BOUQUET_CONTENT;
+  const { details } = useContent().bouquet;
 
   useGSAP(() => {
     gsap.from(".detail-card", {

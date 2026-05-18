@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { Loader2, Check, AlertCircle } from "lucide-react";
 import { api, type ApiError } from "@/lib/api";
 import { FormData } from "../config/types";
-import { Inquiry_Form_Data } from "../config/constants";
+import { useContent } from "@/lib/ContentProvider";
 
 
 
@@ -16,6 +16,7 @@ function isApiError(e: unknown): e is ApiError {
 }
 
 const InquiryForm = () => {
+  const Inquiry_Form_Data = useContent().inquiryForm;
   const containerRef = useRef(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 

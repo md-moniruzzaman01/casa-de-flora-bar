@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   X,
@@ -9,6 +9,7 @@ import {
   Loader2,
   Check,
   AlertCircle,
+  ExternalLink,
 } from "lucide-react";
 import { DAY_NAMES, MONTHS } from "../config/constants";
 import { Slot, SelectedDate } from "../config/types";
@@ -70,6 +71,7 @@ export default function GuestForm({
   onClearSelection,
 }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
   const {
     register,
@@ -90,19 +92,23 @@ export default function GuestForm({
     }
 
     try {
-      await api.post("/api/table-bookings", {
-        name: data.name.trim(),
-        email: data.email.trim(),
-        phone: data.phone.trim(),
-        guests: parseInt(data.guests, 10),
-        date: dateToIso(selectedDate),
-        timeSlot: to24h(selectedSlot.from),
-        ...(data.message?.trim()
-          ? { specialRequests: data.message.trim() }
-          : {}),
-      });
+      const res = await api.post<{ data: unknown; checkoutUrl: string | null }>(
+        "/api/table-bookings",
+        {
+          name:    data.name.trim(),
+          email:   data.email.trim(),
+          phone:   data.phone.trim(),
+          guests:  parseInt(data.guests, 10),
+          date:    dateToIso(selectedDate),
+          timeSlot: to24h(selectedSlot.from),
+          ...(data.message?.trim() ? { specialRequests: data.message.trim() } : {}),
+        },
+      );
+      setCheckoutUrl(res.checkoutUrl);
       reset({ guests: "2" } as FormValues);
+      console.log("reserve",res)
     } catch (err) {
+       console.log("reserve error",err)
       if (isApiError(err)) {
         const fieldMsg = err.errors?.[0]?.message;
         setSubmitError(fieldMsg ?? err.message);
@@ -176,23 +182,9 @@ export default function GuestForm({
           </div>
         )}
 
-        {/* Success state */}
+        {/* Success + payment step */}
         {isSubmitSuccessful ? (
-          <div className="text-center py-8">
-            <div className="mx-auto w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center mb-4">
-              <Check size={26} />
-            </div>
-            <h3 className="font-serif text-2xl text-black mb-2">
-              Reservation received.
-            </h3>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              Check your inbox — a confirmation is on its way. We can&apos;t wait
-              to host you.
-            </p>
-            <p className="mt-6 text-[11px] uppercase tracking-[0.24em] text-gray-500">
-              — Casa de Flora team
-            </p>
-          </div>
+          <PaymentStep checkoutUrl={checkoutUrl} />
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <StepLabel step="" label="" />
@@ -351,6 +343,68 @@ function Field({
       </label>
       {children}
       {error && <p className="mt-1 text-[11px] text-red-600">{error}</p>}
+    </div>
+  );
+}
+
+function PaymentStep({ checkoutUrl }: { checkoutUrl: string | null }) {
+  useEffect(() => {
+    if (checkoutUrl) {
+      const t = setTimeout(() => { window.location.href = checkoutUrl; }, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [checkoutUrl]);
+
+  return (
+    <div className="py-4">
+      {/* Step 1 */}
+      <div className="flex items-start gap-3 mb-5">
+        <div className="flex flex-col items-center">
+          <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0">
+            <Check size={14} />
+          </div>
+          <div className="w-px flex-1 bg-primary-100 my-1.5" style={{ minHeight: 24 }} />
+        </div>
+        <div className="pt-1.5 pb-4">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-primary mb-0.5">Step 1 · Done</p>
+          <p className="text-sm font-medium text-black">Reservation received</p>
+          <p className="text-xs text-gray-500 mt-0.5">A confirmation email is on its way.</p>
+        </div>
+      </div>
+
+      {/* Step 2 */}
+      <div className="flex items-start gap-3 mb-7">
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-semibold ${
+          checkoutUrl ? "border-2 border-primary text-primary" : "bg-primary-100 text-primary"
+        }`}>
+          {checkoutUrl ? "2" : <Loader2 size={13} className="animate-spin" />}
+        </div>
+        <div className="pt-1.5">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-primary mb-0.5">Step 2 · Required</p>
+          <p className="text-sm font-medium text-black">
+            {checkoutUrl ? "Redirecting to payment…" : "Preparing your checkout…"}
+          </p>
+          <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+            Your table is held. Pay the advance deposit to fully confirm.
+          </p>
+        </div>
+      </div>
+
+      {checkoutUrl ? (
+        <a
+          href={checkoutUrl}
+          className="flex items-center justify-center gap-2 w-full bg-black text-white py-4 rounded-xl text-[11px] uppercase tracking-[0.18em] font-medium hover:bg-primary transition-all"
+        >
+          <ExternalLink size={14} />
+          Pay Deposit Now
+        </a>
+      ) : (
+        <div className="flex items-center justify-center gap-2 w-full bg-gray-100 text-gray-500 py-4 rounded-xl text-[11px] uppercase tracking-[0.18em]">
+          <Loader2 size={14} className="animate-spin" />
+          Setting up payment…
+        </div>
+      )}
+      <p className="text-center text-[10px] text-gray-400 mt-3">Secure checkout via Square</p>
     </div>
   );
 }

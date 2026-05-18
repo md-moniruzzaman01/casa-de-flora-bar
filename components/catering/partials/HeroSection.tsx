@@ -1,9 +1,9 @@
 
-import { CATERING_CONTENT } from '../config/constant';
+import { getContent } from "@/lib/content";
 
 
 const HeroSection = () => {
-  const { hero } = CATERING_CONTENT;
+  const { hero } = getContent().catering;
 
   return (
     <section className="relative h-screen min-h-[720px] flex items-end px-8 md:px-16 pb-20 overflow-hidden">

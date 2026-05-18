@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
-import { HOME_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,7 +15,7 @@ export default function Hero() {
 
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const { hero } = HOME_CONTENT;
+  const { hero } = useContent().home;
 
   useEffect(() => {
     if (!ref.current || !videoRef.current || !textRef.current) return;

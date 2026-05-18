@@ -77,7 +77,8 @@ export default function BouquetReservationForm() {
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitError,  setSubmitError]  = useState<string | null>(null);
+  const [checkoutUrl,  setCheckoutUrl]  = useState<string | null>(null);
 
   const { config } = useFormConfig();
 
@@ -119,23 +120,26 @@ export default function BouquetReservationForm() {
   const onSubmit = async (data: FormValues) => {
     setSubmitError(null);
     try {
-      await api.post("/api/table-bookings", {
-        name: data.fullName.trim(),
-        email: data.email.trim(),
-        phone: data.phone.trim(),
-        guests: parseInt(data.guests, 10),
-        date: data.date,
-        timeSlot: to24h(data.timeSlot),
-        ...(data.specialRequests?.trim() ? { specialRequests: data.specialRequests.trim() } : {}),
-        bouquets: [{
-          bouquetType: data.bouquetType,
-          quantity: parseInt(data.quantity, 10),
-          ...(data.cardMessage?.trim() ? { cardMessage: data.cardMessage.trim() } : {}),
-        }],
-      });
+      const res = await api.post<{ data: unknown; checkoutUrl: string | null }>(
+        "/api/table-bookings",
+        {
+          name: data.fullName.trim(),
+          email: data.email.trim(),
+          phone: data.phone.trim(),
+          guests: parseInt(data.guests, 10),
+          date: data.date,
+          timeSlot: to24h(data.timeSlot),
+          ...(data.specialRequests?.trim() ? { specialRequests: data.specialRequests.trim() } : {}),
+          bouquets: [{
+            bouquetType: data.bouquetType,
+            quantity: parseInt(data.quantity, 10),
+            ...(data.cardMessage?.trim() ? { cardMessage: data.cardMessage.trim() } : {}),
+          }],
+        },
+      );
+      setCheckoutUrl(res.checkoutUrl);
       reset({ guests: "1", quantity: "1" });
     } catch (err) {
-      console.log("bouquit", err)
       if (isApiError(err)) {
         setSubmitError(err.errors?.[0]?.message ?? err.message);
       } else if (err instanceof Error) {
@@ -171,7 +175,7 @@ export default function BouquetReservationForm() {
 
         {/* Form */}
         {isSubmitSuccessful ? (
-          <SuccessState />
+          <SuccessState checkoutUrl={checkoutUrl} />
         ) : (
           <form ref={formRef} onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8" noValidate>
@@ -293,23 +297,72 @@ function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
   );
 }
 
-function SuccessState() {
+function SuccessState({ checkoutUrl }: { checkoutUrl: string | null }) {
   const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     gsap.fromTo(ref.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" });
-  }, []);
+    // Auto-redirect to Square checkout after a short delay so customer sees the confirmation.
+    if (checkoutUrl) {
+      const t = setTimeout(() => { window.location.href = checkoutUrl; }, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [checkoutUrl]);
+
   return (
-    <div ref={ref} className="flex flex-col justify-center py-24 lg:py-0 lg:min-h-150">
+    <div ref={ref} className="flex flex-col justify-center py-16 lg:py-0 lg:min-h-150">
       <div className="w-px h-16 bg-[#f2b8c6] mb-10" />
-      <div className="w-14 h-14 rounded-full bg-[#d4607e] text-white flex items-center justify-center mb-6">
-        <Check size={26} />
+
+      {/* Step 1 — confirmed */}
+      <div className="flex items-center gap-4 mb-8">
+        <div className="w-10 h-10 rounded-full bg-[#d4607e] text-white flex items-center justify-center flex-shrink-0">
+          <Check size={18} />
+        </div>
+        <div>
+          <p className="text-[9px] tracking-[0.4em] uppercase text-[#d4607e] mb-0.5 font-light">Step 1 · Complete</p>
+          <p className="text-sm font-light text-[#0e0b0b] tracking-wide">Booking request received</p>
+        </div>
       </div>
-      <p className="text-[9px] tracking-[0.4em] uppercase text-[#d4607e] mb-4 font-light">Confirmed</p>
-      <h3 className="font-serif text-[clamp(32px,4vw,50px)] font-light leading-tight text-[#0e0b0b] mb-6">
-        Your bouquet is<br /><em className="italic text-[#d4607e]">reserved.</em>
+
+      {/* Step 2 — payment */}
+      <div className="flex items-start gap-4 mb-10">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-light ${
+          checkoutUrl ? "border border-[#d4607e] text-[#d4607e]" : "bg-[#f2b8c6] text-white"
+        }`}>
+          {checkoutUrl ? "2" : <Loader2 size={16} className="animate-spin" />}
+        </div>
+        <div>
+          <p className="text-[9px] tracking-[0.4em] uppercase text-[#d4607e] mb-0.5 font-light">Step 2 · Required</p>
+          <p className="text-sm font-light text-[#0e0b0b] tracking-wide">
+            {checkoutUrl ? "Redirecting to payment…" : "Preparing your payment…"}
+          </p>
+        </div>
+      </div>
+
+      <h3 className="font-serif text-[clamp(28px,3.5vw,44px)] font-light leading-tight text-[#0e0b0b] mb-5">
+        One more step —<br /><em className="italic text-[#d4607e]">secure your spot.</em>
       </h3>
-      <p className="text-[12px] leading-[1.9] text-[#5a3f3f] max-w-sm font-light tracking-wide">
-        We&apos;ll be in touch shortly to confirm the details. Don&apos;t forget — flower tickets must be purchased in advance.
+      <p className="text-[12px] leading-[1.9] text-[#5a3f3f] max-w-sm font-light tracking-wide mb-10">
+        Your reservation is saved. You&apos;ll be redirected to our secure Square checkout to complete your advance deposit. Your bouquet will be prepared once payment is received.
+      </p>
+
+      {checkoutUrl ? (
+        <a
+          href={checkoutUrl}
+          className="group inline-flex items-center gap-4 bg-[#0e0b0b] text-[#fdf8f5] px-10 py-5 text-[10px] tracking-[0.3em] uppercase font-light w-fit hover:bg-[#d4607e] transition-colors duration-300"
+        >
+          Pay Advance Now
+          <span className="text-base leading-none group-hover:translate-x-1 transition-transform duration-300 inline-block">→</span>
+        </a>
+      ) : (
+        <div className="inline-flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase text-[#c9a0ac] font-light">
+          <Loader2 size={14} className="animate-spin" />
+          Setting up payment…
+        </div>
+      )}
+
+      <p className="mt-6 text-[10px] text-[#c9a0ac] tracking-wide font-light">
+        Secure checkout via Square
       </p>
     </div>
   );

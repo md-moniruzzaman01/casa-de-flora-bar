@@ -3,13 +3,13 @@
 import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { BOUQUET_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 
 
   export default function QuoteSection() {
   const container = useRef<HTMLDivElement>(null);
-  const { quote } = BOUQUET_CONTENT
+  const { quote } = useContent().bouquet;
 
   useGSAP(() => {
     gsap.from(".quote-content > *", {

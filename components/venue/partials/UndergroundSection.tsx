@@ -5,12 +5,12 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { WaveDividerDown } from "@/components/shared/WaveDivider";
-import { VANUE_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 
 const UndergroundSection = () => {
     const sectionRef = useRef<HTMLElement>(null);
-    const { underground_section: content } = VANUE_CONTENT;
+    const { underground_section: content } = useContent().venue;
 
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);

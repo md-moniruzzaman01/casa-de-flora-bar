@@ -11,7 +11,9 @@ import { api } from "@/lib/api";
 import {
   STATUS_TO_BACKEND,
   tableBookingToRow,
+  formatTimeRange,
   type AdminStatus,
+  type AdminPaymentStatus,
   type BackendTableBooking,
 } from "@/lib/admin-mappers";
 
@@ -23,18 +25,25 @@ type SortKey   = "guest" | "bookingFor" | "date" | "time" | "guests" | "status";
 type SortDir   = "asc" | "desc";
 
 interface Reservation {
-  id:         string;
-  guest:      string;
-  email:      string;
-  phone:      string;
-  bookingFor: string;
-  date:       string;
-  dateValue:  string;
-  dateTs:     number;
-  time:       string;
-  guests:     number;
-  status:     Status;
-  notes:      string;
+  id:              string;
+  guest:           string;
+  email:           string;
+  phone:           string;
+  bookingFor:      string;
+  date:            string;
+  dateValue:       string;
+  dateTs:          number;
+  time:            string;
+  guests:          number;
+  status:          Status;
+  paymentStatus:   AdminPaymentStatus;
+  notes:           string;
+  specialRequests: string;
+  bouquetId:       string;
+  bouquetType:     BouquetType;
+  quantity:        number;
+  occasion:        string;
+  cardMessage:     string;
 }
 
 interface SessionCapacity {
@@ -135,6 +144,22 @@ function capacityColor(pct: number) {
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
+
+const PAYMENT_STYLES: Record<AdminPaymentStatus, { dot: string; bg: string; text: string }> = {
+  Unpaid:   { dot: "bg-amber-400",   bg: "bg-amber-50",   text: "text-amber-700"   },
+  Paid:     { dot: "bg-emerald-500", bg: "bg-emerald-50", text: "text-emerald-700" },
+  Refunded: { dot: "bg-gray-400",    bg: "bg-gray-50",    text: "text-gray-600"    },
+};
+
+function PaymentBadge({ status }: { status: AdminPaymentStatus }) {
+  const s = PAYMENT_STYLES[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${s.bg} ${s.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.dot}`} />
+      {status}
+    </span>
+  );
+}
 
 function StatusBadge({ status }: { status: Status }) {
   const s = STATUS_STYLES[status];
@@ -574,6 +599,72 @@ function EditDrawer({ reservation, onClose, onSave }: {
 
           <div className="border-t border-gray-100" />
 
+          {/* Customer's Message — read-only */}
+          <section>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Customer&apos;s Message</p>
+            {form.specialRequests ? (
+              <div className="rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-900 leading-relaxed whitespace-pre-wrap">
+                {form.specialRequests}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-300 italic">No message provided by customer.</p>
+            )}
+          </section>
+
+          <div className="border-t border-gray-100" />
+
+          <section>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Bouquet Details</p>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">Bouquet Type</label>
+                  <select
+                    value={form.bouquetType}
+                    onChange={e => set("bouquetType", e.target.value as BouquetType)}
+                    className={`${inp} cursor-pointer`}
+                  >
+                    {BOUQUET_TYPES.map(t => (
+                      <option key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1.5">Quantity</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={form.quantity}
+                    onChange={e => set("quantity", Math.max(1, Number(e.target.value) || 1))}
+                    className={inp}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1.5">Occasion (optional)</label>
+                <input
+                  value={form.occasion}
+                  onChange={e => set("occasion", e.target.value)}
+                  className={inp}
+                  placeholder="Birthday, anniversary…"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1.5">Card Message (optional)</label>
+                <textarea
+                  value={form.cardMessage}
+                  onChange={e => set("cardMessage", e.target.value)}
+                  rows={2}
+                  className={`${inp} resize-none`}
+                  placeholder="A short note for the bouquet card"
+                />
+              </div>
+            </div>
+          </section>
+
+          <div className="border-t border-gray-100" />
+
           <section>
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Internal Notes</p>
             <textarea
@@ -851,8 +942,10 @@ export default function MakeYourBouquet() {
   const [pageSize,    setPageSize]    = useState(10);
   const [filters,     setFilters]     = useState<FilterState>(EMPTY_FILTERS);
   const [filterCount, setFilterCount] = useState(0);
-  const [editing,     setEditing]     = useState<Reservation | null>(null);
-  const [adding,      setAdding]      = useState(false);
+  const [editing,          setEditing]          = useState<Reservation | null>(null);
+  const [adding,           setAdding]           = useState(false);
+  const [sessionCapacity,  setSessionCapacity]  = useState<SessionCapacity[]>([]);
+  const [capacityLoading,  setCapacityLoading]  = useState(false);
 
   function resetPage() { setPage(1); }
 
@@ -880,10 +973,52 @@ export default function MakeYourBouquet() {
   const mapRows = (bookings: BackendTableBooking[]): Reservation[] =>
     bookings
       .filter((b) => b.bouquetBookings.length > 0)
-      .map((b) => ({
-        ...(tableBookingToRow(b, 'Make your Bouquet') as Reservation),
-        bookingFor: 'Make your Bouquet',
-      }));
+      .map((b) => {
+        const row = tableBookingToRow(b, 'Make your Bouquet');
+        const bq  = b.bouquetBookings[0];
+        return {
+          id:              row.id,
+          guest:           row.guest,
+          email:           row.email,
+          phone:           row.phone,
+          bookingFor:      'Make your Bouquet',
+          date:            row.date,
+          dateValue:       row.dateValue,
+          dateTs:          row.dateTs,
+          time:            row.time,
+          guests:          row.guests,
+          status:          row.status,
+          paymentStatus:   row.paymentStatus,
+          notes:           row.notes,
+          specialRequests: b.specialRequests ?? '',
+          bouquetId:       bq.id,
+          bouquetType:     (bq.bouquetType as BouquetType) ?? 'CUSTOM',
+          quantity:        bq.quantity ?? 1,
+          occasion:        bq.occasion ?? '',
+          cardMessage:     bq.cardMessage ?? '',
+        };
+      });
+
+  const todayIso = new Date().toISOString().slice(0, 10);
+
+  const fetchCapacity = useCallback(() => {
+    setCapacityLoading(true);
+    api
+      .get<{ data: { timeSlot: string; guests: number }[] }>(
+        `/api/table-bookings/capacity?date=${todayIso}`,
+      )
+      .then((res) =>
+        setSessionCapacity(
+          (res.data ?? []).map(({ timeSlot, guests }) => ({
+            label:  formatTimeRange(timeSlot, 90),
+            filled: guests,
+            total:  SESSION_CAPACITY_TOTAL,
+          })),
+        ),
+      )
+      .catch(() => { /* non-fatal — sidebar just stays empty */ })
+      .finally(() => setCapacityLoading(false));
+  }, []);
 
   const fetchData = useCallback(() => {
     setLoading(true);
@@ -899,9 +1034,23 @@ export default function MakeYourBouquet() {
 
   useEffect(() => {
     let cancelled = false;
-    api
-      .get<{ bookings: BackendTableBooking[] }>('/api/table-bookings?limit=200')
-      .then((res) => { if (!cancelled) setData(mapRows(res.bookings ?? [])); })
+    Promise.all([
+      api.get<{ bookings: BackendTableBooking[] }>('/api/table-bookings?limit=200'),
+      api.get<{ data: { timeSlot: string; guests: number }[] }>(
+        `/api/table-bookings/capacity?date=${todayIso}`,
+      ),
+    ])
+      .then(([bookingsRes, capRes]) => {
+        if (cancelled) return;
+        setData(mapRows(bookingsRes.bookings ?? []));
+        setSessionCapacity(
+          (capRes.data ?? []).map(({ timeSlot, guests }) => ({
+            label:  formatTimeRange(timeSlot, 90),
+            filled: guests,
+            total:  SESSION_CAPACITY_TOTAL,
+          })),
+        );
+      })
       .catch((e: { message?: string }) => {
         if (!cancelled) setError(e.message ?? 'Failed to load bouquet reservations');
       })
@@ -915,16 +1064,25 @@ export default function MakeYourBouquet() {
     setEditing(null);
 
     try {
-      await api.patch(`/api/table-bookings/${updated.id}`, {
-        name: updated.guest,
-        email: updated.email,
-        phone: updated.phone,
-        guests: updated.guests,
-        date: updated.dateValue,
-        timeSlot: SESSION_TO_BACKEND[updated.time] ?? updated.time,
-        specialRequests: updated.notes,
-        status: STATUS_TO_BACKEND[updated.status],
-      });
+      await Promise.all([
+        api.patch(`/api/table-bookings/${updated.id}`, {
+          name:    updated.guest,
+          email:   updated.email,
+          phone:   updated.phone,
+          guests:  updated.guests,
+          date:    updated.dateValue,
+          timeSlot: SESSION_TO_BACKEND[updated.time] ?? updated.time,
+          specialRequests: updated.notes,
+          status:  STATUS_TO_BACKEND[updated.status],
+        }),
+        api.patch(`/api/table-bookings/${updated.id}/bouquets/${updated.bouquetId}`, {
+          bouquetType: updated.bouquetType,
+          quantity:    updated.quantity,
+          ...(updated.occasion    ? { occasion:    updated.occasion }    : {}),
+          ...(updated.cardMessage ? { cardMessage: updated.cardMessage } : {}),
+        }),
+      ]);
+      fetchCapacity();
     } catch (e) {
       const err = e as { message?: string };
       setError(err.message ?? 'Failed to update reservation');
@@ -939,6 +1097,7 @@ export default function MakeYourBouquet() {
       await api.patch(`/api/table-bookings/${id}/status`, {
         status: STATUS_TO_BACKEND[status],
       });
+      fetchCapacity();
     } catch (e) {
       const err = e as { message?: string };
       setError(err.message ?? 'Failed to update status');
@@ -952,6 +1111,7 @@ export default function MakeYourBouquet() {
     resetPage();
     try {
       await api.delete(`/api/table-bookings/${id}`);
+      fetchCapacity();
     } catch (e) {
       const err = e as { message?: string };
       setError(err.message ?? 'Failed to delete reservation');
@@ -1024,17 +1184,6 @@ export default function MakeYourBouquet() {
   }, [page, totalPages]);
 
   const hasActiveFilters = !!search || filterCount > 0;
-
-  // Today's session capacity from live data (filled = guests booked into each slot today).
-  const sessionCapacity = useMemo<SessionCapacity[]>(() => {
-    const todayIso = new Date().toISOString().slice(0, 10);
-    return SESSION_TIMES.map((label) => {
-      const filled = data
-        .filter((r) => r.dateValue === todayIso && r.time === label && r.status !== "Cancelled")
-        .reduce((sum, r) => sum + r.guests, 0);
-      return { label, filled, total: SESSION_CAPACITY_TOTAL };
-    });
-  }, [data]);
 
   return (
     <>
@@ -1159,7 +1308,9 @@ export default function MakeYourBouquet() {
                       <ColHeader label="Date"       sortKey="date"    currentKey={sortKey} dir={sortDir} onSort={handleSort} />
                       <ColHeader label="Time"       sortKey="time"    currentKey={sortKey} dir={sortDir} onSort={handleSort} />
                       <ColHeader label="Guests"     sortKey="guests"  currentKey={sortKey} dir={sortDir} onSort={handleSort} />
+                      <th className="text-left px-5 py-3.5 font-medium text-gray-500 text-xs whitespace-nowrap">Bouquet</th>
                       <ColHeader label="Status"     sortKey="status"  currentKey={sortKey} dir={sortDir} onSort={handleSort} />
+                      <th className="text-left px-5 py-3.5 font-medium text-gray-500 text-xs whitespace-nowrap">Payment</th>
                       <th className="px-4 py-3.5 w-10" />
                     </tr>
                   </thead>
@@ -1184,7 +1335,16 @@ export default function MakeYourBouquet() {
                         <td className="px-5 py-3.5 text-gray-600 text-sm whitespace-nowrap">{r.date}</td>
                         <td className="px-5 py-3.5 text-gray-600 text-sm whitespace-nowrap">{r.time}</td>
                         <td className="px-5 py-3.5 text-gray-600 text-sm">{r.guests} Guests</td>
+                        <td className="px-5 py-3.5">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-sm text-gray-800 font-medium capitalize">
+                              {r.bouquetType.charAt(0) + r.bouquetType.slice(1).toLowerCase()}
+                            </span>
+                            <span className="text-[11px] text-gray-400">Qty&nbsp;{r.quantity}</span>
+                          </div>
+                        </td>
                         <td className="px-5 py-3.5"><StatusBadge status={r.status} /></td>
+                        <td className="px-5 py-3.5"><PaymentBadge status={r.paymentStatus} /></td>
                         <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
                           <ActionMenu
                             onEdit={() => setEditing(r)}
@@ -1265,10 +1425,18 @@ export default function MakeYourBouquet() {
             {/* ── Session capacity sidebar ── */}
             <aside className="w-72 flex-shrink-0 sticky top-6">
               <div className="bg-pink-50 rounded-2xl p-5">
-                <h3 className="text-base font-semibold text-gray-900 mb-2">Session capacity</h3>
-                {sessionCapacity.map(s => (
-                  <SessionCapacityCard key={s.label} session={s} />
-                ))}
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-base font-semibold text-gray-900">Session capacity</h3>
+                  {capacityLoading && <RefreshCw size={13} className="animate-spin text-gray-400" />}
+                </div>
+                <p className="text-[11px] text-gray-400 mb-3">Today · {todayIso}</p>
+                {sessionCapacity.length === 0 && !capacityLoading ? (
+                  <p className="text-xs text-gray-400 py-3">No bookings today.</p>
+                ) : (
+                  sessionCapacity.map(s => (
+                    <SessionCapacityCard key={s.label} session={s} />
+                  ))
+                )}
               </div>
             </aside>
 

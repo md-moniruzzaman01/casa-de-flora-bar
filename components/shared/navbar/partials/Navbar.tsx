@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
-import { NAVBAR_CONFIG } from "../config/constants";
+import { useContent } from "@/lib/ContentProvider";
+import type { NavItem } from "../config/types";
 import Image from "next/image";
 
 export default function Navbar() {
-  const { logo, navItems, cta } = NAVBAR_CONFIG;
+  const { logo, navItems: _navItems, cta } = useContent().navbar;
+  const navItems = _navItems as NavItem[];
   const pathname = usePathname();
 
   const [mobileOpen, setMobileOpen] = useState(false);

@@ -87,6 +87,8 @@ export interface BackendBouquet {
   specialRequests: string | null;
 }
 
+export type BackendPaymentStatus = 'UNPAID' | 'PAID' | 'REFUNDED';
+
 export interface BackendTableBooking {
   id: string;
   name: string;
@@ -97,6 +99,8 @@ export interface BackendTableBooking {
   timeSlot: string; // "HH:mm"
   specialRequests: string | null;
   status: BackendBookingStatus;
+  paymentStatus: BackendPaymentStatus;
+  squareOrderId: string | null;
   createdAt: string;
   customer: BackendCustomerSummary | null;
   bouquetBookings: BackendBouquet[];
@@ -116,11 +120,21 @@ export interface BackendEventBooking {
   cateringRequired: boolean;
   specialRequests: string | null;
   status: BackendBookingStatus;
+  paymentStatus: BackendPaymentStatus;
+  squareOrderId: string | null;
   createdAt: string;
   customer: BackendCustomerSummary | null;
 }
 
 // ── Reservation row (matches the table-page UI shape, but with string ids) ──
+
+export type AdminPaymentStatus = 'Unpaid' | 'Paid' | 'Refunded';
+
+export const PAYMENT_STATUS_FROM_BACKEND: Record<BackendPaymentStatus, AdminPaymentStatus> = {
+  UNPAID:   'Unpaid',
+  PAID:     'Paid',
+  REFUNDED: 'Refunded',
+};
 
 export interface ReservationRow {
   id: string;
@@ -135,6 +149,7 @@ export interface ReservationRow {
   timeSlot: string;   // raw "HH:mm" for editing
   guests: number;
   status: AdminStatus;
+  paymentStatus: AdminPaymentStatus;
   notes: string;
   source: 'table' | 'bouquet' | 'event';
   bouquetCount?: number;
@@ -159,6 +174,7 @@ export const tableBookingToRow = (
     timeSlot: b.timeSlot,
     guests: b.guests,
     status: STATUS_FROM_BACKEND[b.status],
+    paymentStatus: PAYMENT_STATUS_FROM_BACKEND[b.paymentStatus ?? 'UNPAID'],
     notes: b.specialRequests ?? '',
     source: 'table',
     bouquetCount: b.bouquetBookings.length,
@@ -182,6 +198,7 @@ export const eventBookingToRow = (b: BackendEventBooking): ReservationRow => {
     timeSlot: b.startTime,
     guests: b.guests,
     status: STATUS_FROM_BACKEND[b.status],
+    paymentStatus: PAYMENT_STATUS_FROM_BACKEND[b.paymentStatus ?? 'UNPAID'],
     notes: b.specialRequests ?? '',
     source: 'event',
   };

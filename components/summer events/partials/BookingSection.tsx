@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -14,10 +14,11 @@ import {
   Music,
   ShieldCheck,
   Check,
+  ExternalLink,
   Loader2,
   AlertCircle,
 } from "lucide-react";
-import { SUMMER_EVENTS_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import { api, type ApiError } from "@/lib/api";
 
 function to24h(time12: string): string {
@@ -54,7 +55,7 @@ type FormValues = {
 };
 
 export default function BookingSection() {
-  const { about, pricing, sessions } = SUMMER_EVENTS_CONTENT;
+  const { about, pricing, sessions } = useContent().summerEvents;
   const sessionList = sessions ?? [];
 
   const [activeSession, setActiveSession] = useState(0);
@@ -63,6 +64,7 @@ export default function BookingSection() {
   );
   const [guests, setGuests] = useState(1);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
   const {
     register,
@@ -86,7 +88,7 @@ export default function BookingSection() {
     setSubmitError(null);
     try {
       const startTime = to24h(activeTime);
-      await api.post("/api/event-bookings", {
+      const res = await api.post<{ data: unknown; checkoutUrl: string | null }>("/api/event-bookings", {
         name: data.name.trim(),
         email: data.email.trim(),
         phone: data.phone.trim(),
@@ -98,6 +100,7 @@ export default function BookingSection() {
         cateringRequired: true,
         ...(data.notes?.trim() ? { specialRequests: data.notes.trim() } : {}),
       });
+      setCheckoutUrl(res.checkoutUrl);
       reset();
     } catch (err) {
       if (isApiError(err)) {
@@ -239,7 +242,7 @@ export default function BookingSection() {
             </div>
 
             {isSubmitSuccessful ? (
-              <SuccessState session={session} time={activeTime} guests={guests} />
+              <SuccessState session={session} time={activeTime} guests={guests} checkoutUrl={checkoutUrl} />
             ) : (
               <form
                 onSubmit={handleSubmit(onSubmit)}
@@ -541,39 +544,74 @@ function SuccessState({
   session,
   time,
   guests,
+  checkoutUrl,
 }: {
   session?: { date: string; day: string };
   time?: string;
   guests: number;
+  checkoutUrl: string | null;
 }) {
+  useEffect(() => {
+    if (checkoutUrl) {
+      const t = setTimeout(() => { window.location.href = checkoutUrl; }, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [checkoutUrl]);
+
   return (
-    <div className="p-8 sm:p-10 text-center">
-      <div className="mx-auto w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center mb-5">
-        <Check size={26} />
+    <div className="p-8 sm:p-10">
+      {/* Step 1 */}
+      <div className="flex items-start gap-3 mb-5">
+        <div className="flex flex-col items-center">
+          <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0">
+            <Check size={14} />
+          </div>
+          <div className="w-px flex-1 bg-primary-100 my-1.5" style={{ minHeight: 24 }} />
+        </div>
+        <div className="pt-1.5 pb-4">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-primary mb-0.5">Step 1 · Done</p>
+          <p className="text-sm font-medium text-black">Reservation received</p>
+          {session && time && (
+            <p className="text-xs text-gray-500 mt-0.5">
+              {session.day}, {session.date} at {time} · {guests} {guests > 1 ? "guests" : "guest"}
+            </p>
+          )}
+        </div>
       </div>
-      <h3 className="font-serif text-2xl sm:text-3xl text-black mb-3">
-        You&apos;re on the list.
-      </h3>
-      <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-6">
-        We&apos;ve sent a confirmation to your email with deposit details.
-        {session && time && (
-          <>
-            {" "}
-            See you on{" "}
-            <strong className="text-black">
-              {session.day}, {session.date}
-            </strong>{" "}
-            at <strong className="text-black">{time}</strong> with{" "}
-            <strong className="text-black">
-              {guests} {guests > 1 ? "guests" : "guest"}
-            </strong>
-            .
-          </>
-        )}
-      </p>
-      <p className="text-[11px] uppercase tracking-[0.24em] text-gray-500">
-        — The Casa de Flora team
-      </p>
+
+      {/* Step 2 */}
+      <div className="flex items-start gap-3 mb-6">
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-semibold ${
+          checkoutUrl ? "border-2 border-primary text-primary" : "bg-primary-100 text-primary"
+        }`}>
+          {checkoutUrl ? "2" : <Loader2 size={13} className="animate-spin" />}
+        </div>
+        <div className="pt-1.5">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-primary mb-0.5">Step 2 · Required</p>
+          <p className="text-sm font-medium text-black">
+            {checkoutUrl ? "Redirecting to payment…" : "Preparing your checkout…"}
+          </p>
+          <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+            A $150 deposit secures your spot. Pay now to confirm.
+          </p>
+        </div>
+      </div>
+
+      {checkoutUrl ? (
+        <a
+          href={checkoutUrl}
+          className="flex items-center justify-center gap-2 w-full bg-black text-white py-4 text-[11px] uppercase tracking-[0.18em] font-medium hover:bg-primary transition-all"
+        >
+          <ExternalLink size={14} />
+          Pay $150 Deposit Now
+        </a>
+      ) : (
+        <div className="flex items-center justify-center gap-2 w-full bg-gray-100 text-gray-500 py-4 text-[11px] uppercase tracking-[0.18em]">
+          <Loader2 size={14} className="animate-spin" />
+          Setting up payment…
+        </div>
+      )}
+      <p className="text-center text-[10px] text-gray-400 mt-3">Secure checkout via Square</p>
     </div>
   );
 }

@@ -3,12 +3,12 @@
 import React, { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ChevronDown, Mail, Phone, MessageCircle } from "lucide-react";
-import { SUMMER_EVENTS_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import { siteConfig, whatsappLink } from "@/lib/site";
 
 export default function FAQSection() {
   const { title, titleHighlight, description, questions } =
-    SUMMER_EVENTS_CONTENT.faq;
+    useContent().summerEvents.faq;
 
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
   const contentRefs = useRef<(HTMLDivElement | null)[]>([]);

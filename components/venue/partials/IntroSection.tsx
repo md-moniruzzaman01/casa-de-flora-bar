@@ -5,11 +5,11 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import WaveDividerUp from "@/components/shared/WaveDivider";
-import { VANUE_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 
 const GardenRoomSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const { garden_room_section: content } = VANUE_CONTENT;
+  const { garden_room_section: content } = useContent().venue;
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);

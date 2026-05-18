@@ -4,13 +4,13 @@ import React, { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { BOUQUET_CONTENT } from "../config/constant";
+import { useContent } from "@/lib/ContentProvider";
 import Link from "next/link";
 
 
 export default function Hero() {
     const container = useRef<HTMLDivElement>(null);
-    const { hero } = BOUQUET_CONTENT;
+    const { hero } = useContent().bouquet;
 
     useGSAP(() => {
         const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
